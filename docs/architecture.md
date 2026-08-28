@@ -90,6 +90,10 @@ The validator checks the returned plan independently of the solver model. It ver
 10. A human approves a valid result.
 11. Export is enabled only for the approved result.
 
+## Optional RapidBlock flow
+
+An authorised urgent-job request creates a derived immutable snapshot and a child planning run. The child run reuses the same optimizer, locks, hard constraints, independent validator, approval, and export services. Parent snapshots and runs remain immutable, and the result is a candidate recommendation rather than railway authority.
+
 ## Planning run states
 
 `QUEUED` -> `RUNNING` -> `FEASIBLE` or `OPTIMAL`

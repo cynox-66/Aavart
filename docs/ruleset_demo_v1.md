@@ -12,6 +12,7 @@ This is the fixed, visible hackathon ruleset. It is not a legal railway rule lib
 - Jobs sharing an isolation zone cannot overlap.
 - Maintenance cannot overlap a conflicting train path.
 - Locked schedule items cannot move or disappear during re-planning.
+- Compatible jobs from different departments may use the same planning window; department identity alone is not a conflict.
 
 ## Objective priorities
 
@@ -24,6 +25,10 @@ Use lexicographic intent, implemented with documented weights if CP-SAT requires
 5. minimize unused gaps and fragmentation.
 
 Priority is an integer from 0 to 100. It is not a safety override.
+
+## RapidBlock policy
+
+RapidBlock uses this unchanged ruleset. The urgent job may carry priority `100`, but receives no hidden objective boost and cannot override any hard constraint or locked item. Therefore RapidBlock does not require a new ruleset version.
 
 ## Deterministic baseline
 

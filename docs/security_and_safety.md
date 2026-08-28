@@ -11,10 +11,12 @@ The system is decision support. It does not issue railway authority, dispatch tr
 - Invalid, stale, failed, infeasible, and timed-out/degraded results cannot be approved or exported.
 - Locked decisions are immutable within a re-plan.
 - All approvals and exports are auditable.
+- RapidBlock urgency never overrides locks, hard constraints, independent validation, approval, or export rules.
+- A RapidBlock candidate is not an operational grant, sanction, permit, or authority to occupy the line.
 
 ## Access rules
 
-For the hackathon, use a simple planner identity if full identity integration is unavailable. Still record actor identity on locks, approvals, exports, and administrative changes.
+For the hackathon, use a simple planner allowlist if full identity integration is unavailable. Still enforce the allowlist in the backend and record actor identity on RapidBlock requests, locks, approvals, exports, and administrative changes.
 
 ## Data handling
 
@@ -34,6 +36,7 @@ Record actor, timestamp, run ID, snapshot ID, ruleset version, action, and relev
 - approval;
 - export;
 - failure.
+- RapidBlock submission, rejection, derived snapshot creation, child-run creation, and candidate result.
 
 ## Threats to address
 

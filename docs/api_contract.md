@@ -75,6 +75,40 @@ Approval fails for invalid, stale, unsafe, failed, or timed-out/degraded results
 
 Returns CSV or PDF only after approval. It must include run ID, snapshot ID, ruleset version, reviewer, and approval timestamp.
 
+## `POST /rapidblock-requests`
+
+Request:
+
+```json
+{
+  "base_run_id": "RUN-001",
+  "actor": "officer-01",
+  "actor_role": "PLANNER",
+  "justification": "Urgent inspection after reported defect",
+  "source_reported_at": "2026-09-02T10:15:00+05:30",
+  "urgent_job": {
+    "job_id": "JOB-EMG-001",
+    "department": "TRACK",
+    "asset_id": "ASSET-001",
+    "section_id": "SEC-A",
+    "work_type": "urgent rail inspection",
+    "priority": 100,
+    "duration_minutes": 45,
+    "duration_min_minutes": 45,
+    "duration_max_minutes": 60,
+    "required_resources": ["TRACK_TEAM_1"],
+    "allowed_windows": ["WIN-002"],
+    "status": "UNSCHEDULED"
+  }
+}
+```
+
+The backend records the request, validates the actor and urgent job, creates a derived immutable snapshot, and launches a child planning run. The response includes `request_id`, `state`, `base_run_id`, nullable `derived_snapshot_id`, nullable `child_run_id`, and `status_url`. Invalid requests remain auditable and return `REJECTED` with stable reason codes.
+
+## `GET /rapidblock-requests/{request_id}`
+
+Return request metadata, state, reason codes, base and derived snapshot lineage, parent and child run IDs, changed and preserved jobs, validator result, and candidate-plan status. `CANDIDATE_READY` means reviewable, not operationally granted.
+
 ## Error format
 
 ```json
@@ -85,4 +119,4 @@ Returns CSV or PDF only after approval. It must include run ID, snapshot ID, rul
 }
 ```
 
-Required HTTP behavior: `400` invalid request, `404` unknown resource, `409` invalid state transition, `422` validation failure, `500` unexpected server failure.
+Required HTTP behavior: `400` invalid request, `403` unauthorised actor, `404` unknown resource, `409` invalid state transition, `422` validation failure, `500` unexpected server failure.

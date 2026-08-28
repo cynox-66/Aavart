@@ -22,3 +22,5 @@ Use these meanings consistently in code, UI, tests, and presentations.
 | Reason code | A stable machine-readable explanation for scheduling or rejecting a job. |
 | Approval | A human decision that makes a valid candidate eligible for export. |
 | Export | A CSV/PDF representation of an approved plan. It is not railway sanctioning. |
+| RapidBlock request | An authorised urgent-job submission that may create a derived snapshot and child candidate-planning run. |
+| Candidate emergency window | An existing controlled planning window in which urgent work may be proposed. It is not an operationally granted block. |

@@ -1,6 +1,6 @@
 # Data Contract
 
-This is the detailed input contract. The summary contract in `docs/01_shared_contract.md` remains authoritative if a conflict appears.
+This is the detailed input contract. The summary contract in `docs/project-context/01_shared_contract.md` remains authoritative if a conflict appears.
 
 ## Common rules
 
@@ -55,6 +55,21 @@ This is the detailed input contract. The summary contract in `docs/01_shared_con
 ## Schedule item
 
 Required fields: `job_id`, `window_id`, `start`, `end`, `status`, `reason_codes`, and `locked`.
+
+## RapidBlock request schema
+
+| Field | Type | Required | Rule |
+|---|---|---:|---|
+| `base_run_id` | string | yes | References an existing planning run |
+| `actor` | string | yes | Non-empty demo identity recorded in audit history |
+| `actor_role` | enum | yes | `PLANNER` for the demo allowlist |
+| `justification` | string | yes | Non-empty reason for urgent planning |
+| `source_reported_at` | datetime | yes | Explicit timezone offset |
+| `urgent_job` | object | yes | Must satisfy the complete canonical Job schema |
+
+The urgent job is validated exactly like any other job. Its section, asset, resources, and `allowed_windows` must reference entities in the base run's one-corridor snapshot. Cross-corridor requests are rejected with `OUTSIDE_PLANNING_SCOPE`. The request creates a derived snapshot containing the urgent job and lineage metadata; it never edits the base snapshot.
+
+RapidBlock does not create an operational window. A request with no eligible controlled planning window is rejected with `NO_ELIGIBLE_WINDOW`.
 
 ## Validation errors
 

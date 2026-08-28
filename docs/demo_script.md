@@ -38,9 +38,20 @@ Export the approved CSV/PDF.
 
 Expected: export succeeds and contains approval metadata. State clearly that this is a recommendation export, not BDMS sanctioning.
 
+## Optional RapidBlock extension
+
+Target duration: 60-90 seconds after the mandatory core demo is complete.
+
+Submit `JOB-EMG-001` against the baseline run using the authorised demo planner. Show the request ID, derived snapshot, child run, preserved lock, affected-job comparison, validator result, and `CANDIDATE_READY` state.
+
+Expected: the base run remains unchanged, the urgent job is evaluated within an existing controlled window, and the child run uses the normal approval and export guardrails. State that the result is a candidate recommendation, not an emergency block grant.
+
+If time is limited or the extension is unstable, omit RapidBlock and run the mandatory six-step core demo unchanged.
+
 ## Presenter rules
 
 - Do not claim live railway integration.
 - Do not claim automatic sanctioning.
 - Do not claim validated ML.
 - If a run is infeasible or times out, show that export is correctly blocked rather than hiding the failure.
+- Never say that RapidBlock creates, grants, sanctions, or authorises an operational block.

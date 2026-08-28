@@ -6,7 +6,7 @@ PostgreSQL is the transactional store. PostGIS is available for section and corr
 
 ### `snapshots`
 
-`id`, `source_hash`, `status`, `created_at`, `created_by`, `schema_version`, `raw_metadata`.
+`id`, `parent_snapshot_id`, `derivation_type`, `derived_from_request_id`, `source_hash`, `status`, `created_at`, `created_by`, `schema_version`, `raw_metadata`.
 
 Snapshots are immutable after validation.
 
@@ -42,7 +42,13 @@ Unique constraint: `(snapshot_id, id)`.
 
 ### `planning_runs`
 
-`id`, `snapshot_id`, `ruleset_version`, `state`, `solver_version`, `deterministic_seed`, `objective_value`, `bound`, `gap`, `created_at`, `completed_at`.
+`id`, `snapshot_id`, `parent_run_id`, `trigger_type`, `rapidblock_request_id`, `ruleset_version`, `state`, `solver_version`, `deterministic_seed`, `objective_value`, `bound`, `gap`, `created_at`, `completed_at`.
+
+`trigger_type` is `BASELINE`, `REPLAN`, or `RAPIDBLOCK`.
+
+### `rapidblock_requests`
+
+`id`, `base_run_id`, `base_snapshot_id`, `derived_snapshot_id`, `child_run_id`, `actor`, `actor_role`, `justification`, `source_reported_at`, `urgent_job_id`, `state`, `reason_codes`, `created_at`, `updated_at`.
 
 ### `schedule_items`
 
@@ -63,7 +69,10 @@ Unique constraint: `(snapshot_id, id)`.
 - Approved runs cannot be mutated; re-planning creates a new run.
 - Locks are recorded as audit events and represented on schedule items.
 - Export records reference the exact approved run.
+- A RapidBlock request never mutates its base snapshot or base run.
+- Every RapidBlock-derived snapshot references one parent snapshot and one request.
+- Every RapidBlock child run references its parent run and derived snapshot.
 
 ## Indexes
 
-Index `snapshot_id` on snapshot-owned tables, `run_id` on result tables, `(section_id, start_at, end_at)` for schedule/window lookup, and `state` on planning runs.
+Index `snapshot_id` on snapshot-owned tables, `run_id` on result tables, `(section_id, start_at, end_at)` for schedule/window lookup, `state` on planning runs, and `(base_run_id, state)` on RapidBlock requests.

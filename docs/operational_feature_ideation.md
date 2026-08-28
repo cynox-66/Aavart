@@ -20,7 +20,15 @@ Primary measures are requested block hours, granted block hours, utilised block 
 
 `RapidBlock` is the short name for emergency block planning.
 
-It allows an authorised planner to submit urgent work, identify affected scheduled jobs, and generate a revised candidate plan. It must not automatically override locks, approvals, safety rules, or operational authority. Any emergency override requires an identified actor, reason, timestamp, and audit event.
+Status: approved as an optional extension by `DEC-003`; it is not part of the mandatory five-minute core flow.
+
+It allows an authorised demo planner to submit one canonical urgent job against an existing planning run. The backend records the actor and justification, validates the job and requested controlled windows, creates a derived immutable snapshot, and launches a child run for affected unlocked work.
+
+RapidBlock reuses `Demo Ruleset v1`. It does not add a special solver, hidden priority boost, new operational window, lock override, safety override, automatic approval, or automatic export. Compatible work from multiple departments may share a planning window; department identity alone neither forces separation nor proves compatibility.
+
+The request must remain inside the base run's one-corridor snapshot. It produces either a validated `CANDIDATE_READY` comparison or stable failure reasons such as `ACTOR_NOT_AUTHORIZED`, `NO_ELIGIBLE_WINDOW`, `LOCK_CONFLICT`, or `OUTSIDE_PLANNING_SCOPE`. It never returns `GRANTED`, `SANCTIONED`, or authority to use the line.
+
+Required audit lineage is: request -> base run and snapshot -> derived snapshot -> child run -> validator result -> optional human approval and recommendation export.
 
 ## WeatherGuard
 
@@ -35,4 +43,4 @@ Forecast confidence, source time, and freshness must be visible. Weather affecti
 1. Complete the core upload, validation, planning, explanation, lock, re-plan, approval, and export flow.
 2. Add `BlockReady` as the first operational add-on.
 3. Add one deterministic `WeatherGuard` disruption scenario.
-4. Add `RapidBlock` only if the core demo remains stable and explainable within five minutes.
+4. Add the optional `RapidBlock` extension only after the core demo is stable; keep its separate demonstration within 60-90 seconds.
