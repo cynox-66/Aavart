@@ -13,6 +13,7 @@ These are approved SIH simplifications. Team members must not expand scope witho
 - Single-host deployment is acceptable.
 - Re-planning is limited to affected and unlocked jobs.
 - Independent post-solve validation blocks unsafe export.
+- RapidBlock is an optional extension that creates a derived snapshot and child run; it does not replace the mandatory core flow.
 
 ## Forbidden deviations
 
@@ -24,6 +25,8 @@ These are approved SIH simplifications. Team members must not expand scope witho
 - Do not remove reason codes, snapshots, locks, audit history, or validation.
 - Do not broaden to network-wide planning.
 - Do not claim production readiness.
+- Do not label a RapidBlock candidate as `GRANTED`, `SANCTIONED`, or operationally available.
+- Do not let urgency override locks, safety constraints, validation, approval, or export rules.
 
 ## Change rule
 

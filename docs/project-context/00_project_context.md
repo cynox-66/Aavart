@@ -23,6 +23,8 @@ This is decision support, not an autonomous railway sanctioning system. A solver
 - Planner review, locks, rejects, re-planning, explanations, and audit history.
 - CSV/PDF export after validation and approval.
 
+`RapidBlock` is an approved optional extension only. It may be added after the complete core flow works, and it does not change the five-minute completion criterion.
+
 ## Out of scope
 
 - Live TMS, SMMS, TDMS, COA, or BDMS integration.
@@ -36,10 +38,10 @@ This is decision support, not an autonomous railway sanctioning system. A solver
 
 When documents conflict, use this order:
 
-1. `docs/01_shared_contract.md`
-2. `docs/03_deviation_lock.md`
-3. `docs/02_acceptance_checks.md`
-4. `docs/04_decision_log.md`
+1. `docs/project-context/01_shared_contract.md`
+2. `docs/project-context/03_deviation_lock.md`
+3. `docs/project-context/02_acceptance_checks.md`
+4. `docs/project-context/04_decision_log.md`
 5. Role files under `docs/roles/`
 6. Root README and informal chat messages
 
