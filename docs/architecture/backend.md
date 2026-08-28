@@ -20,6 +20,7 @@ API layer
   -> snapshot service
   -> planning run service
   -> lock/re-plan service
+  -> RapidBlock request service
   -> approval service
   -> export service
   -> audit service
@@ -36,6 +37,8 @@ The API submits work to one optimizer worker. The API does not construct CP-SAT 
 - `POST /planning-runs/{run_id}/replan`
 - `POST /planning-runs/{run_id}/approve`
 - `GET /planning-runs/{run_id}/export`
+- `POST /rapidblock-requests`
+- `GET /rapidblock-requests/{request_id}`
 
 ## Persistence model
 
@@ -51,6 +54,7 @@ Persist at minimum:
 - approval record
 - export record
 - audit events
+- RapidBlock request state and parent/child snapshot and run lineage
 
 Every planning result must be traceable to its snapshot, ruleset, solver version, deterministic seed, and run ID.
 
@@ -64,6 +68,18 @@ Every planning result must be traceable to its snapshot, ruleset, solver version
 6. Store only a valid immutable snapshot.
 
 Invalid data returns stable error codes and never silently receives defaults that change meaning.
+
+## RapidBlock orchestration
+
+1. Record the request and actor before planning.
+2. Authorise the demo actor and validate the urgent job against the canonical schema.
+3. Confirm that the section, asset, resources, and every requested window belong to the base run's corridor and are eligible for planning.
+4. Create a derived immutable snapshot containing the urgent job and parent lineage.
+5. Create a child run with `trigger_type` set to `RAPIDBLOCK`.
+6. Re-plan only the affected corridor and time region while preserving all locked items.
+7. Run the independent validator and return either a candidate comparison or stable failure reasons.
+
+The service does not create railway authority, invent an operational window, or bypass the existing approval and export services.
 
 ## Approval and export guardrails
 

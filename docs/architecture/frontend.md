@@ -44,6 +44,14 @@ The frontend is a planner review interface. It displays backend truth and must n
 - Disable export until human approval exists.
 - Show export metadata: run ID, snapshot ID, ruleset version, reviewer, and timestamp.
 
+### 6. Optional RapidBlock extension
+
+- Allow an authorised demo planner to submit one urgent job against an existing run.
+- Show request state, actor, justification, parent run, child run, and derived snapshot.
+- Compare changed, preserved, newly scheduled, and unscheduled jobs.
+- Label successful output `CANDIDATE_READY`; never label it granted, sanctioned, or operationally available.
+- Keep approval and export disabled until the child run independently satisfies the normal backend guardrails.
+
 ## State rules
 
 - Backend status is authoritative.
@@ -53,11 +61,11 @@ The frontend is a planner review interface. It displays backend truth and must n
 
 ## API boundary
 
-Use the operations and fields in `docs/01_shared_contract.md`. Keep API types separate from visual display labels. Do not rename canonical statuses in the data layer.
+Use the operations and fields in `docs/project-context/01_shared_contract.md`. Keep API types separate from visual display labels. Do not rename canonical statuses in the data layer.
 
 ## Non-goals
 
 - No frontend-only optimizer.
 - No fake live integration status.
 - No automatic approval.
-- No product surfaces outside the five-minute demo path.
+- No product surfaces outside the five-minute core path and the approved optional RapidBlock extension.
