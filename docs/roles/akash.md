@@ -9,11 +9,12 @@
 
 ## Must implement
 
-- The operations in `docs/01_shared_contract.md`.
+- The operations in `docs/project-context/01_shared_contract.md`.
 - Stable error codes and messages.
 - Rejection of invalid or stale data.
 - Approval before export.
 - Independent post-solve validation integration.
+- RapidBlock request validation, demo-actor allowlist, derived snapshot creation, child-run lineage, and audit events.
 
 ## Must not implement
 
@@ -24,4 +25,4 @@
 
 ## Done when
 
-Acceptance checks for validation, snapshots, approval, export, and auditability pass.
+Acceptance checks for validation, snapshots, approval, export, auditability, and the optional RapidBlock backend path pass.

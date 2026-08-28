@@ -12,7 +12,8 @@
 - Provide deterministic data that exercises scheduling, conflict, rejection, lock, and re-plan paths.
 - Mark assumptions clearly.
 - Keep IDs, statuses, timestamps, and relationships internally consistent.
-- Record uncertain rules in `docs/04_decision_log.md`.
+- Record uncertain rules in `docs/project-context/04_decision_log.md`.
+- Provide deterministic RapidBlock fixtures for a feasible request, unavailable window, locked conflict, unauthorised actor, and outside-corridor request.
 
 ## Must not implement
 

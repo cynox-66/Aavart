@@ -14,6 +14,7 @@
 - Explain every scheduling decision with stable reason codes.
 - Distinguish feasible from optimal results.
 - Fail safely on timeout, infeasibility, and invalid input.
+- Process RapidBlock child runs through the unchanged ruleset and report lock or window conflicts using contract reason codes.
 
 ## Must not implement
 
@@ -21,6 +22,7 @@
 - Constraints that contradict the shared contract.
 - Silent fallback that makes an unsafe plan look valid.
 - Network-wide topology.
+- RapidBlock-specific safety overrides, hidden priority boosts, or lock bypasses.
 
 ## Done when
 

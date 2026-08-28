@@ -11,6 +11,7 @@
 - Prioritize schedule readability over decorative visuals.
 - Keep terminology identical to the shared contract.
 - Supply assets in formats the frontend can load locally.
+- Distinguish `CANDIDATE_READY` from operational grant or availability using contract terminology.
 
 ## Must not implement
 

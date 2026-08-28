@@ -10,6 +10,7 @@
 - Show validation, optimization, explanations, planner review, lock, re-plan, approval, and export.
 - State the hackathon deviations honestly.
 - Use the same names as the shared contract.
+- Present RapidBlock only as an optional urgent-job candidate re-plan after the mandatory core story.
 
 ## Must not claim
 
@@ -18,6 +19,7 @@
 - Production readiness.
 - Validated ML superiority.
 - Network-wide optimization.
+- Emergency block grant, sanction, or authority to use the line.
 
 ## Done when
 
