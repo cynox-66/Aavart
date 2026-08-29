@@ -22,6 +22,69 @@
         "title": "ApprovalRequest",
         "type": "object"
       },
+      "ApprovalResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "approval": {
+            "$ref": "#/components/schemas/ApprovalSummary"
+          },
+          "approved": {
+            "title": "Approved",
+            "type": "boolean"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "approved",
+          "approval"
+        ],
+        "title": "ApprovalResponse",
+        "type": "object"
+      },
+      "ApprovalSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "approved_at": {
+            "format": "date-time",
+            "title": "Approved At",
+            "type": "string"
+          },
+          "comment": {
+            "title": "Comment",
+            "type": "string"
+          },
+          "reviewer": {
+            "title": "Reviewer",
+            "type": "string"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reviewer",
+          "comment",
+          "approved_at",
+          "run_id",
+          "snapshot_id",
+          "ruleset_version"
+        ],
+        "title": "ApprovalSummary",
+        "type": "object"
+      },
       "DatasetCounts": {
         "additionalProperties": false,
         "properties": {
@@ -92,30 +155,6 @@
         "title": "DatasetValidationResponse",
         "type": "object"
       },
-      "ErrorResponse": {
-        "additionalProperties": false,
-        "properties": {
-          "code": {
-            "title": "Code",
-            "type": "string"
-          },
-          "details": {
-            "additionalProperties": true,
-            "title": "Details",
-            "type": "object"
-          },
-          "message": {
-            "title": "Message",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code",
-          "message"
-        ],
-        "title": "ErrorResponse",
-        "type": "object"
-      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -127,6 +166,45 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "JobContext": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "department": {
+            "title": "Department",
+            "type": "string"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "section_id": {
+            "title": "Section Id",
+            "type": "string"
+          },
+          "work_type": {
+            "title": "Work Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "department",
+          "asset_id",
+          "section_id",
+          "work_type",
+          "priority"
+        ],
+        "title": "JobContext",
         "type": "object"
       },
       "LockRequest": {
@@ -148,6 +226,38 @@
           "reason"
         ],
         "title": "LockRequest",
+        "type": "object"
+      },
+      "LockResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "locked": {
+            "title": "Locked",
+            "type": "boolean"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "job_id",
+          "locked",
+          "reason_codes"
+        ],
+        "title": "LockResponse",
         "type": "object"
       },
       "PlanningRunCreateRequest": {
@@ -210,6 +320,126 @@
         "title": "PlanningRunCreatedResponse",
         "type": "object"
       },
+      "PlanningRunDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "approval": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ApprovalSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changes": {
+            "additionalProperties": {
+              "enum": [
+                "SCHEDULED",
+                "REJECTED",
+                "PRESERVED",
+                "CHANGED"
+              ],
+              "type": "string"
+            },
+            "title": "Changes",
+            "type": "object"
+          },
+          "completed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completed At"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "export_ready": {
+            "title": "Export Ready",
+            "type": "boolean"
+          },
+          "jobs": {
+            "items": {
+              "$ref": "#/components/schemas/JobContext"
+            },
+            "title": "Jobs",
+            "type": "array"
+          },
+          "parent_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Run Id"
+          },
+          "ruleset_version": {
+            "title": "Ruleset Version",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "schedule_items": {
+            "items": {
+              "$ref": "#/components/schemas/ScheduleItem"
+            },
+            "title": "Schedule Items",
+            "type": "array"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "snapshot_status": {
+            "title": "Snapshot Status",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/PlanningRunState"
+          },
+          "unscheduled_jobs": {
+            "items": {
+              "$ref": "#/components/schemas/UnscheduledJob"
+            },
+            "title": "Unscheduled Jobs",
+            "type": "array"
+          },
+          "validator": {
+            "$ref": "#/components/schemas/ValidatorSummary"
+          }
+        },
+        "required": [
+          "run_id",
+          "state",
+          "snapshot_id",
+          "snapshot_status",
+          "ruleset_version",
+          "created_at",
+          "completed_at",
+          "schedule_items",
+          "unscheduled_jobs",
+          "jobs",
+          "validator",
+          "changes",
+          "export_ready"
+        ],
+        "title": "PlanningRunDetail",
+        "type": "object"
+      },
       "PlanningRunState": {
         "enum": [
           "QUEUED",
@@ -249,6 +479,93 @@
           "affected_window_ids"
         ],
         "title": "ReplanRequest",
+        "type": "object"
+      },
+      "ScheduleItem": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "format": "date-time",
+            "title": "End",
+            "type": "string"
+          },
+          "job_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "locked": {
+            "default": false,
+            "title": "Locked",
+            "type": "boolean"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "start": {
+            "format": "date-time",
+            "title": "Start",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ScheduleStatus"
+          },
+          "window_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "title": "Window Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "window_id",
+          "start",
+          "end",
+          "status",
+          "reason_codes"
+        ],
+        "title": "ScheduleItem",
+        "type": "object"
+      },
+      "ScheduleStatus": {
+        "enum": [
+          "SCHEDULED",
+          "LOCKED",
+          "REJECTED"
+        ],
+        "title": "ScheduleStatus",
+        "type": "string"
+      },
+      "UnscheduledJob": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Reason Codes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "job_id",
+          "reason_codes"
+        ],
+        "title": "UnscheduledJob",
         "type": "object"
       },
       "ValidationError": {
@@ -329,6 +646,34 @@
           "field"
         ],
         "title": "ValidationIssue",
+        "type": "object"
+      },
+      "ValidatorSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "issues": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "validated_at": {
+            "format": "date-time",
+            "title": "Validated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "passed",
+          "validated_at"
+        ],
+        "title": "ValidatorSummary",
         "type": "object"
       }
     }
@@ -422,7 +767,7 @@
           "required": true
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -441,16 +786,6 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Typed foundation route; implementation is assigned to its feature owner."
           }
         },
         "summary": "Create Planning Run",
@@ -477,7 +812,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PlanningRunDetail"
+                }
               }
             },
             "description": "Successful Response"
@@ -491,16 +828,6 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Typed foundation route; implementation is assigned to its feature owner."
           }
         },
         "summary": "Get Planning Run",
@@ -537,7 +864,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalResponse"
+                }
               }
             },
             "description": "Successful Response"
@@ -551,16 +880,6 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Typed foundation route; implementation is assigned to its feature owner."
           }
         },
         "summary": "Approve",
@@ -601,16 +920,6 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Typed foundation route; implementation is assigned to its feature owner."
           }
         },
         "summary": "Export",
@@ -647,7 +956,9 @@
           "200": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/LockResponse"
+                }
               }
             },
             "description": "Successful Response"
@@ -661,16 +972,6 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Typed foundation route; implementation is assigned to its feature owner."
           }
         },
         "summary": "Lock Schedule Item",
@@ -704,10 +1005,12 @@
           "required": true
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/PlanningRunCreatedResponse"
+                }
               }
             },
             "description": "Successful Response"
@@ -721,16 +1024,6 @@
               }
             },
             "description": "Validation Error"
-          },
-          "501": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            },
-            "description": "Typed foundation route; implementation is assigned to its feature owner."
           }
         },
         "summary": "Replan",
