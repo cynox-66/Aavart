@@ -151,6 +151,32 @@ export interface components {
             /** Reviewer */
             reviewer: string;
         };
+        /** ApprovalResponse */
+        ApprovalResponse: {
+            approval: components["schemas"]["ApprovalSummary"];
+            /** Approved */
+            approved: boolean;
+            /** Run Id */
+            run_id: string;
+        };
+        /** ApprovalSummary */
+        ApprovalSummary: {
+            /**
+             * Approved At
+             * Format: date-time
+             */
+            approved_at: string;
+            /** Comment */
+            comment: string;
+            /** Reviewer */
+            reviewer: string;
+            /** Ruleset Version */
+            ruleset_version: string;
+            /** Run Id */
+            run_id: string;
+            /** Snapshot Id */
+            snapshot_id: string;
+        };
         /** DatasetCounts */
         DatasetCounts: {
             /**
@@ -189,21 +215,25 @@ export interface components {
             /** Valid */
             valid: boolean;
         };
-        /** ErrorResponse */
-        ErrorResponse: {
-            /** Code */
-            code: string;
-            /** Details */
-            details?: {
-                [key: string]: unknown;
-            };
-            /** Message */
-            message: string;
-        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** JobContext */
+        JobContext: {
+            /** Asset Id */
+            asset_id: string;
+            /** Department */
+            department: string;
+            /** Job Id */
+            job_id: string;
+            /** Priority */
+            priority: number;
+            /** Section Id */
+            section_id: string;
+            /** Work Type */
+            work_type: string;
         };
         /** LockRequest */
         LockRequest: {
@@ -211,6 +241,17 @@ export interface components {
             job_id: string;
             /** Reason */
             reason: string;
+        };
+        /** LockResponse */
+        LockResponse: {
+            /** Job Id */
+            job_id: string;
+            /** Locked */
+            locked: boolean;
+            /** Reason Codes */
+            reason_codes: string[];
+            /** Run Id */
+            run_id: string;
         };
         /** PlanningRunCreateRequest */
         PlanningRunCreateRequest: {
@@ -236,6 +277,41 @@ export interface components {
             /** Status Url */
             status_url: string;
         };
+        /** PlanningRunDetail */
+        PlanningRunDetail: {
+            approval?: components["schemas"]["ApprovalSummary"] | null;
+            /** Changes */
+            changes: {
+                [key: string]: "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED";
+            };
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Export Ready */
+            export_ready: boolean;
+            /** Jobs */
+            jobs: components["schemas"]["JobContext"][];
+            /** Parent Run Id */
+            parent_run_id?: string | null;
+            /** Ruleset Version */
+            ruleset_version: string;
+            /** Run Id */
+            run_id: string;
+            /** Schedule Items */
+            schedule_items: components["schemas"]["ScheduleItem"][];
+            /** Snapshot Id */
+            snapshot_id: string;
+            /** Snapshot Status */
+            snapshot_status: string;
+            state: components["schemas"]["PlanningRunState"];
+            /** Unscheduled Jobs */
+            unscheduled_jobs: components["schemas"]["UnscheduledJob"][];
+            validator: components["schemas"]["ValidatorSummary"];
+        };
         /**
          * PlanningRunState
          * @enum {string}
@@ -247,6 +323,43 @@ export interface components {
             affected_section_ids: string[];
             /** Affected Window Ids */
             affected_window_ids: string[];
+        };
+        /** ScheduleItem */
+        ScheduleItem: {
+            /**
+             * End
+             * Format: date-time
+             */
+            end: string;
+            /** Job Id */
+            job_id: string;
+            /**
+             * Locked
+             * @default false
+             */
+            locked: boolean;
+            /** Reason Codes */
+            reason_codes: string[];
+            /**
+             * Start
+             * Format: date-time
+             */
+            start: string;
+            status: components["schemas"]["ScheduleStatus"];
+            /** Window Id */
+            window_id: string;
+        };
+        /**
+         * ScheduleStatus
+         * @enum {string}
+         */
+        ScheduleStatus: "SCHEDULED" | "LOCKED" | "REJECTED";
+        /** UnscheduledJob */
+        UnscheduledJob: {
+            /** Job Id */
+            job_id: string;
+            /** Reason Codes */
+            reason_codes: string[];
         };
         /** ValidationError */
         ValidationError: {
@@ -275,6 +388,20 @@ export interface components {
             message: string;
             /** Row */
             row?: number | null;
+        };
+        /** ValidatorSummary */
+        ValidatorSummary: {
+            /** Issues */
+            issues?: {
+                [key: string]: unknown;
+            }[];
+            /** Passed */
+            passed: boolean;
+            /**
+             * Validated At
+             * Format: date-time
+             */
+            validated_at: string;
         };
     };
     responses: never;
@@ -356,7 +483,7 @@ export interface operations {
         };
         responses: {
             /** @description Successful Response */
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -371,15 +498,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Typed foundation route; implementation is assigned to its feature owner. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -401,7 +519,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["PlanningRunDetail"];
                 };
             };
             /** @description Validation Error */
@@ -411,15 +529,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Typed foundation route; implementation is assigned to its feature owner. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -445,7 +554,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["ApprovalResponse"];
                 };
             };
             /** @description Validation Error */
@@ -455,15 +564,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Typed foundation route; implementation is assigned to its feature owner. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -497,15 +597,6 @@ export interface operations {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
-            /** @description Typed foundation route; implementation is assigned to its feature owner. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
         };
     };
     lock_schedule_item_planning_runs__run_id__lock_post: {
@@ -529,7 +620,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["LockResponse"];
                 };
             };
             /** @description Validation Error */
@@ -539,15 +630,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Typed foundation route; implementation is assigned to its feature owner. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -568,12 +650,12 @@ export interface operations {
         };
         responses: {
             /** @description Successful Response */
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["PlanningRunCreatedResponse"];
                 };
             };
             /** @description Validation Error */
@@ -583,15 +665,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-            /** @description Typed foundation route; implementation is assigned to its feature owner. */
-            501: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

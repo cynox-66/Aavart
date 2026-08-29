@@ -3,6 +3,65 @@ export interface HealthResponse {
   service: string;
 }
 
+export interface ValidationIssue {
+  code: string;
+  message: string;
+  field: string;
+  row: number | null;
+}
+
+export interface ValidationResponse {
+  valid: boolean;
+  snapshot_candidate_id: string | null;
+  errors: ValidationIssue[];
+  counts: { jobs: number; windows: number; assets: number; sections: number; resources: number };
+}
+
+export interface ScheduleItem {
+  job_id: string;
+  window_id: string;
+  start: string;
+  end: string;
+  status: "SCHEDULED" | "LOCKED" | "REJECTED";
+  reason_codes: string[];
+  locked: boolean;
+}
+
+export interface JobContext {
+  job_id: string;
+  department: string;
+  asset_id: string;
+  section_id: string;
+  work_type: string;
+  priority: number;
+}
+
+export interface RunDetail {
+  run_id: string;
+  state: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
+  snapshot_id: string;
+  snapshot_status: string;
+  ruleset_version: string;
+  parent_run_id: string | null;
+  schedule_items: ScheduleItem[];
+  unscheduled_jobs: Array<{ job_id: string; reason_codes: string[] }>;
+  jobs: JobContext[];
+  validator: { passed: boolean; issues: Array<Record<string, unknown>>; validated_at: string };
+  approval: { reviewer: string; approved_at: string } | null;
+  changes: Record<string, "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED">;
+  export_ready: boolean;
+}
+
+interface RunCreated {
+  run_id: string;
+}
+
+export class ApiError extends Error {
+  constructor(public code: string, message: string) {
+    super(message);
+  }
+}
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export async function getApiHealth(signal?: AbortSignal): Promise<HealthResponse> {
@@ -11,3 +70,73 @@ export async function getApiHealth(signal?: AbortSignal): Promise<HealthResponse
   return response.json() as Promise<HealthResponse>;
 }
 
+async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetch(`${apiUrl}${path}`, {
+    ...init,
+    headers: { "Content-Type": "application/json", ...init?.headers },
+  });
+  const body = (await response.json()) as T & { code?: string; message?: string };
+  if (!response.ok) throw new ApiError(body.code ?? "REQUEST_FAILED", body.message ?? `Request failed: ${response.status}`);
+  return body;
+}
+
+export function validateDataset(payload: unknown): Promise<ValidationResponse> {
+  return requestJson("/datasets/validate", { method: "POST", body: JSON.stringify(payload) });
+}
+
+export async function createPlanningRun(snapshotId: string): Promise<RunDetail> {
+  const created = await requestJson<RunCreated>("/planning-runs", {
+    method: "POST",
+    body: JSON.stringify({ snapshot_id: snapshotId, ruleset_version: "Demo Ruleset v1" }),
+  });
+  return getPlanningRun(created.run_id);
+}
+
+export function getPlanningRun(runId: string): Promise<RunDetail> {
+  return requestJson(`/planning-runs/${runId}`);
+}
+
+export async function lockScheduleItem(runId: string, jobId: string): Promise<RunDetail> {
+  await requestJson(`/planning-runs/${runId}/lock`, {
+    method: "POST",
+    body: JSON.stringify({ job_id: jobId, reason: "Planner accepted this block" }),
+  });
+  return getPlanningRun(runId);
+}
+
+export async function replanRun(
+  runId: string,
+  affectedSectionIds: string[],
+  affectedWindowIds: string[],
+): Promise<RunDetail> {
+  const created = await requestJson<RunCreated>(`/planning-runs/${runId}/replan`, {
+    method: "POST",
+    body: JSON.stringify({
+      affected_section_ids: affectedSectionIds,
+      affected_window_ids: affectedWindowIds,
+    }),
+  });
+  return getPlanningRun(created.run_id);
+}
+
+export async function approveRun(runId: string, reviewer: string): Promise<RunDetail> {
+  await requestJson(`/planning-runs/${runId}/approve`, {
+    method: "POST",
+    body: JSON.stringify({ reviewer, comment: "Reviewed schedule and independent validator result" }),
+  });
+  return getPlanningRun(runId);
+}
+
+export async function downloadRun(runId: string): Promise<void> {
+  const response = await fetch(`${apiUrl}/planning-runs/${runId}/export`);
+  if (!response.ok) {
+    const body = (await response.json()) as { code: string; message: string };
+    throw new ApiError(body.code, body.message);
+  }
+  const url = URL.createObjectURL(await response.blob());
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${runId}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+}

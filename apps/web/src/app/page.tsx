@@ -1,11 +1,5 @@
 import { HealthCheck } from "@/app/health-check";
-
-const foundationItems = [
-  ["Contract", "Pydantic models + OpenAPI"],
-  ["Data", "Deterministic baseline fixture"],
-  ["Safety", "Validation before planning"],
-  ["Scope", "One corridor / one week"],
-];
+import { PlannerDashboard } from "@/app/planner-dashboard";
 
 export default function Home() {
   return (
@@ -17,26 +11,13 @@ export default function Home() {
           Rail<span>Niyojan</span>
         </h1>
         <p className="lede">
-          The shared development foundation is active. This shell exposes backend truth; it does
-          not simulate planning results.
+          Deterministic maintenance planning with explicit conflicts, preserved locks, independent
+          validation, and human-gated export.
         </p>
         <HealthCheck />
       </section>
 
-      <section className="foundation" aria-labelledby="foundation-title">
-        <div>
-          <p className="section-number">01</p>
-          <h2 id="foundation-title">Foundation boundary</h2>
-        </div>
-        <div className="foundation-grid">
-          {foundationItems.map(([label, value]) => (
-            <article key={label}>
-              <p>{label}</p>
-              <strong>{value}</strong>
-            </article>
-          ))}
-        </div>
-      </section>
+      <PlannerDashboard />
 
       <footer>
         Synthetic data. Demonstration ruleset. Human approval required. Not for operational
@@ -45,4 +26,3 @@ export default function Home() {
     </main>
   );
 }
-
