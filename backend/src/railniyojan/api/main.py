@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from railniyojan.api.errors import ApiError, api_error_handler
-from railniyojan.api.routes import datasets, health, planning_runs, rapidblock
+from railniyojan.api.routes import datasets, health, planning_runs, railradar, rapidblock
 from railniyojan.api.settings import get_settings
 
 
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
     application.include_router(datasets.router)
     application.include_router(planning_runs.router)
     application.include_router(rapidblock.router)
+    application.include_router(railradar.router)
     return application
 
 

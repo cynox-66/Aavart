@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     ruleset_version: str = "Demo Ruleset v1"
     planner_allowlist: str = "planner-01"
     store_backend: str = "memory"
+    railradar_base_url: str = "https://api.railradar.in/v1"
+    railradar_api_key: str | None = None
+    railradar_timeout_seconds: float = 10.0
+    railradar_cache_ttl_seconds: int = 300
 
 
 @lru_cache
