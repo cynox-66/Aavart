@@ -1,0 +1,902 @@
+[
+  {
+    "permit_id": "PTW-C1-001",
+    "job_id": "JOB-C1-001",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-002",
+    "job_id": "JOB-C1-002",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-003",
+    "job_id": "JOB-C1-003",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-004",
+    "job_id": "JOB-C1-004",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-005",
+    "job_id": "JOB-C1-005",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-006",
+    "job_id": "JOB-C1-006",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-007",
+    "job_id": "JOB-C1-007",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-008",
+    "job_id": "JOB-C1-008",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-009",
+    "job_id": "JOB-C1-009",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-010",
+    "job_id": "JOB-C1-010",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-011",
+    "job_id": "JOB-C1-011",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-012",
+    "job_id": "JOB-C1-012",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "EXPIRED",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-013",
+    "job_id": "JOB-C1-013",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-014",
+    "job_id": "JOB-C1-014",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-015",
+    "job_id": "JOB-C1-015",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-016",
+    "job_id": "JOB-C1-016",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-017",
+    "job_id": "JOB-C1-017",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-018",
+    "job_id": "JOB-C1-018",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-019",
+    "job_id": "JOB-C1-019",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-020",
+    "job_id": "JOB-C1-020",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-021",
+    "job_id": "JOB-C1-021",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-022",
+    "job_id": "JOB-C1-022",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-023",
+    "job_id": "JOB-C1-023",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-024",
+    "job_id": "JOB-C1-024",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-025",
+    "job_id": "JOB-C1-025",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-026",
+    "job_id": "JOB-C1-026",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-027",
+    "job_id": "JOB-C1-027",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-028",
+    "job_id": "JOB-C1-028",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-029",
+    "job_id": "JOB-C1-029",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-030",
+    "job_id": "JOB-C1-030",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-031",
+    "job_id": "JOB-C1-031",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-032",
+    "job_id": "JOB-C1-032",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "EXPIRED",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-033",
+    "job_id": "JOB-C1-033",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-034",
+    "job_id": "JOB-C1-034",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-035",
+    "job_id": "JOB-C1-035",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-036",
+    "job_id": "JOB-C1-036",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-037",
+    "job_id": "JOB-C1-037",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-038",
+    "job_id": "JOB-C1-038",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-039",
+    "job_id": "JOB-C1-039",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-040",
+    "job_id": "JOB-C1-040",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-041",
+    "job_id": "JOB-C1-041",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-042",
+    "job_id": "JOB-C1-042",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-043",
+    "job_id": "JOB-C1-043",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-044",
+    "job_id": "JOB-C1-044",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-045",
+    "job_id": "JOB-C1-045",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-046",
+    "job_id": "JOB-C1-046",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-047",
+    "job_id": "JOB-C1-047",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-048",
+    "job_id": "JOB-C1-048",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-049",
+    "job_id": "JOB-C1-049",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-050",
+    "job_id": "JOB-C1-050",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-051",
+    "job_id": "JOB-C1-051",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-052",
+    "job_id": "JOB-C1-052",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "EXPIRED",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-053",
+    "job_id": "JOB-C1-053",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-054",
+    "job_id": "JOB-C1-054",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-055",
+    "job_id": "JOB-C1-055",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-056",
+    "job_id": "JOB-C1-056",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-057",
+    "job_id": "JOB-C1-057",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-058",
+    "job_id": "JOB-C1-058",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-059",
+    "job_id": "JOB-C1-059",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-060",
+    "job_id": "JOB-C1-060",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-061",
+    "job_id": "JOB-C1-061",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-062",
+    "job_id": "JOB-C1-062",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-063",
+    "job_id": "JOB-C1-063",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-064",
+    "job_id": "JOB-C1-064",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-065",
+    "job_id": "JOB-C1-065",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-066",
+    "job_id": "JOB-C1-066",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-067",
+    "job_id": "JOB-C1-067",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-068",
+    "job_id": "JOB-C1-068",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-069",
+    "job_id": "JOB-C1-069",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-070",
+    "job_id": "JOB-C1-070",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-071",
+    "job_id": "JOB-C1-071",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-072",
+    "job_id": "JOB-C1-072",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "EXPIRED",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-073",
+    "job_id": "JOB-C1-073",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-074",
+    "job_id": "JOB-C1-074",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-075",
+    "job_id": "JOB-C1-075",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-076",
+    "job_id": "JOB-C1-076",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-077",
+    "job_id": "JOB-C1-077",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-078",
+    "job_id": "JOB-C1-078",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-079",
+    "job_id": "JOB-C1-079",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-080",
+    "job_id": "JOB-C1-080",
+    "section_id": "SEC-C1-03",
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-081",
+    "job_id": "JOB-C1-081",
+    "section_id": "SEC-C1-04",
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-082",
+    "job_id": "JOB-C1-082",
+    "section_id": "SEC-C1-05",
+    "block_rule_id": "RULE-C1-05-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-083",
+    "job_id": "JOB-C1-083",
+    "section_id": "SEC-C1-06",
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-084",
+    "job_id": "JOB-C1-084",
+    "section_id": "SEC-C1-07",
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-085",
+    "job_id": "JOB-C1-085",
+    "section_id": "SEC-C1-08",
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-086",
+    "job_id": "JOB-C1-086",
+    "section_id": "SEC-C1-09",
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-087",
+    "job_id": "JOB-C1-087",
+    "section_id": "SEC-C1-10",
+    "block_rule_id": "RULE-C1-10-POWER",
+    "permit_type": "POWER_PERMIT_TO_WORK",
+    "status": "PENDING",
+    "issuer_role": "TRACTION_POWER_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-088",
+    "job_id": "JOB-C1-088",
+    "section_id": "SEC-C1-11",
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "EXPIRED",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-089",
+    "job_id": "JOB-C1-089",
+    "section_id": "SEC-C1-01",
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "permit_id": "PTW-C1-090",
+    "job_id": "JOB-C1-090",
+    "section_id": "SEC-C1-02",
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "permit_type": "TRAFFIC_BLOCK_REQUEST",
+    "status": "PENDING",
+    "issuer_role": "SECTION_CONTROLLER",
+    "source_class": "CONTROLLED-SCENARIO"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "source_class": "CONTROLLED-SCENARIO",
+  "planner_scope": "one corridor per run",
+  "corridors": [
+    {
+      "corridor_id": "CORRIDOR-C1",
+      "dataset": "corridor_1/dataset.json"
+    },
+    {
+      "corridor_id": "CORRIDOR-C2",
+      "dataset": "corridor_2/dataset.json"
+    }
+  ]
+}

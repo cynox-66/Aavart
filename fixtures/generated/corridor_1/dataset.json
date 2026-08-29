@@ -1,0 +1,3906 @@
+{
+  "schema_version": "1.0",
+  "sections": [
+    {
+      "section_id": "SEC-C1-01",
+      "from_node": "C101",
+      "to_node": "C102",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-02",
+      "from_node": "C102",
+      "to_node": "C103",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-03",
+      "from_node": "C103",
+      "to_node": "C104",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-04",
+      "from_node": "C104",
+      "to_node": "C105",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-05",
+      "from_node": "C105",
+      "to_node": "C106",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-06",
+      "from_node": "C106",
+      "to_node": "C107",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-07",
+      "from_node": "C107",
+      "to_node": "C108",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-08",
+      "from_node": "C108",
+      "to_node": "C109",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-09",
+      "from_node": "C109",
+      "to_node": "C110",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-10",
+      "from_node": "C110",
+      "to_node": "C111",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-C1-11",
+      "from_node": "C111",
+      "to_node": "C112",
+      "line": "UP/DOWN DOUBLE LINE",
+      "direction": "BOTH"
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "AST-C1-01-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-01",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-01-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-01",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-01-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-01",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-02-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-02",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-02-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-02",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-02-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-02",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-03-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-03",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-03-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-03",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-03-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-03",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-04-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-04",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-04-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-04",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-04-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-04",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-05-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-05",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-05-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-05",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-05-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-05",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-06-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-06",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-06-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-06",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-06-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-06",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-07-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-07",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-07-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-07",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-07-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-07",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-08-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-08",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-08-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-08",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-08-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-08",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-09-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-09",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-09-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-09",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-09-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-09",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-10-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-10",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-10-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-10",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-10-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-10",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-11-TRACK",
+      "asset_type": "TRACK",
+      "section_id": "SEC-C1-11",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-11-SIGNAL",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-C1-11",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "AST-C1-11-OHE",
+      "asset_type": "OHE",
+      "section_id": "SEC-C1-11",
+      "status": "AVAILABLE"
+    }
+  ],
+  "resources": [
+    {
+      "resource_id": "RES-C1-01",
+      "resource_type": "TRACK_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-02",
+      "resource_type": "TRACK_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-03",
+      "resource_type": "TRACK_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-04",
+      "resource_type": "TRACK_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-05",
+      "resource_type": "TRACK_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-06",
+      "resource_type": "SIGNAL_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-07",
+      "resource_type": "SIGNAL_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-08",
+      "resource_type": "SIGNAL_TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-09",
+      "resource_type": "MACHINE",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-10",
+      "resource_type": "MACHINE",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-11",
+      "resource_type": "MACHINE",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "RES-C1-12",
+      "resource_type": "MACHINE",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    }
+  ],
+  "windows": [
+    {
+      "window_id": "WIN-C1-01-1",
+      "start": "2026-09-08T08:00:00+05:30",
+      "end": "2026-09-08T10:00:00+05:30",
+      "section_id": "SEC-C1-01",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-01-2",
+      "start": "2026-09-08T12:00:00+05:30",
+      "end": "2026-09-08T14:00:00+05:30",
+      "section_id": "SEC-C1-01",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-01-3",
+      "start": "2026-09-08T16:00:00+05:30",
+      "end": "2026-09-08T18:00:00+05:30",
+      "section_id": "SEC-C1-01",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-02-1",
+      "start": "2026-09-09T08:00:00+05:30",
+      "end": "2026-09-09T10:00:00+05:30",
+      "section_id": "SEC-C1-02",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-02-2",
+      "start": "2026-09-09T12:00:00+05:30",
+      "end": "2026-09-09T14:00:00+05:30",
+      "section_id": "SEC-C1-02",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-02-3",
+      "start": "2026-09-09T16:00:00+05:30",
+      "end": "2026-09-09T18:00:00+05:30",
+      "section_id": "SEC-C1-02",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-03-1",
+      "start": "2026-09-07T08:00:00+05:30",
+      "end": "2026-09-07T10:00:00+05:30",
+      "section_id": "SEC-C1-03",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-03-2",
+      "start": "2026-09-07T12:00:00+05:30",
+      "end": "2026-09-07T14:00:00+05:30",
+      "section_id": "SEC-C1-03",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-03-3",
+      "start": "2026-09-07T16:00:00+05:30",
+      "end": "2026-09-07T18:00:00+05:30",
+      "section_id": "SEC-C1-03",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-04-1",
+      "start": "2026-09-08T08:00:00+05:30",
+      "end": "2026-09-08T10:00:00+05:30",
+      "section_id": "SEC-C1-04",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-04-2",
+      "start": "2026-09-08T12:00:00+05:30",
+      "end": "2026-09-08T14:00:00+05:30",
+      "section_id": "SEC-C1-04",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-04-3",
+      "start": "2026-09-08T16:00:00+05:30",
+      "end": "2026-09-08T18:00:00+05:30",
+      "section_id": "SEC-C1-04",
+      "availability": "UNAVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-05-1",
+      "start": "2026-09-09T08:00:00+05:30",
+      "end": "2026-09-09T10:00:00+05:30",
+      "section_id": "SEC-C1-05",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-05-2",
+      "start": "2026-09-09T12:00:00+05:30",
+      "end": "2026-09-09T14:00:00+05:30",
+      "section_id": "SEC-C1-05",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-05-3",
+      "start": "2026-09-09T16:00:00+05:30",
+      "end": "2026-09-09T18:00:00+05:30",
+      "section_id": "SEC-C1-05",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-06-1",
+      "start": "2026-09-07T08:00:00+05:30",
+      "end": "2026-09-07T10:00:00+05:30",
+      "section_id": "SEC-C1-06",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-06-2",
+      "start": "2026-09-07T12:00:00+05:30",
+      "end": "2026-09-07T14:00:00+05:30",
+      "section_id": "SEC-C1-06",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-06-3",
+      "start": "2026-09-07T16:00:00+05:30",
+      "end": "2026-09-07T18:00:00+05:30",
+      "section_id": "SEC-C1-06",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-07-1",
+      "start": "2026-09-08T08:00:00+05:30",
+      "end": "2026-09-08T10:00:00+05:30",
+      "section_id": "SEC-C1-07",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-07-2",
+      "start": "2026-09-08T12:00:00+05:30",
+      "end": "2026-09-08T14:00:00+05:30",
+      "section_id": "SEC-C1-07",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-07-3",
+      "start": "2026-09-08T16:00:00+05:30",
+      "end": "2026-09-08T18:00:00+05:30",
+      "section_id": "SEC-C1-07",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-08-1",
+      "start": "2026-09-09T08:00:00+05:30",
+      "end": "2026-09-09T10:00:00+05:30",
+      "section_id": "SEC-C1-08",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-08-2",
+      "start": "2026-09-09T12:00:00+05:30",
+      "end": "2026-09-09T14:00:00+05:30",
+      "section_id": "SEC-C1-08",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-08-3",
+      "start": "2026-09-09T16:00:00+05:30",
+      "end": "2026-09-09T18:00:00+05:30",
+      "section_id": "SEC-C1-08",
+      "availability": "UNAVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-09-1",
+      "start": "2026-09-07T08:00:00+05:30",
+      "end": "2026-09-07T10:00:00+05:30",
+      "section_id": "SEC-C1-09",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-09-2",
+      "start": "2026-09-07T12:00:00+05:30",
+      "end": "2026-09-07T14:00:00+05:30",
+      "section_id": "SEC-C1-09",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-09-3",
+      "start": "2026-09-07T16:00:00+05:30",
+      "end": "2026-09-07T18:00:00+05:30",
+      "section_id": "SEC-C1-09",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-10-1",
+      "start": "2026-09-08T08:00:00+05:30",
+      "end": "2026-09-08T10:00:00+05:30",
+      "section_id": "SEC-C1-10",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-10-2",
+      "start": "2026-09-08T12:00:00+05:30",
+      "end": "2026-09-08T14:00:00+05:30",
+      "section_id": "SEC-C1-10",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-10-3",
+      "start": "2026-09-08T16:00:00+05:30",
+      "end": "2026-09-08T18:00:00+05:30",
+      "section_id": "SEC-C1-10",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-11-1",
+      "start": "2026-09-09T08:00:00+05:30",
+      "end": "2026-09-09T10:00:00+05:30",
+      "section_id": "SEC-C1-11",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-11-2",
+      "start": "2026-09-09T12:00:00+05:30",
+      "end": "2026-09-09T14:00:00+05:30",
+      "section_id": "SEC-C1-11",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-C1-11-3",
+      "start": "2026-09-09T16:00:00+05:30",
+      "end": "2026-09-09T18:00:00+05:30",
+      "section_id": "SEC-C1-11",
+      "availability": "AVAILABLE"
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "JOB-C1-001",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-01-SIGNAL",
+      "section_id": "SEC-C1-01",
+      "work_type": "signal testing",
+      "priority": 53,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-002",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-02-OHE",
+      "section_id": "SEC-C1-02",
+      "work_type": "OHE inspection",
+      "priority": 66,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-003",
+      "department": "TRACK",
+      "asset_id": "AST-C1-03-TRACK",
+      "section_id": "SEC-C1-03",
+      "work_type": "drain cleaning",
+      "priority": 79,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-004",
+      "department": "TRACK",
+      "asset_id": "AST-C1-04-TRACK",
+      "section_id": "SEC-C1-04",
+      "work_type": "rail inspection",
+      "priority": 92,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-005",
+      "department": "TRACK",
+      "asset_id": "AST-C1-05-TRACK",
+      "section_id": "SEC-C1-05",
+      "work_type": "tamping",
+      "priority": 44,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-006",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-06-SIGNAL",
+      "section_id": "SEC-C1-06",
+      "work_type": "signal testing",
+      "priority": 57,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-007",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-07-OHE",
+      "section_id": "SEC-C1-07",
+      "work_type": "OHE inspection",
+      "priority": 70,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-008",
+      "department": "TRACK",
+      "asset_id": "AST-C1-08-TRACK",
+      "section_id": "SEC-C1-08",
+      "work_type": "drain cleaning",
+      "priority": 83,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-009",
+      "department": "TRACK",
+      "asset_id": "AST-C1-09-TRACK",
+      "section_id": "SEC-C1-09",
+      "work_type": "rail inspection",
+      "priority": 96,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-010",
+      "department": "TRACK",
+      "asset_id": "AST-C1-10-TRACK",
+      "section_id": "SEC-C1-10",
+      "work_type": "tamping",
+      "priority": 48,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-011",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-11-SIGNAL",
+      "section_id": "SEC-C1-11",
+      "work_type": "signal testing",
+      "priority": 61,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-012",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-01-OHE",
+      "section_id": "SEC-C1-01",
+      "work_type": "OHE inspection",
+      "priority": 74,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-013",
+      "department": "TRACK",
+      "asset_id": "AST-C1-02-TRACK",
+      "section_id": "SEC-C1-02",
+      "work_type": "drain cleaning",
+      "priority": 87,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-014",
+      "department": "TRACK",
+      "asset_id": "AST-C1-03-TRACK",
+      "section_id": "SEC-C1-03",
+      "work_type": "rail inspection",
+      "priority": 100,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-015",
+      "department": "TRACK",
+      "asset_id": "AST-C1-04-TRACK",
+      "section_id": "SEC-C1-04",
+      "work_type": "tamping",
+      "priority": 52,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-016",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-05-SIGNAL",
+      "section_id": "SEC-C1-05",
+      "work_type": "signal testing",
+      "priority": 65,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-017",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-06-OHE",
+      "section_id": "SEC-C1-06",
+      "work_type": "OHE inspection",
+      "priority": 78,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-018",
+      "department": "TRACK",
+      "asset_id": "AST-C1-07-TRACK",
+      "section_id": "SEC-C1-07",
+      "work_type": "drain cleaning",
+      "priority": 91,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-019",
+      "department": "TRACK",
+      "asset_id": "AST-C1-08-TRACK",
+      "section_id": "SEC-C1-08",
+      "work_type": "rail inspection",
+      "priority": 43,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-020",
+      "department": "TRACK",
+      "asset_id": "AST-C1-09-TRACK",
+      "section_id": "SEC-C1-09",
+      "work_type": "tamping",
+      "priority": 56,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-021",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-10-SIGNAL",
+      "section_id": "SEC-C1-10",
+      "work_type": "signal testing",
+      "priority": 69,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-022",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-11-OHE",
+      "section_id": "SEC-C1-11",
+      "work_type": "OHE inspection",
+      "priority": 82,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-023",
+      "department": "TRACK",
+      "asset_id": "AST-C1-01-TRACK",
+      "section_id": "SEC-C1-01",
+      "work_type": "drain cleaning",
+      "priority": 95,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-024",
+      "department": "TRACK",
+      "asset_id": "AST-C1-02-TRACK",
+      "section_id": "SEC-C1-02",
+      "work_type": "rail inspection",
+      "priority": 47,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-025",
+      "department": "TRACK",
+      "asset_id": "AST-C1-03-TRACK",
+      "section_id": "SEC-C1-03",
+      "work_type": "tamping",
+      "priority": 60,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-026",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-04-SIGNAL",
+      "section_id": "SEC-C1-04",
+      "work_type": "signal testing",
+      "priority": 73,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-027",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-05-OHE",
+      "section_id": "SEC-C1-05",
+      "work_type": "OHE inspection",
+      "priority": 86,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-028",
+      "department": "TRACK",
+      "asset_id": "AST-C1-06-TRACK",
+      "section_id": "SEC-C1-06",
+      "work_type": "drain cleaning",
+      "priority": 99,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-029",
+      "department": "TRACK",
+      "asset_id": "AST-C1-07-TRACK",
+      "section_id": "SEC-C1-07",
+      "work_type": "rail inspection",
+      "priority": 51,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-030",
+      "department": "TRACK",
+      "asset_id": "AST-C1-08-TRACK",
+      "section_id": "SEC-C1-08",
+      "work_type": "tamping",
+      "priority": 64,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-031",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-09-SIGNAL",
+      "section_id": "SEC-C1-09",
+      "work_type": "signal testing",
+      "priority": 77,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-032",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-10-OHE",
+      "section_id": "SEC-C1-10",
+      "work_type": "OHE inspection",
+      "priority": 90,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-033",
+      "department": "TRACK",
+      "asset_id": "AST-C1-11-TRACK",
+      "section_id": "SEC-C1-11",
+      "work_type": "drain cleaning",
+      "priority": 42,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-034",
+      "department": "TRACK",
+      "asset_id": "AST-C1-01-TRACK",
+      "section_id": "SEC-C1-01",
+      "work_type": "rail inspection",
+      "priority": 55,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-035",
+      "department": "TRACK",
+      "asset_id": "AST-C1-02-TRACK",
+      "section_id": "SEC-C1-02",
+      "work_type": "tamping",
+      "priority": 68,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-036",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-03-SIGNAL",
+      "section_id": "SEC-C1-03",
+      "work_type": "signal testing",
+      "priority": 81,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-037",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-04-OHE",
+      "section_id": "SEC-C1-04",
+      "work_type": "OHE inspection",
+      "priority": 94,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-038",
+      "department": "TRACK",
+      "asset_id": "AST-C1-05-TRACK",
+      "section_id": "SEC-C1-05",
+      "work_type": "drain cleaning",
+      "priority": 46,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-039",
+      "department": "TRACK",
+      "asset_id": "AST-C1-06-TRACK",
+      "section_id": "SEC-C1-06",
+      "work_type": "rail inspection",
+      "priority": 59,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-040",
+      "department": "TRACK",
+      "asset_id": "AST-C1-07-TRACK",
+      "section_id": "SEC-C1-07",
+      "work_type": "tamping",
+      "priority": 72,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-041",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-08-SIGNAL",
+      "section_id": "SEC-C1-08",
+      "work_type": "signal testing",
+      "priority": 85,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-042",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-09-OHE",
+      "section_id": "SEC-C1-09",
+      "work_type": "OHE inspection",
+      "priority": 98,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-043",
+      "department": "TRACK",
+      "asset_id": "AST-C1-10-TRACK",
+      "section_id": "SEC-C1-10",
+      "work_type": "drain cleaning",
+      "priority": 50,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-044",
+      "department": "TRACK",
+      "asset_id": "AST-C1-11-TRACK",
+      "section_id": "SEC-C1-11",
+      "work_type": "rail inspection",
+      "priority": 63,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-045",
+      "department": "TRACK",
+      "asset_id": "AST-C1-01-TRACK",
+      "section_id": "SEC-C1-01",
+      "work_type": "tamping",
+      "priority": 76,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-046",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-02-SIGNAL",
+      "section_id": "SEC-C1-02",
+      "work_type": "signal testing",
+      "priority": 89,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-047",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-03-OHE",
+      "section_id": "SEC-C1-03",
+      "work_type": "OHE inspection",
+      "priority": 41,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-048",
+      "department": "TRACK",
+      "asset_id": "AST-C1-04-TRACK",
+      "section_id": "SEC-C1-04",
+      "work_type": "drain cleaning",
+      "priority": 54,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-049",
+      "department": "TRACK",
+      "asset_id": "AST-C1-05-TRACK",
+      "section_id": "SEC-C1-05",
+      "work_type": "rail inspection",
+      "priority": 67,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-050",
+      "department": "TRACK",
+      "asset_id": "AST-C1-06-TRACK",
+      "section_id": "SEC-C1-06",
+      "work_type": "tamping",
+      "priority": 80,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-051",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-07-SIGNAL",
+      "section_id": "SEC-C1-07",
+      "work_type": "signal testing",
+      "priority": 93,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-052",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-08-OHE",
+      "section_id": "SEC-C1-08",
+      "work_type": "OHE inspection",
+      "priority": 45,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-053",
+      "department": "TRACK",
+      "asset_id": "AST-C1-09-TRACK",
+      "section_id": "SEC-C1-09",
+      "work_type": "drain cleaning",
+      "priority": 58,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-054",
+      "department": "TRACK",
+      "asset_id": "AST-C1-10-TRACK",
+      "section_id": "SEC-C1-10",
+      "work_type": "rail inspection",
+      "priority": 71,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-055",
+      "department": "TRACK",
+      "asset_id": "AST-C1-11-TRACK",
+      "section_id": "SEC-C1-11",
+      "work_type": "tamping",
+      "priority": 84,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-056",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-01-SIGNAL",
+      "section_id": "SEC-C1-01",
+      "work_type": "signal testing",
+      "priority": 97,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-057",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-02-OHE",
+      "section_id": "SEC-C1-02",
+      "work_type": "OHE inspection",
+      "priority": 49,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-058",
+      "department": "TRACK",
+      "asset_id": "AST-C1-03-TRACK",
+      "section_id": "SEC-C1-03",
+      "work_type": "drain cleaning",
+      "priority": 62,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-059",
+      "department": "TRACK",
+      "asset_id": "AST-C1-04-TRACK",
+      "section_id": "SEC-C1-04",
+      "work_type": "rail inspection",
+      "priority": 75,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-060",
+      "department": "TRACK",
+      "asset_id": "AST-C1-05-TRACK",
+      "section_id": "SEC-C1-05",
+      "work_type": "tamping",
+      "priority": 88,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-061",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-06-SIGNAL",
+      "section_id": "SEC-C1-06",
+      "work_type": "signal testing",
+      "priority": 40,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-062",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-07-OHE",
+      "section_id": "SEC-C1-07",
+      "work_type": "OHE inspection",
+      "priority": 53,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-063",
+      "department": "TRACK",
+      "asset_id": "AST-C1-08-TRACK",
+      "section_id": "SEC-C1-08",
+      "work_type": "drain cleaning",
+      "priority": 66,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-064",
+      "department": "TRACK",
+      "asset_id": "AST-C1-09-TRACK",
+      "section_id": "SEC-C1-09",
+      "work_type": "rail inspection",
+      "priority": 79,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-065",
+      "department": "TRACK",
+      "asset_id": "AST-C1-10-TRACK",
+      "section_id": "SEC-C1-10",
+      "work_type": "tamping",
+      "priority": 92,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-066",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-11-SIGNAL",
+      "section_id": "SEC-C1-11",
+      "work_type": "signal testing",
+      "priority": 44,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-067",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-01-OHE",
+      "section_id": "SEC-C1-01",
+      "work_type": "OHE inspection",
+      "priority": 57,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-068",
+      "department": "TRACK",
+      "asset_id": "AST-C1-02-TRACK",
+      "section_id": "SEC-C1-02",
+      "work_type": "drain cleaning",
+      "priority": 70,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-069",
+      "department": "TRACK",
+      "asset_id": "AST-C1-03-TRACK",
+      "section_id": "SEC-C1-03",
+      "work_type": "rail inspection",
+      "priority": 83,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-070",
+      "department": "TRACK",
+      "asset_id": "AST-C1-04-TRACK",
+      "section_id": "SEC-C1-04",
+      "work_type": "tamping",
+      "priority": 96,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-071",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-05-SIGNAL",
+      "section_id": "SEC-C1-05",
+      "work_type": "signal testing",
+      "priority": 48,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-072",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-06-OHE",
+      "section_id": "SEC-C1-06",
+      "work_type": "OHE inspection",
+      "priority": 61,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-073",
+      "department": "TRACK",
+      "asset_id": "AST-C1-07-TRACK",
+      "section_id": "SEC-C1-07",
+      "work_type": "drain cleaning",
+      "priority": 74,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-074",
+      "department": "TRACK",
+      "asset_id": "AST-C1-08-TRACK",
+      "section_id": "SEC-C1-08",
+      "work_type": "rail inspection",
+      "priority": 87,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-075",
+      "department": "TRACK",
+      "asset_id": "AST-C1-09-TRACK",
+      "section_id": "SEC-C1-09",
+      "work_type": "tamping",
+      "priority": 100,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-076",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-10-SIGNAL",
+      "section_id": "SEC-C1-10",
+      "work_type": "signal testing",
+      "priority": 52,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-077",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-11-OHE",
+      "section_id": "SEC-C1-11",
+      "work_type": "OHE inspection",
+      "priority": 65,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-078",
+      "department": "TRACK",
+      "asset_id": "AST-C1-01-TRACK",
+      "section_id": "SEC-C1-01",
+      "work_type": "drain cleaning",
+      "priority": 78,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-079",
+      "department": "TRACK",
+      "asset_id": "AST-C1-02-TRACK",
+      "section_id": "SEC-C1-02",
+      "work_type": "rail inspection",
+      "priority": 91,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-07"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-080",
+      "department": "TRACK",
+      "asset_id": "AST-C1-03-TRACK",
+      "section_id": "SEC-C1-03",
+      "work_type": "tamping",
+      "priority": 43,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-08"
+      ],
+      "allowed_windows": [
+        "WIN-C1-03-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-081",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-04-SIGNAL",
+      "section_id": "SEC-C1-04",
+      "work_type": "signal testing",
+      "priority": 56,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-09"
+      ],
+      "allowed_windows": [
+        "WIN-C1-04-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-082",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-05-OHE",
+      "section_id": "SEC-C1-05",
+      "work_type": "OHE inspection",
+      "priority": 69,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-10"
+      ],
+      "allowed_windows": [
+        "WIN-C1-05-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-083",
+      "department": "TRACK",
+      "asset_id": "AST-C1-06-TRACK",
+      "section_id": "SEC-C1-06",
+      "work_type": "drain cleaning",
+      "priority": 82,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-11"
+      ],
+      "allowed_windows": [
+        "WIN-C1-06-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-084",
+      "department": "TRACK",
+      "asset_id": "AST-C1-07-TRACK",
+      "section_id": "SEC-C1-07",
+      "work_type": "rail inspection",
+      "priority": 95,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-12"
+      ],
+      "allowed_windows": [
+        "WIN-C1-07-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-085",
+      "department": "TRACK",
+      "asset_id": "AST-C1-08-TRACK",
+      "section_id": "SEC-C1-08",
+      "work_type": "tamping",
+      "priority": 47,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-01"
+      ],
+      "allowed_windows": [
+        "WIN-C1-08-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-086",
+      "department": "SIGNAL",
+      "asset_id": "AST-C1-09-SIGNAL",
+      "section_id": "SEC-C1-09",
+      "work_type": "signal testing",
+      "priority": 60,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-02"
+      ],
+      "allowed_windows": [
+        "WIN-C1-09-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-087",
+      "department": "ELECTRICAL",
+      "asset_id": "AST-C1-10-OHE",
+      "section_id": "SEC-C1-10",
+      "work_type": "OHE inspection",
+      "priority": 73,
+      "duration_minutes": 90,
+      "duration_min_minutes": 75,
+      "duration_max_minutes": 120,
+      "required_resources": [
+        "RES-C1-03"
+      ],
+      "allowed_windows": [
+        "WIN-C1-10-3"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-088",
+      "department": "TRACK",
+      "asset_id": "AST-C1-11-TRACK",
+      "section_id": "SEC-C1-11",
+      "work_type": "drain cleaning",
+      "priority": 86,
+      "duration_minutes": 45,
+      "duration_min_minutes": 30,
+      "duration_max_minutes": 75,
+      "required_resources": [
+        "RES-C1-04"
+      ],
+      "allowed_windows": [
+        "WIN-C1-11-1"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-089",
+      "department": "TRACK",
+      "asset_id": "AST-C1-01-TRACK",
+      "section_id": "SEC-C1-01",
+      "work_type": "rail inspection",
+      "priority": 99,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 90,
+      "required_resources": [
+        "RES-C1-05"
+      ],
+      "allowed_windows": [
+        "WIN-C1-01-2"
+      ],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-C1-090",
+      "department": "TRACK",
+      "asset_id": "AST-C1-02-TRACK",
+      "section_id": "SEC-C1-02",
+      "work_type": "tamping",
+      "priority": 51,
+      "duration_minutes": 75,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 105,
+      "required_resources": [
+        "RES-C1-06"
+      ],
+      "allowed_windows": [
+        "WIN-C1-02-3"
+      ],
+      "status": "UNSCHEDULED"
+    }
+  ],
+  "train_paths": [
+    {
+      "train_path_id": "TP-C1-01-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-08T07:06:00+05:30",
+      "end": "2026-09-08T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-08T07:12:00+05:30",
+      "end": "2026-09-08T07:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-08T07:18:00+05:30",
+      "end": "2026-09-08T07:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-08T07:24:00+05:30",
+      "end": "2026-09-08T07:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-08T07:30:00+05:30",
+      "end": "2026-09-08T07:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-08T07:36:00+05:30",
+      "end": "2026-09-08T07:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-08T07:42:00+05:30",
+      "end": "2026-09-08T07:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-08T07:48:00+05:30",
+      "end": "2026-09-08T08:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-08T07:54:00+05:30",
+      "end": "2026-09-08T08:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-08T08:00:00+05:30",
+      "end": "2026-09-08T08:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-01-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-08T08:06:00+05:30",
+      "end": "2026-09-08T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-09T08:06:00+05:30",
+      "end": "2026-09-09T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-09T08:12:00+05:30",
+      "end": "2026-09-09T08:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-09T08:18:00+05:30",
+      "end": "2026-09-09T08:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-09T08:24:00+05:30",
+      "end": "2026-09-09T08:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-09T08:30:00+05:30",
+      "end": "2026-09-09T08:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-09T08:36:00+05:30",
+      "end": "2026-09-09T08:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-09T08:42:00+05:30",
+      "end": "2026-09-09T08:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-09T08:48:00+05:30",
+      "end": "2026-09-09T09:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-09T08:54:00+05:30",
+      "end": "2026-09-09T09:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-09T09:00:00+05:30",
+      "end": "2026-09-09T09:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-02-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-09T09:06:00+05:30",
+      "end": "2026-09-09T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-10T09:06:00+05:30",
+      "end": "2026-09-10T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-10T09:12:00+05:30",
+      "end": "2026-09-10T09:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-10T09:18:00+05:30",
+      "end": "2026-09-10T09:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-10T09:24:00+05:30",
+      "end": "2026-09-10T09:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-10T09:30:00+05:30",
+      "end": "2026-09-10T09:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-10T09:36:00+05:30",
+      "end": "2026-09-10T09:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-10T09:42:00+05:30",
+      "end": "2026-09-10T09:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-10T09:48:00+05:30",
+      "end": "2026-09-10T10:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-10T09:54:00+05:30",
+      "end": "2026-09-10T10:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-10T10:00:00+05:30",
+      "end": "2026-09-10T10:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-03-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-10T10:06:00+05:30",
+      "end": "2026-09-10T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-11T10:06:00+05:30",
+      "end": "2026-09-11T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-11T10:12:00+05:30",
+      "end": "2026-09-11T10:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-11T10:18:00+05:30",
+      "end": "2026-09-11T10:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-11T10:24:00+05:30",
+      "end": "2026-09-11T10:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-11T10:30:00+05:30",
+      "end": "2026-09-11T10:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-11T10:36:00+05:30",
+      "end": "2026-09-11T10:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-11T10:42:00+05:30",
+      "end": "2026-09-11T10:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-11T10:48:00+05:30",
+      "end": "2026-09-11T11:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-11T10:54:00+05:30",
+      "end": "2026-09-11T11:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-11T11:00:00+05:30",
+      "end": "2026-09-11T11:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-04-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-11T11:06:00+05:30",
+      "end": "2026-09-11T11:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-12T06:06:00+05:30",
+      "end": "2026-09-12T06:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-12T06:12:00+05:30",
+      "end": "2026-09-12T06:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-12T06:18:00+05:30",
+      "end": "2026-09-12T06:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-12T06:24:00+05:30",
+      "end": "2026-09-12T06:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-12T06:30:00+05:30",
+      "end": "2026-09-12T06:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-12T06:36:00+05:30",
+      "end": "2026-09-12T06:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-12T06:42:00+05:30",
+      "end": "2026-09-12T06:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-12T06:48:00+05:30",
+      "end": "2026-09-12T07:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-12T06:54:00+05:30",
+      "end": "2026-09-12T07:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-12T07:00:00+05:30",
+      "end": "2026-09-12T07:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-05-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-12T07:06:00+05:30",
+      "end": "2026-09-12T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-13T07:06:00+05:30",
+      "end": "2026-09-13T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-13T07:12:00+05:30",
+      "end": "2026-09-13T07:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-13T07:18:00+05:30",
+      "end": "2026-09-13T07:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-13T07:24:00+05:30",
+      "end": "2026-09-13T07:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-13T07:30:00+05:30",
+      "end": "2026-09-13T07:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-13T07:36:00+05:30",
+      "end": "2026-09-13T07:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-13T07:42:00+05:30",
+      "end": "2026-09-13T07:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-13T07:48:00+05:30",
+      "end": "2026-09-13T08:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-13T07:54:00+05:30",
+      "end": "2026-09-13T08:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-13T08:00:00+05:30",
+      "end": "2026-09-13T08:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-06-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-13T08:06:00+05:30",
+      "end": "2026-09-13T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-07T08:06:00+05:30",
+      "end": "2026-09-07T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-07T08:12:00+05:30",
+      "end": "2026-09-07T08:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-07T08:18:00+05:30",
+      "end": "2026-09-07T08:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-07T08:24:00+05:30",
+      "end": "2026-09-07T08:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-07T08:30:00+05:30",
+      "end": "2026-09-07T08:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-07T08:36:00+05:30",
+      "end": "2026-09-07T08:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-07T08:42:00+05:30",
+      "end": "2026-09-07T08:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-07T08:48:00+05:30",
+      "end": "2026-09-07T09:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-07T08:54:00+05:30",
+      "end": "2026-09-07T09:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-07T09:00:00+05:30",
+      "end": "2026-09-07T09:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-07-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-07T09:06:00+05:30",
+      "end": "2026-09-07T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-08T09:06:00+05:30",
+      "end": "2026-09-08T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-08T09:12:00+05:30",
+      "end": "2026-09-08T09:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-08T09:18:00+05:30",
+      "end": "2026-09-08T09:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-08T09:24:00+05:30",
+      "end": "2026-09-08T09:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-08T09:30:00+05:30",
+      "end": "2026-09-08T09:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-08T09:36:00+05:30",
+      "end": "2026-09-08T09:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-08T09:42:00+05:30",
+      "end": "2026-09-08T09:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-08T09:48:00+05:30",
+      "end": "2026-09-08T10:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-08T09:54:00+05:30",
+      "end": "2026-09-08T10:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-08T10:00:00+05:30",
+      "end": "2026-09-08T10:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-08-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-08T10:06:00+05:30",
+      "end": "2026-09-08T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-09T10:06:00+05:30",
+      "end": "2026-09-09T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-09T10:12:00+05:30",
+      "end": "2026-09-09T10:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-09T10:18:00+05:30",
+      "end": "2026-09-09T10:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-09T10:24:00+05:30",
+      "end": "2026-09-09T10:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-09T10:30:00+05:30",
+      "end": "2026-09-09T10:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-09T10:36:00+05:30",
+      "end": "2026-09-09T10:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-09T10:42:00+05:30",
+      "end": "2026-09-09T10:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-09T10:48:00+05:30",
+      "end": "2026-09-09T11:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-09T10:54:00+05:30",
+      "end": "2026-09-09T11:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-09T11:00:00+05:30",
+      "end": "2026-09-09T11:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-09-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-09T11:06:00+05:30",
+      "end": "2026-09-09T11:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-10T06:06:00+05:30",
+      "end": "2026-09-10T06:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-10T06:12:00+05:30",
+      "end": "2026-09-10T06:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-10T06:18:00+05:30",
+      "end": "2026-09-10T06:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-10T06:24:00+05:30",
+      "end": "2026-09-10T06:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-10T06:30:00+05:30",
+      "end": "2026-09-10T06:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-10T06:36:00+05:30",
+      "end": "2026-09-10T06:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-10T06:42:00+05:30",
+      "end": "2026-09-10T06:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-10T06:48:00+05:30",
+      "end": "2026-09-10T07:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-10T06:54:00+05:30",
+      "end": "2026-09-10T07:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-10T07:00:00+05:30",
+      "end": "2026-09-10T07:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-10-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-10T07:06:00+05:30",
+      "end": "2026-09-10T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-11T07:06:00+05:30",
+      "end": "2026-09-11T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-11T07:12:00+05:30",
+      "end": "2026-09-11T07:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-11T07:18:00+05:30",
+      "end": "2026-09-11T07:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-11T07:24:00+05:30",
+      "end": "2026-09-11T07:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-11T07:30:00+05:30",
+      "end": "2026-09-11T07:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-11T07:36:00+05:30",
+      "end": "2026-09-11T07:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-11T07:42:00+05:30",
+      "end": "2026-09-11T07:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-11T07:48:00+05:30",
+      "end": "2026-09-11T08:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-11T07:54:00+05:30",
+      "end": "2026-09-11T08:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-11T08:00:00+05:30",
+      "end": "2026-09-11T08:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-11-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-11T08:06:00+05:30",
+      "end": "2026-09-11T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-12T08:06:00+05:30",
+      "end": "2026-09-12T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-12T08:12:00+05:30",
+      "end": "2026-09-12T08:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-12T08:18:00+05:30",
+      "end": "2026-09-12T08:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-12T08:24:00+05:30",
+      "end": "2026-09-12T08:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-12T08:30:00+05:30",
+      "end": "2026-09-12T08:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-12T08:36:00+05:30",
+      "end": "2026-09-12T08:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-12T08:42:00+05:30",
+      "end": "2026-09-12T08:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-12T08:48:00+05:30",
+      "end": "2026-09-12T09:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-12T08:54:00+05:30",
+      "end": "2026-09-12T09:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-12T09:00:00+05:30",
+      "end": "2026-09-12T09:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-12-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-12T09:06:00+05:30",
+      "end": "2026-09-12T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-13T09:06:00+05:30",
+      "end": "2026-09-13T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-13T09:12:00+05:30",
+      "end": "2026-09-13T09:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-13T09:18:00+05:30",
+      "end": "2026-09-13T09:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-13T09:24:00+05:30",
+      "end": "2026-09-13T09:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-13T09:30:00+05:30",
+      "end": "2026-09-13T09:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-13T09:36:00+05:30",
+      "end": "2026-09-13T09:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-13T09:42:00+05:30",
+      "end": "2026-09-13T09:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-13T09:48:00+05:30",
+      "end": "2026-09-13T10:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-13T09:54:00+05:30",
+      "end": "2026-09-13T10:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-13T10:00:00+05:30",
+      "end": "2026-09-13T10:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-13-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-13T10:06:00+05:30",
+      "end": "2026-09-13T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-07T10:06:00+05:30",
+      "end": "2026-09-07T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-07T10:12:00+05:30",
+      "end": "2026-09-07T10:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-07T10:18:00+05:30",
+      "end": "2026-09-07T10:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-07T10:24:00+05:30",
+      "end": "2026-09-07T10:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-07T10:30:00+05:30",
+      "end": "2026-09-07T10:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-07T10:36:00+05:30",
+      "end": "2026-09-07T10:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-07T10:42:00+05:30",
+      "end": "2026-09-07T10:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-07T10:48:00+05:30",
+      "end": "2026-09-07T11:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-07T10:54:00+05:30",
+      "end": "2026-09-07T11:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-07T11:00:00+05:30",
+      "end": "2026-09-07T11:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-14-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-07T11:06:00+05:30",
+      "end": "2026-09-07T11:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-08T06:06:00+05:30",
+      "end": "2026-09-08T06:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-08T06:12:00+05:30",
+      "end": "2026-09-08T06:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-08T06:18:00+05:30",
+      "end": "2026-09-08T06:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-08T06:24:00+05:30",
+      "end": "2026-09-08T06:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-08T06:30:00+05:30",
+      "end": "2026-09-08T06:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-08T06:36:00+05:30",
+      "end": "2026-09-08T06:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-08T06:42:00+05:30",
+      "end": "2026-09-08T06:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-08T06:48:00+05:30",
+      "end": "2026-09-08T07:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-08T06:54:00+05:30",
+      "end": "2026-09-08T07:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-08T07:00:00+05:30",
+      "end": "2026-09-08T07:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-15-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-08T07:06:00+05:30",
+      "end": "2026-09-08T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-09T07:06:00+05:30",
+      "end": "2026-09-09T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-09T07:12:00+05:30",
+      "end": "2026-09-09T07:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-09T07:18:00+05:30",
+      "end": "2026-09-09T07:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-09T07:24:00+05:30",
+      "end": "2026-09-09T07:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-09T07:30:00+05:30",
+      "end": "2026-09-09T07:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-09T07:36:00+05:30",
+      "end": "2026-09-09T07:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-09T07:42:00+05:30",
+      "end": "2026-09-09T07:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-09T07:48:00+05:30",
+      "end": "2026-09-09T08:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-09T07:54:00+05:30",
+      "end": "2026-09-09T08:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-09T08:00:00+05:30",
+      "end": "2026-09-09T08:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-16-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-09T08:06:00+05:30",
+      "end": "2026-09-09T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-10T08:06:00+05:30",
+      "end": "2026-09-10T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-10T08:12:00+05:30",
+      "end": "2026-09-10T08:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-10T08:18:00+05:30",
+      "end": "2026-09-10T08:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-10T08:24:00+05:30",
+      "end": "2026-09-10T08:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-10T08:30:00+05:30",
+      "end": "2026-09-10T08:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-10T08:36:00+05:30",
+      "end": "2026-09-10T08:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-10T08:42:00+05:30",
+      "end": "2026-09-10T08:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-10T08:48:00+05:30",
+      "end": "2026-09-10T09:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-10T08:54:00+05:30",
+      "end": "2026-09-10T09:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-10T09:00:00+05:30",
+      "end": "2026-09-10T09:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-17-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-10T09:06:00+05:30",
+      "end": "2026-09-10T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-11T09:06:00+05:30",
+      "end": "2026-09-11T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-11T09:12:00+05:30",
+      "end": "2026-09-11T09:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-11T09:18:00+05:30",
+      "end": "2026-09-11T09:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-11T09:24:00+05:30",
+      "end": "2026-09-11T09:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-11T09:30:00+05:30",
+      "end": "2026-09-11T09:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-11T09:36:00+05:30",
+      "end": "2026-09-11T09:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-11T09:42:00+05:30",
+      "end": "2026-09-11T09:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-11T09:48:00+05:30",
+      "end": "2026-09-11T10:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-11T09:54:00+05:30",
+      "end": "2026-09-11T10:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-11T10:00:00+05:30",
+      "end": "2026-09-11T10:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-18-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-11T10:06:00+05:30",
+      "end": "2026-09-11T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-12T10:06:00+05:30",
+      "end": "2026-09-12T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-12T10:12:00+05:30",
+      "end": "2026-09-12T10:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-12T10:18:00+05:30",
+      "end": "2026-09-12T10:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-12T10:24:00+05:30",
+      "end": "2026-09-12T10:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-12T10:30:00+05:30",
+      "end": "2026-09-12T10:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-12T10:36:00+05:30",
+      "end": "2026-09-12T10:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-12T10:42:00+05:30",
+      "end": "2026-09-12T10:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-12T10:48:00+05:30",
+      "end": "2026-09-12T11:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-12T10:54:00+05:30",
+      "end": "2026-09-12T11:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-12T11:00:00+05:30",
+      "end": "2026-09-12T11:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-19-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-12T11:06:00+05:30",
+      "end": "2026-09-12T11:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-13T06:06:00+05:30",
+      "end": "2026-09-13T06:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-13T06:12:00+05:30",
+      "end": "2026-09-13T06:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-13T06:18:00+05:30",
+      "end": "2026-09-13T06:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-13T06:24:00+05:30",
+      "end": "2026-09-13T06:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-13T06:30:00+05:30",
+      "end": "2026-09-13T06:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-13T06:36:00+05:30",
+      "end": "2026-09-13T06:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-13T06:42:00+05:30",
+      "end": "2026-09-13T06:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-13T06:48:00+05:30",
+      "end": "2026-09-13T07:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-13T06:54:00+05:30",
+      "end": "2026-09-13T07:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-13T07:00:00+05:30",
+      "end": "2026-09-13T07:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-20-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-13T07:06:00+05:30",
+      "end": "2026-09-13T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-07T07:06:00+05:30",
+      "end": "2026-09-07T07:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-07T07:12:00+05:30",
+      "end": "2026-09-07T07:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-07T07:18:00+05:30",
+      "end": "2026-09-07T07:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-07T07:24:00+05:30",
+      "end": "2026-09-07T07:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-07T07:30:00+05:30",
+      "end": "2026-09-07T07:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-07T07:36:00+05:30",
+      "end": "2026-09-07T07:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-07T07:42:00+05:30",
+      "end": "2026-09-07T07:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-07T07:48:00+05:30",
+      "end": "2026-09-07T08:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-07T07:54:00+05:30",
+      "end": "2026-09-07T08:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-07T08:00:00+05:30",
+      "end": "2026-09-07T08:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-21-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-07T08:06:00+05:30",
+      "end": "2026-09-07T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-08T08:06:00+05:30",
+      "end": "2026-09-08T08:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-08T08:12:00+05:30",
+      "end": "2026-09-08T08:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-08T08:18:00+05:30",
+      "end": "2026-09-08T08:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-08T08:24:00+05:30",
+      "end": "2026-09-08T08:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-08T08:30:00+05:30",
+      "end": "2026-09-08T08:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-08T08:36:00+05:30",
+      "end": "2026-09-08T08:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-08T08:42:00+05:30",
+      "end": "2026-09-08T08:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-08T08:48:00+05:30",
+      "end": "2026-09-08T09:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-08T08:54:00+05:30",
+      "end": "2026-09-08T09:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-08T09:00:00+05:30",
+      "end": "2026-09-08T09:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-22-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-08T09:06:00+05:30",
+      "end": "2026-09-08T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-09T09:06:00+05:30",
+      "end": "2026-09-09T09:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-09T09:12:00+05:30",
+      "end": "2026-09-09T09:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-09T09:18:00+05:30",
+      "end": "2026-09-09T09:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-09T09:24:00+05:30",
+      "end": "2026-09-09T09:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-09T09:30:00+05:30",
+      "end": "2026-09-09T09:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-09T09:36:00+05:30",
+      "end": "2026-09-09T09:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-09T09:42:00+05:30",
+      "end": "2026-09-09T09:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-09T09:48:00+05:30",
+      "end": "2026-09-09T10:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-09T09:54:00+05:30",
+      "end": "2026-09-09T10:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-09T10:00:00+05:30",
+      "end": "2026-09-09T10:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-23-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-09T10:06:00+05:30",
+      "end": "2026-09-09T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-01",
+      "section_id": "SEC-C1-01",
+      "start": "2026-09-10T10:06:00+05:30",
+      "end": "2026-09-10T10:18:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-02",
+      "section_id": "SEC-C1-02",
+      "start": "2026-09-10T10:12:00+05:30",
+      "end": "2026-09-10T10:24:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-03",
+      "section_id": "SEC-C1-03",
+      "start": "2026-09-10T10:18:00+05:30",
+      "end": "2026-09-10T10:30:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-04",
+      "section_id": "SEC-C1-04",
+      "start": "2026-09-10T10:24:00+05:30",
+      "end": "2026-09-10T10:36:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-05",
+      "section_id": "SEC-C1-05",
+      "start": "2026-09-10T10:30:00+05:30",
+      "end": "2026-09-10T10:42:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-06",
+      "section_id": "SEC-C1-06",
+      "start": "2026-09-10T10:36:00+05:30",
+      "end": "2026-09-10T10:48:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-07",
+      "section_id": "SEC-C1-07",
+      "start": "2026-09-10T10:42:00+05:30",
+      "end": "2026-09-10T10:54:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-08",
+      "section_id": "SEC-C1-08",
+      "start": "2026-09-10T10:48:00+05:30",
+      "end": "2026-09-10T11:00:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-09",
+      "section_id": "SEC-C1-09",
+      "start": "2026-09-10T10:54:00+05:30",
+      "end": "2026-09-10T11:06:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-10",
+      "section_id": "SEC-C1-10",
+      "start": "2026-09-10T11:00:00+05:30",
+      "end": "2026-09-10T11:12:00+05:30"
+    },
+    {
+      "train_path_id": "TP-C1-24-11",
+      "section_id": "SEC-C1-11",
+      "start": "2026-09-10T11:06:00+05:30",
+      "end": "2026-09-10T11:18:00+05:30"
+    }
+  ],
+  "conflict_groups": [
+    {
+      "conflict_group_id": "ISO-GROUP-C1-01",
+      "member_ids": [
+        "JOB-C1-001",
+        "JOB-C1-013"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-02",
+      "member_ids": [
+        "JOB-C1-002",
+        "JOB-C1-014"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-03",
+      "member_ids": [
+        "JOB-C1-003",
+        "JOB-C1-015"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-04",
+      "member_ids": [
+        "JOB-C1-004",
+        "JOB-C1-016"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-05",
+      "member_ids": [
+        "JOB-C1-005",
+        "JOB-C1-017"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-06",
+      "member_ids": [
+        "JOB-C1-006",
+        "JOB-C1-018"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-07",
+      "member_ids": [
+        "JOB-C1-007",
+        "JOB-C1-019"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-08",
+      "member_ids": [
+        "JOB-C1-008",
+        "JOB-C1-020"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-09",
+      "member_ids": [
+        "JOB-C1-009",
+        "JOB-C1-021"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-10",
+      "member_ids": [
+        "JOB-C1-010",
+        "JOB-C1-022"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-11",
+      "member_ids": [
+        "JOB-C1-011",
+        "JOB-C1-023"
+      ],
+      "conflict_type": "ISOLATION"
+    },
+    {
+      "conflict_group_id": "ISO-GROUP-C1-12",
+      "member_ids": [
+        "JOB-C1-012",
+        "JOB-C1-024"
+      ],
+      "conflict_type": "ISOLATION"
+    }
+  ],
+  "metadata": {
+    "dataset_id": "DEMO-WEEK-C1-V1",
+    "corridor_id": "CORRIDOR-C1",
+    "corridor_name": "Narmada Demonstration Corridor",
+    "horizon_start": "2026-09-07T00:00:00+05:30",
+    "horizon_days": 7,
+    "source_class": "CONTROLLED-SCENARIO",
+    "ruleset_version": "Demo Ruleset v1",
+    "generator_seed": 26028,
+    "disclaimer": "Synthetic data. Demonstration ruleset. Human approval required. Not for operational sanctioning."
+  }
+}

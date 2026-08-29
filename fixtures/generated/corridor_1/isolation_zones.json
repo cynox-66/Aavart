@@ -1,0 +1,79 @@
+[
+  {
+    "isolation_zone_id": "ISO-C1-01",
+    "section_id": "SEC-C1-01",
+    "isolation_type": "OHE_EARTHED",
+    "responsible_department": "ELECTRICAL",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-02",
+    "section_id": "SEC-C1-02",
+    "isolation_type": "TRACK_PROTECTION",
+    "responsible_department": "ENGINEERING",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-03",
+    "section_id": "SEC-C1-03",
+    "isolation_type": "OHE_EARTHED",
+    "responsible_department": "ELECTRICAL",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-04",
+    "section_id": "SEC-C1-04",
+    "isolation_type": "TRACK_PROTECTION",
+    "responsible_department": "ENGINEERING",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-05",
+    "section_id": "SEC-C1-05",
+    "isolation_type": "OHE_EARTHED",
+    "responsible_department": "ELECTRICAL",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-06",
+    "section_id": "SEC-C1-06",
+    "isolation_type": "TRACK_PROTECTION",
+    "responsible_department": "ENGINEERING",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-07",
+    "section_id": "SEC-C1-07",
+    "isolation_type": "OHE_EARTHED",
+    "responsible_department": "ELECTRICAL",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-08",
+    "section_id": "SEC-C1-08",
+    "isolation_type": "TRACK_PROTECTION",
+    "responsible_department": "ENGINEERING",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-09",
+    "section_id": "SEC-C1-09",
+    "isolation_type": "OHE_EARTHED",
+    "responsible_department": "ELECTRICAL",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-10",
+    "section_id": "SEC-C1-10",
+    "isolation_type": "TRACK_PROTECTION",
+    "responsible_department": "ENGINEERING",
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "isolation_zone_id": "ISO-C1-11",
+    "section_id": "SEC-C1-11",
+    "isolation_type": "OHE_EARTHED",
+    "responsible_department": "ELECTRICAL",
+    "source_class": "CONTROLLED-SCENARIO"
+  }
+]

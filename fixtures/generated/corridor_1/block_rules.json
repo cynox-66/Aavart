@@ -1,0 +1,255 @@
+[
+  {
+    "block_rule_id": "RULE-C1-01-TRAFFIC",
+    "section_id": "SEC-C1-01",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-01-POWER",
+    "section_id": "SEC-C1-01",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-02-TRAFFIC",
+    "section_id": "SEC-C1-02",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-02-POWER",
+    "section_id": "SEC-C1-02",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-03-TRAFFIC",
+    "section_id": "SEC-C1-03",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-03-POWER",
+    "section_id": "SEC-C1-03",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-04-TRAFFIC",
+    "section_id": "SEC-C1-04",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-04-POWER",
+    "section_id": "SEC-C1-04",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-05-TRAFFIC",
+    "section_id": "SEC-C1-05",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-05-POWER",
+    "section_id": "SEC-C1-05",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-06-TRAFFIC",
+    "section_id": "SEC-C1-06",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-06-POWER",
+    "section_id": "SEC-C1-06",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-07-TRAFFIC",
+    "section_id": "SEC-C1-07",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-07-POWER",
+    "section_id": "SEC-C1-07",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-08-TRAFFIC",
+    "section_id": "SEC-C1-08",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-08-POWER",
+    "section_id": "SEC-C1-08",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-09-TRAFFIC",
+    "section_id": "SEC-C1-09",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-09-POWER",
+    "section_id": "SEC-C1-09",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-10-TRAFFIC",
+    "section_id": "SEC-C1-10",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-10-POWER",
+    "section_id": "SEC-C1-10",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-11-TRAFFIC",
+    "section_id": "SEC-C1-11",
+    "block_type": "TRAFFIC",
+    "minimum_buffer_minutes": 10,
+    "required_authority": "SECTION_CONTROLLER",
+    "eligible_departments": [
+      "TRACK",
+      "SIGNAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "block_rule_id": "RULE-C1-11-POWER",
+    "section_id": "SEC-C1-11",
+    "block_type": "POWER",
+    "minimum_buffer_minutes": 15,
+    "required_authority": "TRACTION_POWER_CONTROLLER",
+    "eligible_departments": [
+      "ELECTRICAL"
+    ],
+    "source_class": "CONTROLLED-SCENARIO"
+  }
+]

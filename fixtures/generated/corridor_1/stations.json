@@ -1,0 +1,110 @@
+[
+  {
+    "station_id": "STN-C1-01",
+    "code": "C101",
+    "name": "Narmada Junction 01",
+    "sequence": 1,
+    "latitude": 22.835,
+    "longitude": 76.035,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-02",
+    "code": "C102",
+    "name": "Narmada Junction 02",
+    "sequence": 2,
+    "latitude": 22.89,
+    "longitude": 76.1,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-03",
+    "code": "C103",
+    "name": "Narmada Junction 03",
+    "sequence": 3,
+    "latitude": 22.945,
+    "longitude": 76.165,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-04",
+    "code": "C104",
+    "name": "Narmada Junction 04",
+    "sequence": 4,
+    "latitude": 23.0,
+    "longitude": 76.23,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-05",
+    "code": "C105",
+    "name": "Narmada Junction 05",
+    "sequence": 5,
+    "latitude": 23.055,
+    "longitude": 76.295,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-06",
+    "code": "C106",
+    "name": "Narmada Junction 06",
+    "sequence": 6,
+    "latitude": 23.11,
+    "longitude": 76.36,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-07",
+    "code": "C107",
+    "name": "Narmada Junction 07",
+    "sequence": 7,
+    "latitude": 23.165,
+    "longitude": 76.425,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-08",
+    "code": "C108",
+    "name": "Narmada Junction 08",
+    "sequence": 8,
+    "latitude": 23.22,
+    "longitude": 76.49,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-09",
+    "code": "C109",
+    "name": "Narmada Junction 09",
+    "sequence": 9,
+    "latitude": 23.275,
+    "longitude": 76.555,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-10",
+    "code": "C110",
+    "name": "Narmada Junction 10",
+    "sequence": 10,
+    "latitude": 23.33,
+    "longitude": 76.62,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-11",
+    "code": "C111",
+    "name": "Narmada Junction 11",
+    "sequence": 11,
+    "latitude": 23.385,
+    "longitude": 76.685,
+    "source_class": "CONTROLLED-SCENARIO"
+  },
+  {
+    "station_id": "STN-C1-12",
+    "code": "C112",
+    "name": "Narmada Junction 12",
+    "sequence": 12,
+    "latitude": 23.44,
+    "longitude": 76.75,
+    "source_class": "CONTROLLED-SCENARIO"
+  }
+]
