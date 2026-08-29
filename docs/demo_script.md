@@ -12,7 +12,7 @@ Expected: validation succeeds and planning is enabled.
 
 Start a weekly planning run.
 
-Expected: the UI shows `RUNNING`, then `FEASIBLE` or `OPTIMAL`, with schedule items and solver metadata.
+Expected: the synchronous demo returns `FEASIBLE` or `OPTIMAL`, with schedule items and the independent validator result.
 
 ## 3. Explain the result
 
@@ -34,7 +34,7 @@ Expected: approval records reviewer, timestamp, snapshot ID, and ruleset version
 
 ## 6. Export
 
-Export the approved CSV/PDF.
+Export the approved CSV.
 
 Expected: export succeeds and contains approval metadata. State clearly that this is a recommendation export, not BDMS sanctioning.
 
