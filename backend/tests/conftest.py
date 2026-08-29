@@ -20,10 +20,12 @@ def repository_root() -> Path:
 @pytest.fixture
 def baseline_payload(repository_root: Path) -> dict[str, Any]:
     fixture_path = repository_root / "fixtures" / "baseline_valid" / "dataset.json"
-    return json.loads(fixture_path.read_text())
+    payload: dict[str, Any] = json.loads(fixture_path.read_text())
+    return payload
 
 
 @pytest.fixture
 def baseline_expected_validation(repository_root: Path) -> dict[str, Any]:
     fixture_path = repository_root / "fixtures" / "baseline_valid" / "expected_validation.json"
-    return json.loads(fixture_path.read_text())
+    payload: dict[str, Any] = json.loads(fixture_path.read_text())
+    return payload
