@@ -42,8 +42,9 @@ When documents conflict, use this order:
 2. `docs/project-context/03_deviation_lock.md`
 3. `docs/project-context/02_acceptance_checks.md`
 4. `docs/project-context/04_decision_log.md`
-5. Role files under `docs/roles/`
-6. Root README and informal chat messages
+5. `docs/project-context/06_progress_tracker.md`
+6. Role files under `docs/roles/`
+7. Root README and informal chat messages
 
 ## Required demo path
 

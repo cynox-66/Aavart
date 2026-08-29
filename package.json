@@ -1,0 +1,14 @@
+{
+  "name": "railniyojan",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "dev:web": "pnpm --filter @railniyojan/web dev",
+    "build:web": "pnpm --filter @railniyojan/web build",
+    "lint:web": "pnpm --filter @railniyojan/web lint",
+    "test:web": "pnpm --filter @railniyojan/web test",
+    "test:e2e": "pnpm --filter @railniyojan/web test:e2e",
+    "typecheck:web": "pnpm --filter @railniyojan/web typecheck",
+    "generate:types": "pnpm --filter @railniyojan/web generate:types"
+  }
+}

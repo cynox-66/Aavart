@@ -1,0 +1,173 @@
+{
+  "schema_version": "1.0",
+  "sections": [
+    {
+      "section_id": "SEC-A",
+      "from_node": "A",
+      "to_node": "B",
+      "line": "MAIN",
+      "direction": "BOTH"
+    },
+    {
+      "section_id": "SEC-B",
+      "from_node": "B",
+      "to_node": "C",
+      "line": "MAIN",
+      "direction": "BOTH"
+    }
+  ],
+  "assets": [
+    {
+      "asset_id": "ASSET-TRACK-001",
+      "asset_type": "TRACK",
+      "section_id": "SEC-A",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "ASSET-SIGNAL-001",
+      "asset_type": "SIGNAL",
+      "section_id": "SEC-A",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "ASSET-OHE-001",
+      "asset_type": "OHE",
+      "section_id": "SEC-B",
+      "status": "AVAILABLE"
+    },
+    {
+      "asset_id": "ASSET-BRIDGE-001",
+      "asset_type": "BRIDGE",
+      "section_id": "SEC-B",
+      "status": "RESTRICTED"
+    }
+  ],
+  "resources": [
+    {
+      "resource_id": "TRACK_TEAM_1",
+      "resource_type": "TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "SIGNAL_TEAM_1",
+      "resource_type": "TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "ELECTRICAL_TEAM_1",
+      "resource_type": "TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    },
+    {
+      "resource_id": "CIVIL_TEAM_1",
+      "resource_type": "TEAM",
+      "capacity": 1,
+      "availability": "AVAILABLE"
+    }
+  ],
+  "windows": [
+    {
+      "window_id": "WIN-001",
+      "start": "2026-09-01T09:00:00+05:30",
+      "end": "2026-09-01T13:00:00+05:30",
+      "section_id": "SEC-A",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-002",
+      "start": "2026-09-02T10:00:00+05:30",
+      "end": "2026-09-02T14:00:00+05:30",
+      "section_id": "SEC-B",
+      "availability": "AVAILABLE"
+    },
+    {
+      "window_id": "WIN-003",
+      "start": "2026-09-03T01:00:00+05:30",
+      "end": "2026-09-03T03:00:00+05:30",
+      "section_id": "SEC-B",
+      "availability": "AVAILABLE"
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "JOB-001",
+      "department": "TRACK",
+      "asset_id": "ASSET-TRACK-001",
+      "section_id": "SEC-A",
+      "work_type": "rail inspection",
+      "priority": 80,
+      "duration_minutes": 120,
+      "duration_min_minutes": 90,
+      "duration_max_minutes": 150,
+      "required_resources": ["TRACK_TEAM_1"],
+      "allowed_windows": ["WIN-001"],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-002",
+      "department": "SIGNAL",
+      "asset_id": "ASSET-SIGNAL-001",
+      "section_id": "SEC-A",
+      "work_type": "signal circuit inspection",
+      "priority": 70,
+      "duration_minutes": 60,
+      "duration_min_minutes": 45,
+      "duration_max_minutes": 75,
+      "required_resources": ["SIGNAL_TEAM_1"],
+      "allowed_windows": ["WIN-001"],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-003",
+      "department": "ELECTRICAL",
+      "asset_id": "ASSET-OHE-001",
+      "section_id": "SEC-B",
+      "work_type": "OHE inspection",
+      "priority": 90,
+      "duration_minutes": 90,
+      "duration_min_minutes": 60,
+      "duration_max_minutes": 120,
+      "required_resources": ["ELECTRICAL_TEAM_1"],
+      "allowed_windows": ["WIN-002"],
+      "status": "UNSCHEDULED"
+    },
+    {
+      "job_id": "JOB-004",
+      "department": "CIVIL",
+      "asset_id": "ASSET-BRIDGE-001",
+      "section_id": "SEC-B",
+      "work_type": "bridge visual inspection",
+      "priority": 60,
+      "duration_minutes": 120,
+      "duration_min_minutes": 90,
+      "duration_max_minutes": 150,
+      "required_resources": ["CIVIL_TEAM_1"],
+      "allowed_windows": ["WIN-003"],
+      "status": "UNSCHEDULED"
+    }
+  ],
+  "train_paths": [
+    {
+      "train_path_id": "TRAIN-001",
+      "section_id": "SEC-B",
+      "start": "2026-09-03T01:30:00+05:30",
+      "end": "2026-09-03T02:30:00+05:30"
+    }
+  ],
+  "conflict_groups": [
+    {
+      "conflict_group_id": "CG-SEC-A-001",
+      "member_ids": ["JOB-001", "JOB-002"],
+      "conflict_type": "SECTION"
+    }
+  ],
+  "metadata": {
+    "scenario": "baseline_valid",
+    "synthetic": true,
+    "ruleset_version": "Demo Ruleset v1"
+  }
+}
+

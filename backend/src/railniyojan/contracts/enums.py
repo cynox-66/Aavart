@@ -1,0 +1,41 @@
+from enum import StrEnum
+
+
+class Availability(StrEnum):
+    AVAILABLE = "AVAILABLE"
+    UNAVAILABLE = "UNAVAILABLE"
+
+
+class JobStatus(StrEnum):
+    UNSCHEDULED = "UNSCHEDULED"
+    SCHEDULED = "SCHEDULED"
+    LOCKED = "LOCKED"
+    REJECTED = "REJECTED"
+    INVALID = "INVALID"
+
+
+class ScheduleStatus(StrEnum):
+    SCHEDULED = "SCHEDULED"
+    LOCKED = "LOCKED"
+    REJECTED = "REJECTED"
+
+
+class PlanningRunState(StrEnum):
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    FEASIBLE = "FEASIBLE"
+    OPTIMAL = "OPTIMAL"
+    INFEASIBLE = "INFEASIBLE"
+    TIMEOUT = "TIMEOUT"
+    INVALID = "INVALID"
+    FAILED = "FAILED"
+
+
+class RapidBlockState(StrEnum):
+    SUBMITTED = "SUBMITTED"
+    VALIDATING = "VALIDATING"
+    REJECTED = "REJECTED"
+    PLANNING = "PLANNING"
+    CANDIDATE_READY = "CANDIDATE_READY"
+    NO_CANDIDATE = "NO_CANDIDATE"
+
