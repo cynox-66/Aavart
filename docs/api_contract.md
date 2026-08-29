@@ -2,6 +2,14 @@
 
 The API is the only integration boundary between UI, persistence, and the optimizer. All responses are JSON except export downloads.
 
+## RailRadar read-only proxy
+
+The FastAPI service exposes `GET /railradar/trains/{number}/timetable`, `/route`, and `/live`.
+The RailRadar key is server-side only. Responses include `source: PUBLIC`, provider fetch time,
+cache state, and stale state. A last-valid response may be returned as `stale: true` when the
+provider is unavailable. These endpoints provide public train context only; they do not create
+planning snapshots, prove Railway section mappings, or authorize a block.
+
 ## `POST /datasets/validate`
 
 Accept controlled CSV/JSON. Return validation results without creating a planning run.
