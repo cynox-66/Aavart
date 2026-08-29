@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
+import json
 from datetime import UTC, datetime
+from typing import cast
 
 from fastapi import APIRouter
 from fastapi.responses import Response
@@ -27,22 +30,32 @@ from railniyojan.contracts.models import ScheduleItem
 from railniyojan.optimizer.contracts import OptimizerInput
 from railniyojan.optimizer.planner import DeterministicPlanner
 from railniyojan.optimizer.validator import validate_schedule
-from railniyojan.planning.store import RunRecord, SnapshotRecord, planning_store
+from railniyojan.planning.ai import LocalHeuristicEstimator
+from railniyojan.planning.kpis import calculate_kpis
+from railniyojan.planning.store import (
+    AuditEventRecord,
+    ExportRecord,
+    PlanningStore,
+    RunRecord,
+    SnapshotRecord,
+    planning_store,
+)
 
 router = APIRouter(prefix="/planning-runs", tags=["planning-runs"])
 RULESET_VERSION = "Demo Ruleset v1"
 planner = DeterministicPlanner()
+estimator = LocalHeuristicEstimator()
 
 
 def _snapshot_or_404(snapshot_id: str) -> SnapshotRecord:
-    snapshot = planning_store.get_snapshot(snapshot_id)
+    snapshot = cast(PlanningStore, planning_store).get_snapshot(snapshot_id)
     if snapshot is None:
         raise ApiError(404, "SNAPSHOT_NOT_FOUND", "Validate the dataset before creating a run")
     return snapshot
 
 
 def _run_or_404(run_id: str) -> RunRecord:
-    run = planning_store.get_run(run_id)
+    run = cast(PlanningStore, planning_store).get_run(run_id)
     if run is None:
         raise ApiError(404, "RUN_NOT_FOUND", f"Planning run {run_id} was not found")
     return run
@@ -69,18 +82,19 @@ def _execute_run(
 ) -> RunRecord:
     run_id = planning_store.next_run_id()
     created_at = datetime.now(UTC)
+    planned_dataset, ai_estimates = estimator.estimate(snapshot.dataset)
     output = planner.solve(
         OptimizerInput(
             run_id=run_id,
             snapshot_id=snapshot.snapshot_id,
             ruleset_version=ruleset_version,
             deterministic_seed=26027,
-            dataset=snapshot.dataset,
+            dataset=planned_dataset,
             fixed_items=fixed_items or [],
         )
     )
     issues = validate_schedule(
-        snapshot.dataset,
+        planned_dataset,
         output.schedule_items,
         required_locked=required_locked or [],
     )
@@ -90,7 +104,7 @@ def _execute_run(
     scheduled = {item.job_id for item in output.schedule_items}
     changes = {
         job.job_id: ("SCHEDULED" if job.job_id in scheduled else "REJECTED")
-        for job in snapshot.dataset.jobs
+        for job in planned_dataset.jobs
     }
     run = RunRecord(
         run_id=run_id,
@@ -106,8 +120,10 @@ def _execute_run(
         validated_at=now,
         parent_run_id=parent_run_id,
         changes=changes,
+        kpis=calculate_kpis(planned_dataset, output.schedule_items),
+        ai_estimates=ai_estimates,
     )
-    return planning_store.save_run(run)
+    return cast(PlanningStore, planning_store).save_run(run)
 
 
 def _detail(run: RunRecord) -> PlanningRunDetail:
@@ -149,8 +165,25 @@ def _detail(run: RunRecord) -> PlanningRunDetail:
             validated_at=run.validated_at,
         ),
         approval=run.approval,
-        changes=run.changes,  # type: ignore[arg-type]
+        changes=run.changes,
         export_ready=export_ready,
+        kpis=run.kpis or calculate_kpis(snapshot.dataset, run.schedule_items),
+        ai_estimates=run.ai_estimates,
+    )
+
+
+def _audit(
+    entity_type: str, entity_id: str, event_type: str, actor: str, **metadata: object
+) -> None:
+    planning_store.add_audit_event(
+        AuditEventRecord(
+            event_id=planning_store.next_event_id(),
+            entity_type=entity_type,
+            entity_id=entity_id,
+            event_type=event_type,
+            actor=actor,
+            metadata=metadata,
+        )
     )
 
 
@@ -181,6 +214,7 @@ def lock_schedule_item(run_id: str, request: LockRequest) -> LockResponse:
     item.status = ScheduleStatus.LOCKED
     item.reason_codes = ["LOCK_PRESERVED"]
     planning_store.update_run(run)
+    _audit("planning_run", run_id, "LOCK_CREATED", "planner", job_id=request.job_id)
     return LockResponse(
         run_id=run_id,
         job_id=request.job_id,
@@ -258,6 +292,7 @@ def approve(run_id: str, request: ApprovalRequest) -> ApprovalResponse:
     )
     run.approval = approval
     planning_store.update_run(run)
+    _audit("planning_run", run.run_id, "APPROVED", request.reviewer)
     return ApprovalResponse(run_id=run.run_id, approved=True, approval=approval)
 
 
@@ -267,6 +302,15 @@ def export(run_id: str) -> Response:
     detail = _detail(run)
     if not detail.export_ready or run.approval is None:
         raise ApiError(409, "EXPORT_BLOCKED", "Export requires a valid, safe, human-approved run")
+    planning_store.add_export(
+        ExportRecord(
+            export_id=planning_store.next_export_id(),
+            run_id=run.run_id,
+            format="csv",
+            created_by=run.approval.reviewer,
+        )
+    )
+    _audit("planning_run", run.run_id, "EXPORTED", run.approval.reviewer, format="csv")
 
     output = io.StringIO()
     writer = csv.writer(output)
@@ -290,3 +334,14 @@ def export(run_id: str) -> Response:
         media_type="text/csv",
         headers={"Content-Disposition": f'attachment; filename="{run_id}.csv"'},
     )
+
+
+def derive_snapshot_id(payload: object) -> tuple[str, str]:
+    canonical = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    )
+    source_hash = hashlib.sha256(canonical.encode()).hexdigest()
+    return f"SNAP-{source_hash[:12].upper()}", source_hash

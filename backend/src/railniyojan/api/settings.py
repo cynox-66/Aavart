@@ -14,9 +14,9 @@ class Settings(BaseSettings):
     deterministic_seed: int = 26027
     ruleset_version: str = "Demo Ruleset v1"
     planner_allowlist: str = "planner-01"
+    store_backend: str = "memory"
 
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

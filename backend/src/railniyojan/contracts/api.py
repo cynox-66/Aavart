@@ -3,8 +3,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from railniyojan.contracts.enums import PlanningRunState
-from railniyojan.contracts.models import ScheduleItem
+from railniyojan.contracts.enums import PlanningRunState, RapidBlockState
+from railniyojan.contracts.models import Job, ScheduleItem
 
 
 class ApiModel(BaseModel):
@@ -77,6 +77,27 @@ class JobContext(ApiModel):
     priority: int
 
 
+class KpiSummary(ApiModel):
+    baseline_closure_minutes: int
+    optimized_closure_minutes: int
+    scheduled_maintenance_minutes: int
+    rejected_maintenance_minutes: int
+    baseline_asset_downtime_minutes: int
+    optimized_asset_downtime_minutes: int
+    downtime_reduction_minutes: int
+    downtime_reduction_percent: float
+
+
+class AiEstimate(ApiModel):
+    job_id: str
+    source: Literal["LOCAL_HEURISTIC", "DETERMINISTIC_FALLBACK"]
+    priority: int
+    duration_minutes: int
+    duration_min_minutes: int
+    duration_max_minutes: int
+    reason_codes: list[str] = Field(min_length=1)
+
+
 class PlanningRunDetail(ApiModel):
     run_id: str
     state: PlanningRunState
@@ -93,6 +114,8 @@ class PlanningRunDetail(ApiModel):
     approval: ApprovalSummary | None = None
     changes: dict[str, Literal["SCHEDULED", "REJECTED", "PRESERVED", "CHANGED"]]
     export_ready: bool
+    kpis: KpiSummary
+    ai_estimates: list[AiEstimate]
 
 
 class LockResponse(ApiModel):
@@ -127,3 +150,35 @@ class ErrorResponse(ApiModel):
     code: str
     message: str
     details: dict[str, Any] = Field(default_factory=dict)
+
+
+class RapidBlockRequestCreate(ApiModel):
+    base_run_id: str = Field(min_length=1)
+    actor: str = Field(min_length=1)
+    actor_role: Literal["PLANNER"]
+    justification: str = Field(min_length=1)
+    source_reported_at: datetime
+    urgent_job: Job
+
+
+class RapidBlockResponse(ApiModel):
+    request_id: str
+    state: RapidBlockState
+    base_run_id: str
+    base_snapshot_id: str
+    derived_snapshot_id: str | None = None
+    child_run_id: str | None = None
+    reason_codes: list[str]
+    status_url: str
+
+
+class RapidBlockDetail(RapidBlockResponse):
+    actor: str
+    actor_role: str
+    justification: str
+    source_reported_at: datetime
+    urgent_job: Job
+    changed_jobs: dict[str, Literal["SCHEDULED", "REJECTED", "PRESERVED", "CHANGED"]]
+    preserved_locked_jobs: list[str]
+    validator: ValidatorSummary | None = None
+    candidate_plan_status: PlanningRunState | None = None
