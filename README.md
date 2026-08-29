@@ -1,91 +1,107 @@
-# Team Aavart
+# RailNiyojan
 
-System name: RailNiyojan
+RailNiyojan is the SIH26027 hackathon system built by Team Aavart.
 
-Hackathon build for SIH26027: AI-powered automatic block planning for railway maintenance.
+It is a decision-support demo for railway maintenance block planning. The project loads controlled sample data, validates it, runs a deterministic planner, shows schedule and reason codes, supports lock and re-plan, and blocks export until human approval exists.
 
-## What this repo is for
+This is not live railway sanctioning software. Do not treat the solver output as an operational block.
 
-RailNiyojan is a working demo of a planning system that:
-- ingests maintenance and block data
-- validates it into one canonical format
-- runs a constraint-based planner
-- shows a feasible maintenance plan
-- explains why some jobs were scheduled or rejected
+## If you are new here
 
-This is not a full railway production system. It is a hackathon-grade vertical slice that can actually run.
+Start with these files:
 
-## Current source of truth
+- `docs/project-context/00_project_context.md`
+- `docs/project-context/01_shared_contract.md`
+- `docs/project-context/02_acceptance_checks.md`
+- `docs/project-context/06_progress_tracker.md`
+- `docs/local_development.md`
 
-- Problem context: `SIH26027_Detailed_Technical_Architecture.pdf`
-- Team workflow: markdown files in `docs/` or `work/`
-- Shared interface contract: `docs/project-context/01_shared_contract.md`
+Those files explain the scope, the rules, the current demo target, and how the repo is expected to evolve.
 
-## Team split
+## What is in the repo
 
-- `akash` - backend, integration, system glue, final merge
-- `dev jaiswal` - AI / solver logic
-- `arnav gogia` - frontend
-- `mohit ray` - design and assets
-- `aadi shah` - research and data assumptions
-- `sakshi raghuwanshi` - PPT, story, communication
+- `apps/web` - Next.js UI for the planning desk
+- `backend/src/railniyojan/api` - FastAPI routes, validation, and run lifecycle
+- `backend/src/railniyojan/contracts` - shared data contracts
+- `backend/src/railniyojan/optimizer` - OR-Tools planner, validator, and worker
+- `backend/migrations` - Alembic migrations
+- `fixtures` - deterministic sample data and expected outputs
+- `openapi` - generated API schema used by the web app
 
-## Working style
+## Requirements
 
-1. Lock the shared contract first.
-2. Keep each role isolated in its own markdown file.
-3. Use mock JSON/CSV files before wiring real UI and backend together.
-4. Build one feature slice at a time.
+Install these before you start:
 
-## Suggested feature slices
+- Docker and Docker Compose
+- Python 3.12
+- Node.js compatible with the pinned Next.js version
+- `pnpm`
+- `uv`
 
-- dataset upload and validation
-- planning run creation
-- schedule output with reasons
-- manual lock and re-plan
-- export / report view
+## Quick start
 
-## Minimum demo
-
-The demo should be able to:
-- load sample data
-- run the planner
-- return a schedule
-- show unscheduled jobs with reasons
-- support one manual override and re-run
-
-## Locked stack
-
-- Frontend: Next.js, React, TypeScript
-- Backend: Python FastAPI, Pydantic
-- Solver: OR-Tools CP-SAT
-- Processing: pandas or polars
-- Database: PostgreSQL + PostGIS
-- Deployment: Docker Compose
-- Input: controlled JSON/CSV snapshots
-- ML: optional, with deterministic fallback
-
-## Repository structure
-
-- `apps/web` - Next.js planner interface.
-- `backend/src/railniyojan/api` - FastAPI routes and validation.
-- `backend/src/railniyojan/contracts` - executable Pydantic contract.
-- `backend/src/railniyojan/optimizer` - solver input/output boundary and worker.
-- `backend/migrations` - Alembic database migrations.
-- `fixtures` - deterministic shared scenarios and expected results.
-- `openapi` - generated API schema consumed by the frontend.
-
-## Start development
+1. Copy the environment file.
 
 ```bash
 cp .env.example .env
+```
+
+2. Install dependencies.
+
+```bash
 make install
-make test
+```
+
+3. Start the full stack.
+
+```bash
 make dev
 ```
 
-Docker is required for `make dev`. See `docs/local_development.md` for individual commands.
+4. Open the app.
 
-## Status
+- Web UI: `http://localhost:3000`
+- API health check: `http://localhost:8000/health`
 
-The shared development foundation is implemented. Dataset validation is executable; planning, solver execution, locks, re-planning, approval, export, and RapidBlock remain feature work. Typed foundation routes return `501 FOUNDATION_NOT_IMPLEMENTED` instead of fake success.
+The Docker Compose stack starts:
+
+- `db` for PostgreSQL/PostGIS
+- `api` for FastAPI
+- `optimizer` for the CP-SAT worker
+- `web` for Next.js
+
+## Useful commands
+
+```bash
+make test        # backend + web tests
+make test-backend
+make test-web
+make test-e2e
+make lint
+make typecheck
+make migrate
+make openapi
+```
+
+## Demo data
+
+The baseline fixture lives at `fixtures/baseline_valid/dataset.json`.
+
+That fixture is what the current demo flow is built around.
+
+## Current status
+
+- The mandatory demo slice is implemented.
+- The UI, API, planner, and validator are wired into the actual runtime flow.
+- The current snapshot/run store is process-local, so it does not survive an API restart.
+- RapidBlock is optional and not required for the core demo.
+
+## Common mistakes
+
+- Do not assume the planner output is a railway sanction.
+- Do not edit the tracker unless you are Akash.
+- Do not change the shared contract without updating the docs, fixtures, and tests that depend on it.
+
+## Need the exact workflow?
+
+Read `docs/local_development.md`. It has the step-by-step day-to-day commands and troubleshooting notes.
