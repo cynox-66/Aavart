@@ -22,12 +22,13 @@ This file is the working tracker for the team.
 |---|---|---|---|
 | Shared contract lock | Akash | done | Contract and deviation rules already exist |
 | Progress tracker | Akash | done | Updated from passing backend, frontend, build, and browser evidence |
-| Backend foundation | Akash | done | Validate, plan, inspect, lock, re-plan, approve, and guarded CSV export are implemented |
+| Backend foundation | Akash | done | Validate, plan, inspect, lock, re-plan, approve, guarded CSV export, KPI summary, AI estimate evidence, audit logging, and SQL store path are implemented |
 | Solver core | Dev Jaiswal | done | Deterministic OR-Tools CP-SAT output, reason codes, and independent validation are implemented |
 | Frontend shell | Arnav | done | The UI executes the real backend workflow and renders API state only |
 | Sample data and fixtures | Aadi | done | The deterministic baseline drives backend and browser acceptance tests |
 | UI/assets polish | Mohit | done | Desktop/mobile planning desk and explicit run-state labels are implemented |
 | Demo script | Sakshi | done | The script matches synchronous planning and CSV export behavior |
+| RapidBlock extension | Akash | partial | Backend endpoints and guardrail tests exist; UI path remains Arnav-owned |
 
 ## Completion criteria
 
@@ -41,17 +42,17 @@ The project is complete only when all of these are true:
 6. Export is blocked until a valid human-approved run exists.
 7. The demo script matches the actual runtime behavior and does not claim live railway sanctioning or validated ML.
 
-RapidBlock is optional. It is not required for completion of the mandatory demo.
+RapidBlock is optional. It is not required for completion of the mandatory demo, but it is still unfinished.
 
 ## Verification record
 
 - Mandatory demo status: complete on 2026-08-29.
-- Backend: 13 tests passed; Ruff and strict mypy passed.
+- Backend: 20 tests passed; Ruff and strict mypy passed.
 - Frontend: typecheck, lint, unit test, and production build passed.
 - Browser: 2 Playwright tests passed; the guarded end-to-end workflow completed in about one second.
 - Contract: generated OpenAPI and TypeScript API schema are current.
-- Known limitation: snapshots and runs use process-local memory and reset when the API restarts. The PostgreSQL schema exists, but durable repository wiring is not part of the completed hackathon demo slice.
-- Optional work not completed: RapidBlock.
+- Known limitation: default test mode still uses process-local memory. Durable demo mode requires `STORE_BACKEND=sql` and migrated Postgres.
+- Optional work not completed: RapidBlock UI surface, BlockReady, WeatherGuard, and monthly planning.
 
 ## Working cycle
 
@@ -66,8 +67,8 @@ RapidBlock is optional. It is not required for completion of the mandatory demo.
 ## Delivery order
 
 1. Mandatory core flow is complete and verified.
-2. Wire the existing PostgreSQL schema only if durable demo state is required.
-3. Add RapidBlock only if the stable core flow must be extended.
+2. Hand Arnav the KPI and RapidBlock backend fields if the UI will present them.
+3. Add WeatherGuard or monthly planning only after a new decision-log entry.
 
 ## Status values
 

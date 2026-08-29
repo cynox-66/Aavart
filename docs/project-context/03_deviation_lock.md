@@ -6,7 +6,7 @@ These are approved SIH simplifications. Team members must not expand scope witho
 
 - Controlled CSV/JSON replaces live railway adapters.
 - One explicit corridor replaces the full railway network.
-- Deterministic priority and duration are used first; ML is optional and non-blocking.
+- Local heuristic AI assistance runs before planning; deterministic fallback remains mandatory.
 - Weekly planning is implemented; monthly planning is not.
 - `Demo Ruleset v1` is fixed and visible.
 - No BDMS write integration is implemented.
@@ -21,7 +21,7 @@ These are approved SIH simplifications. Team members must not expand scope witho
 - Do not treat solver output as legal or operational authority.
 - Do not silently change canonical field names or status values.
 - Do not add live integrations during the hackathon demo.
-- Do not add ML that changes behavior without a deterministic fallback.
+- Do not add ML or AI assistance that changes behavior without deterministic fallback evidence.
 - Do not remove reason codes, snapshots, locks, audit history, or validation.
 - Do not broaden to network-wide planning.
 - Do not claim production readiness.

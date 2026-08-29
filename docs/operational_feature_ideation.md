@@ -6,34 +6,32 @@ This document tracks candidate add-ons for RailNiyojan. They are not part of the
 
 | Area | Status | What exists now | What is missing |
 |---|---|---|---|
-| Core foundation | Done | Health endpoint, dataset validation, typed API contract, frontend shell, smoke tests | Real planning flow, real persistence, real solver output |
-| Planning runs | Not done | Routes exist | `create`, `get`, `lock`, `replan`, `approve`, `export` still return `501 FOUNDATION_NOT_IMPLEMENTED` |
-| Demo slice | Partly done | Baseline fixture validation is executable | End-to-end schedule generation and explanation |
-| Operational add-ons | Not done | Design notes only | `BlockReady`, `WeatherGuard`, `RapidBlock` are not implemented as product features |
+| Core foundation | Done | Health endpoint, dataset validation, planning flow, typed API contract, frontend shell, smoke tests | Full production hardening |
+| Planning runs | Done | `create`, `get`, `lock`, `replan`, `approve`, export, KPI summary, and AI estimate evidence are implemented | UI wiring for new KPI/RapidBlock fields |
+| Demo slice | Done | Baseline fixture validation, planning, lock/re-plan, approval, export, SQL-backed persistence path, and RapidBlock backend are executable | Monthly planning remains out of scope |
+| Operational add-ons | Partial | RapidBlock backend exists; `BlockReady` and `WeatherGuard` remain design notes | Frontend RapidBlock surface, BlockReady, WeatherGuard |
 
 ## What matters
 
-- The repo is a scaffold with one real slice: dataset validation.
-- The UI is only a shell that reflects backend health.
-- Planning is still a stub, so this is not yet a usable railway planning product.
-- `RapidBlock` is only an ideation item right now, not shipped behavior.
+- The repo now has one real demo slice: validation, planning, lock/re-plan, approval, and export.
+- The UI executes the backend workflow and reflects backend truth.
+- A SQL-backed persistence path exists behind `STORE_BACKEND=sql`; default tests still use memory.
+- `RapidBlock` now has backend endpoints, guardrail tests, lineage, and audit/export records, but Arnav still owns any UI surface.
+- The AI layer is a local deterministic heuristic with fallback evidence, not validated ML superiority.
 
 ## What is missing
 
-- Actual planning output
-- Solver execution
-- Lock and re-plan behavior
-- Approval and export behavior
+- Frontend wiring for new KPI and RapidBlock fields
 - Weather-aware logic
-- Any emergency-planning flow
+- Full monthly planning
 
 ## Next 3 priorities
 
 | Priority | Why it comes next | Success looks like |
 |---|---|---|
-| 1. Planning run creation | Without this, there is no product flow, only validation and placeholders | A planning run creates a real plan from the baseline fixture |
-| 2. Lock / re-plan / approve / export | These are the core workflow steps after planning | A locked run can be re-planned and exported with audit trail intact |
-| 3. One end-to-end demo slice | The repo needs one visible journey, not disconnected endpoints | Upload -> validate -> plan -> explain -> lock -> re-plan works in one demo path |
+| 1. KPI/RapidBlock UI handoff | Backend now exposes fields the UI does not yet present | Arnav wires backend truth without inventing state |
+| 2. WeatherGuard decision | Weather remains a design-only add-on | One deterministic disruption scenario if approved |
+| 3. Monthly planning decision | Monthly is still outside the deviation lock | Add only with a decision-log entry |
 
 ## Operational add-ons
 
@@ -45,9 +43,9 @@ Status: not implemented.
 
 ### RapidBlock
 
-`RapidBlock` is the emergency block planning idea. It is still only an optional extension concept, not production code.
+`RapidBlock` is the emergency block planning idea. The backend now accepts authorised urgent-job requests, creates a derived snapshot, launches a child run, preserves locks, and returns `CANDIDATE_READY`, `REJECTED`, or `NO_CANDIDATE`.
 
-Status: not implemented.
+Status: backend implemented; UI not implemented here.
 
 ### WeatherGuard
 
@@ -57,7 +55,7 @@ Status: not implemented.
 
 ## Recommended delivery order
 
-1. Finish the core upload, validation, planning, explanation, lock, re-plan, approval, and export flow.
-2. Add `BlockReady` first if the team wants an operational add-on.
-3. Add one deterministic `WeatherGuard` disruption scenario after the core flow is stable.
-4. Leave `RapidBlock` for last unless the demo specifically needs emergency-response behavior.
+1. Keep the core upload, validation, planning, explanation, lock, re-plan, approval, and export flow stable.
+2. Let Arnav wire KPI and RapidBlock fields if UI time allows.
+3. Add one deterministic `WeatherGuard` disruption scenario only after a scope decision.
+4. Keep monthly planning out unless Akash records a new decision.

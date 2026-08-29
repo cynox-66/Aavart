@@ -83,6 +83,7 @@ Allowed planner states: `QUEUED`, `RUNNING`, `FEASIBLE`, `OPTIMAL`, `INFEASIBLE`
 - Jobs must not overlap when they share an incompatible resource, section, conflict group, or isolation zone.
 - A locked schedule item cannot move or be deleted during re-planning.
 - Re-planning affects only unlocked jobs in the affected corridor/time region.
+- Every planning run records local heuristic AI estimate evidence or deterministic fallback evidence.
 - `priority` influences the objective; it does not override safety or compatibility constraints.
 - Missing, stale, or invalid input cannot produce an exportable plan.
 - A solver `FEASIBLE` result is not automatically `OPTIMAL`.

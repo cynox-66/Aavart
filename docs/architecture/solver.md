@@ -9,7 +9,7 @@ The solver converts a canonical snapshot and versioned ruleset into an explainab
 - Python
 - Google OR-Tools CP-SAT
 - pandas or polars for bounded data preparation
-- Optional ML provider for priority or duration estimates
+- Local heuristic AI estimator for priority or duration inputs
 
 ## Inputs
 
@@ -69,17 +69,18 @@ Return:
 
 Every job must receive a reason code. For unscheduled jobs, return the strongest blocking reason and any relevant alternatives. Do not return vague text such as `not possible` without a stable code.
 
-## ML boundary
+## AI boundary
 
-ML is optional. If enabled, it may estimate priority or duration only through a defined service interface. It must include:
+The local heuristic AI estimator runs before optimization. It may estimate priority or duration only through a defined service boundary. It must include:
 
 - deterministic fallback;
 - model/version metadata;
 - input lineage;
 - timeout/error fallback;
 - evaluation evidence before claims are made.
+- explicit note that the fallback path is deterministic and not a trained model guarantee.
 
-The demo must work with ML disabled.
+The demo must work even when estimates fall back to deterministic values.
 
 ## Post-solve validation
 

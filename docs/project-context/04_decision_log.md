@@ -46,3 +46,15 @@ Record disagreements here. Chat messages are not decisions.
 - Contract files affected: `docs/project-context/01_shared_contract.md`, `docs/data_contract.md`, `docs/api_contract.md`, `docs/database_schema.md`, architecture, safety, test, fixture, UI, and demo documentation.
 - Demo impact: Optional 60-90 second extension after the mandatory five-minute core flow. The core acceptance gate remains unchanged.
 - Approval: integration owner / 2026-08-29
+
+### DEC-004: Make AI assistance local and fallback-safe
+
+- Date: 2026-08-29
+- Owner: Akash
+- Status: ACCEPTED
+- Problem: The project needs a real AI layer without making unsafe or unproven ML claims.
+- Options considered: keep AI optional, call an external model, or run a local deterministic heuristic estimator with fallback evidence.
+- Decision: Every planning run executes a local heuristic AI-estimate step for priority and duration inputs, records estimate evidence, and falls back to deterministic values if estimates are invalid. The solver still enforces the same hard constraints, validator, locks, approval, and export guardrails.
+- Contract files affected: `docs/project-context/03_deviation_lock.md`, `docs/api_contract.md`, `docs/ruleset_demo_v1.md`, `docs/architecture/solver.md`, and API schemas.
+- Demo impact: Presenters may claim local heuristic AI assistance with deterministic fallback. They must not claim validated ML superiority.
+- Approval: Akash / 2026-08-29

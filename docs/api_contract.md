@@ -30,7 +30,26 @@ Response includes `run_id`, `state`, `snapshot_id`, `ruleset_version`, `created_
 
 ## `GET /planning-runs/{run_id}`
 
-Return run metadata, schedule items, unscheduled jobs, reason codes, validator result, KPI summary, locks, and approval state.
+Return run metadata, schedule items, unscheduled jobs, reason codes, validator result, KPI summary, local heuristic AI estimate evidence, locks, approval state, and stored changes.
+
+KPI fields:
+
+```json
+{
+  "baseline_closure_minutes": 390,
+  "optimized_closure_minutes": 270,
+  "scheduled_maintenance_minutes": 270,
+  "rejected_maintenance_minutes": 120,
+  "baseline_asset_downtime_minutes": 390,
+  "optimized_asset_downtime_minutes": 270,
+  "downtime_reduction_minutes": 120,
+  "downtime_reduction_percent": 30.77
+}
+```
+
+AI estimate evidence is local and deterministic. It records `LOCAL_HEURISTIC` or `DETERMINISTIC_FALLBACK`; it is not evidence of validated ML superiority.
+
+The response is backend truth only. The UI should render these values directly and not invent new KPI or planning state.
 
 ## `POST /planning-runs/{run_id}/lock`
 

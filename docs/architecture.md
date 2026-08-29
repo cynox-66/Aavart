@@ -10,7 +10,7 @@ This is the implementation architecture for RailNiyojan, the SIH26027 hackathon 
 - Keep input data, rules, solver results, approvals, and exports auditable.
 - Make safety and compatibility constraints stronger than optimization preferences.
 - Keep the system simple enough to run on one host with Docker Compose.
-- Leave clear boundaries for future railway adapters and optional ML services.
+- Leave clear boundaries for future railway adapters and local AI estimate services.
 
 ## Locked technology stack
 
@@ -23,7 +23,7 @@ This is the implementation architecture for RailNiyojan, the SIH26027 hackathon 
 | Database | PostgreSQL with PostGIS | Transactional persistence and corridor data |
 | Input | CSV/JSON snapshots | No live railway adapters in the demo |
 | Deployment | Docker Compose | Single host or VM |
-| ML | Optional, non-blocking | Deterministic fallback is mandatory |
+| AI estimates | Local heuristic, fallback-safe | Deterministic fallback is mandatory |
 
 ## System boundary
 
@@ -125,6 +125,6 @@ No Kubernetes, high availability, multi-worker scaling, or live identity integra
 ## Future extension points
 
 - File adapters can later implement TMS, SMMS, TDMS, COA, timetable, and BDMS boundaries.
-- ML services can later provide priority or duration estimates behind the same deterministic fallback contract.
+- AI estimate services provide priority or duration inputs behind the same deterministic fallback contract.
 - Monthly planning can later create capacity reservations above the weekly planner.
 - Multi-corridor planning can later extend topology and conflict scope.

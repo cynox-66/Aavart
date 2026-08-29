@@ -42,13 +42,13 @@ Unique constraint: `(snapshot_id, id)`.
 
 ### `planning_runs`
 
-`id`, `snapshot_id`, `parent_run_id`, `trigger_type`, `rapidblock_request_id`, `ruleset_version`, `state`, `solver_version`, `deterministic_seed`, `objective_value`, `bound`, `gap`, `created_at`, `completed_at`.
+`id`, `snapshot_id`, `parent_run_id`, `trigger_type`, `rapidblock_request_id`, `ruleset_version`, `state`, `solver_version`, `deterministic_seed`, `objective_value`, `bound`, `gap`, `raw_metadata`, `created_at`, `completed_at`.
 
 `trigger_type` is `BASELINE`, `REPLAN`, or `RAPIDBLOCK`.
 
 ### `rapidblock_requests`
 
-`id`, `base_run_id`, `base_snapshot_id`, `derived_snapshot_id`, `child_run_id`, `actor`, `actor_role`, `justification`, `source_reported_at`, `urgent_job_id`, `state`, `reason_codes`, `created_at`, `updated_at`.
+`id`, `base_run_id`, `base_snapshot_id`, `derived_snapshot_id`, `child_run_id`, `actor`, `actor_role`, `justification`, `source_reported_at`, `urgent_job_id`, `request_payload`, `state`, `reason_codes`, `changed_jobs`, `preserved_locked_jobs`, `created_at`, `updated_at`.
 
 ### `schedule_items`
 

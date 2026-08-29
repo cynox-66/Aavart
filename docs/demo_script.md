@@ -20,6 +20,8 @@ Show one scheduled job and one unscheduled job.
 
 Expected: both have stable reason codes; the unscheduled job has a readable blocking reason.
 
+Also show the KPI comparison: baseline closure minutes, optimized closure minutes, asset downtime proxy, and downtime reduction percentage. Explain that the baseline is a simple manual department-by-department sequence over the same controlled data.
+
 ## 4. Lock and re-plan
 
 Lock one accepted schedule item. Trigger re-planning for its affected section or window.
@@ -53,5 +55,7 @@ If time is limited or the extension is unstable, omit RapidBlock and run the man
 - Do not claim live railway integration.
 - Do not claim automatic sanctioning.
 - Do not claim validated ML.
+- Say "local heuristic AI assistance with deterministic fallback," not "validated ML model."
+- If you show RapidBlock, say it is a backend candidate flow, not an approved emergency block.
 - If a run is infeasible or times out, show that export is correctly blocked rather than hiding the failure.
 - Never say that RapidBlock creates, grants, sanctions, or authorises an operational block.

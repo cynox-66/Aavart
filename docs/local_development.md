@@ -49,6 +49,8 @@ Keep secrets in an untracked `.env` file. Provide `.env.example` with non-secret
 
 There is no seed command yet. The baseline fixture is validated through `POST /datasets/validate`; database snapshot persistence belongs to the upload/validation feature slice.
 
+For the durable backend path, set `STORE_BACKEND=sql` and run the existing migration before starting the API. Default local tests keep `STORE_BACKEND=memory` so they do not require Docker/Postgres.
+
 The web container packages the verified Next.js standalone output. Run `pnpm build:web` before rebuilding its image; frontend source is not hot-reloaded inside Compose.
 
 ## Troubleshooting rules

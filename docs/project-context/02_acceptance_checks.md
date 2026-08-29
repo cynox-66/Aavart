@@ -42,14 +42,14 @@ The demo is complete only when all checks pass.
 
 ## Optional RapidBlock extension gate
 
-- [ ] An authorised demo planner can submit one canonical urgent job against an existing run.
-- [ ] The base snapshot and base run remain unchanged.
-- [ ] The request creates a derived snapshot and child run with traceable parent lineage.
-- [ ] Every locked item remains exactly unchanged in the child run.
-- [ ] Re-planning changes only affected unlocked work.
-- [ ] A feasible request shows a validated `CANDIDATE_READY` comparison with stable reason codes.
-- [ ] An unauthorised actor, missing eligible window, or locked conflict returns a stable failure reason and no false candidate.
-- [ ] A cross-corridor request is rejected with `OUTSIDE_PLANNING_SCOPE` and does not broaden the base run.
-- [ ] The child run uses the normal approval and export guardrails.
+- [x] An authorised demo planner can submit one canonical urgent job against an existing run.
+- [x] The base snapshot and base run remain unchanged.
+- [x] The request creates a derived snapshot and child run with traceable parent lineage.
+- [x] Every locked item remains exactly unchanged in the child run.
+- [x] Re-planning changes only affected unlocked work.
+- [x] A feasible request shows a validated `CANDIDATE_READY` comparison with stable reason codes.
+- [x] An unauthorised actor, missing eligible window, or locked conflict returns a stable failure reason and no false candidate.
+- [x] A cross-corridor request is rejected with `OUTSIDE_PLANNING_SCOPE` and does not broaden the base run.
+- [x] The child run uses the normal approval and export guardrails.
 - [ ] The UI and presenter never describe the candidate as granted, sanctioned, or operationally available.
 - [ ] The optional RapidBlock extension can be demonstrated in 60-90 seconds without changing the mandatory five-minute core flow.

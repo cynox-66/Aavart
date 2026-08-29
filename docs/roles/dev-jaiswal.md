@@ -4,7 +4,7 @@
 
 - CP-SAT model.
 - Compatibility, resource, section, isolation, and train-path constraints.
-- Deterministic priority and duration behavior.
+- Local heuristic AI estimates plus deterministic priority and duration fallback behavior.
 - Solver status, reason codes, and post-solve validation inputs.
 
 ## Must implement
@@ -18,7 +18,7 @@
 
 ## Must not implement
 
-- ML as a required dependency.
+- External ML as a required dependency.
 - Constraints that contradict the shared contract.
 - Silent fallback that makes an unsafe plan look valid.
 - Network-wide topology.

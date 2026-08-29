@@ -38,9 +38,11 @@ RapidBlock uses this unchanged ruleset. The urgent job may carry priority `100`,
 - Use fixed setup and restoration buffers from the sample scenario.
 - Use a fixed deterministic seed.
 
-## ML policy
+## AI policy
 
-ML is disabled by default. If a provider is unavailable, times out, or returns invalid output, use deterministic values and record the fallback event.
+Every planning run executes the local heuristic AI-estimate step before optimization. It may adjust objective inputs such as priority within the existing contract range and normalize duration inside the existing bounds. If an estimate is invalid, the backend uses deterministic fallback values and records `DETERMINISTIC_FALLBACK`.
+
+This is not validated ML superiority. It is local AI assistance with traceable fallback evidence.
 
 ## Approval policy
 

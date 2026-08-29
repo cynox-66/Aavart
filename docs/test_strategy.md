@@ -10,7 +10,10 @@ Cover:
 - Ruleset loading.
 - Reason-code generation.
 - Approval and export state transitions.
+- KPI comparison between manual baseline and optimized schedule.
+- Local heuristic AI estimate evidence and deterministic fallback behavior.
 - RapidBlock actor, request-state, and snapshot/run-lineage validation.
+- SQL-backed store reload for snapshots, runs, approvals, exports, audit events, and RapidBlock records.
 
 ## Solver tests
 
@@ -34,6 +37,8 @@ The independent validator must catch intentionally corrupted solver output, incl
 Test every endpoint for valid input, invalid input, missing resources, illegal state transitions, and correct error codes.
 
 For RapidBlock, verify authorised and unauthorised actors, canonical urgent-job validation, unavailable windows, cross-corridor rejection, immutable base snapshots, derived snapshot lineage, child-run lineage, lock conflicts, and normal approval/export enforcement.
+
+Current automated backend evidence covers KPI math, local heuristic estimate evidence, SQL-backed reload, authorised RapidBlock candidate creation, unauthorised actor rejection, outside-scope rejection, no eligible window rejection, locked conflict rejection, and base-run immutability.
 
 ## End-to-end tests
 
