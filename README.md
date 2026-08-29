@@ -93,7 +93,7 @@ That fixture is what the current demo flow is built around.
 
 - The mandatory demo slice is implemented.
 - The UI, API, planner, and validator are wired into the actual runtime flow.
-- The current snapshot/run store is process-local, so it does not survive an API restart.
+- Default local test mode uses process-local storage. Durable demo mode is available with `STORE_BACKEND=sql` after running the database migration.
 - RapidBlock is optional and not required for the core demo.
 
 ## Common mistakes
