@@ -1,6 +1,58 @@
 {
   "components": {
     "schemas": {
+      "AiEstimate": {
+        "additionalProperties": false,
+        "properties": {
+          "duration_max_minutes": {
+            "title": "Duration Max Minutes",
+            "type": "integer"
+          },
+          "duration_min_minutes": {
+            "title": "Duration Min Minutes",
+            "type": "integer"
+          },
+          "duration_minutes": {
+            "title": "Duration Minutes",
+            "type": "integer"
+          },
+          "job_id": {
+            "title": "Job Id",
+            "type": "string"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "source": {
+            "enum": [
+              "LOCAL_HEURISTIC",
+              "DETERMINISTIC_FALLBACK"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "source",
+          "priority",
+          "duration_minutes",
+          "duration_min_minutes",
+          "duration_max_minutes",
+          "reason_codes"
+        ],
+        "title": "AiEstimate",
+        "type": "object"
+      },
       "ApprovalRequest": {
         "additionalProperties": false,
         "properties": {
@@ -168,6 +220,109 @@
         "title": "HTTPValidationError",
         "type": "object"
       },
+      "Job": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed_windows": {
+            "items": {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Allowed Windows",
+            "type": "array"
+          },
+          "asset_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "department": {
+            "enum": [
+              "TRACK",
+              "SIGNAL",
+              "ELECTRICAL",
+              "CIVIL"
+            ],
+            "title": "Department",
+            "type": "string"
+          },
+          "duration_max_minutes": {
+            "exclusiveMinimum": 0.0,
+            "title": "Duration Max Minutes",
+            "type": "integer"
+          },
+          "duration_min_minutes": {
+            "exclusiveMinimum": 0.0,
+            "title": "Duration Min Minutes",
+            "type": "integer"
+          },
+          "duration_minutes": {
+            "exclusiveMinimum": 0.0,
+            "title": "Duration Minutes",
+            "type": "integer"
+          },
+          "job_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "title": "Job Id",
+            "type": "string"
+          },
+          "priority": {
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Priority",
+            "type": "integer"
+          },
+          "required_resources": {
+            "items": {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9._:-]+$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Required Resources",
+            "type": "array"
+          },
+          "section_id": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9._:-]+$",
+            "title": "Section Id",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/JobStatus"
+          },
+          "work_type": {
+            "minLength": 1,
+            "title": "Work Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "department",
+          "asset_id",
+          "section_id",
+          "work_type",
+          "priority",
+          "duration_minutes",
+          "duration_min_minutes",
+          "duration_max_minutes",
+          "required_resources",
+          "allowed_windows",
+          "status"
+        ],
+        "title": "Job",
+        "type": "object"
+      },
       "JobContext": {
         "additionalProperties": false,
         "properties": {
@@ -205,6 +360,66 @@
           "priority"
         ],
         "title": "JobContext",
+        "type": "object"
+      },
+      "JobStatus": {
+        "enum": [
+          "UNSCHEDULED",
+          "SCHEDULED",
+          "LOCKED",
+          "REJECTED",
+          "INVALID"
+        ],
+        "title": "JobStatus",
+        "type": "string"
+      },
+      "KpiSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_asset_downtime_minutes": {
+            "title": "Baseline Asset Downtime Minutes",
+            "type": "integer"
+          },
+          "baseline_closure_minutes": {
+            "title": "Baseline Closure Minutes",
+            "type": "integer"
+          },
+          "downtime_reduction_minutes": {
+            "title": "Downtime Reduction Minutes",
+            "type": "integer"
+          },
+          "downtime_reduction_percent": {
+            "title": "Downtime Reduction Percent",
+            "type": "number"
+          },
+          "optimized_asset_downtime_minutes": {
+            "title": "Optimized Asset Downtime Minutes",
+            "type": "integer"
+          },
+          "optimized_closure_minutes": {
+            "title": "Optimized Closure Minutes",
+            "type": "integer"
+          },
+          "rejected_maintenance_minutes": {
+            "title": "Rejected Maintenance Minutes",
+            "type": "integer"
+          },
+          "scheduled_maintenance_minutes": {
+            "title": "Scheduled Maintenance Minutes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "baseline_closure_minutes",
+          "optimized_closure_minutes",
+          "scheduled_maintenance_minutes",
+          "rejected_maintenance_minutes",
+          "baseline_asset_downtime_minutes",
+          "optimized_asset_downtime_minutes",
+          "downtime_reduction_minutes",
+          "downtime_reduction_percent"
+        ],
+        "title": "KpiSummary",
         "type": "object"
       },
       "LockRequest": {
@@ -323,6 +538,13 @@
       "PlanningRunDetail": {
         "additionalProperties": false,
         "properties": {
+          "ai_estimates": {
+            "items": {
+              "$ref": "#/components/schemas/AiEstimate"
+            },
+            "title": "Ai Estimates",
+            "type": "array"
+          },
           "approval": {
             "anyOf": [
               {
@@ -373,6 +595,9 @@
             },
             "title": "Jobs",
             "type": "array"
+          },
+          "kpis": {
+            "$ref": "#/components/schemas/KpiSummary"
           },
           "parent_run_id": {
             "anyOf": [
@@ -435,7 +660,9 @@
           "jobs",
           "validator",
           "changes",
-          "export_ready"
+          "export_ready",
+          "kpis",
+          "ai_estimates"
         ],
         "title": "PlanningRunDetail",
         "type": "object"
@@ -452,6 +679,254 @@
           "FAILED"
         ],
         "title": "PlanningRunState",
+        "type": "string"
+      },
+      "RapidBlockDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "actor": {
+            "title": "Actor",
+            "type": "string"
+          },
+          "actor_role": {
+            "title": "Actor Role",
+            "type": "string"
+          },
+          "base_run_id": {
+            "title": "Base Run Id",
+            "type": "string"
+          },
+          "base_snapshot_id": {
+            "title": "Base Snapshot Id",
+            "type": "string"
+          },
+          "candidate_plan_status": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanningRunState"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changed_jobs": {
+            "additionalProperties": {
+              "enum": [
+                "SCHEDULED",
+                "REJECTED",
+                "PRESERVED",
+                "CHANGED"
+              ],
+              "type": "string"
+            },
+            "title": "Changed Jobs",
+            "type": "object"
+          },
+          "child_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Child Run Id"
+          },
+          "derived_snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derived Snapshot Id"
+          },
+          "justification": {
+            "title": "Justification",
+            "type": "string"
+          },
+          "preserved_locked_jobs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Preserved Locked Jobs",
+            "type": "array"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "source_reported_at": {
+            "format": "date-time",
+            "title": "Source Reported At",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/RapidBlockState"
+          },
+          "status_url": {
+            "title": "Status Url",
+            "type": "string"
+          },
+          "urgent_job": {
+            "$ref": "#/components/schemas/Job"
+          },
+          "validator": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidatorSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "request_id",
+          "state",
+          "base_run_id",
+          "base_snapshot_id",
+          "reason_codes",
+          "status_url",
+          "actor",
+          "actor_role",
+          "justification",
+          "source_reported_at",
+          "urgent_job",
+          "changed_jobs",
+          "preserved_locked_jobs"
+        ],
+        "title": "RapidBlockDetail",
+        "type": "object"
+      },
+      "RapidBlockRequestCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "actor": {
+            "minLength": 1,
+            "title": "Actor",
+            "type": "string"
+          },
+          "actor_role": {
+            "const": "PLANNER",
+            "title": "Actor Role",
+            "type": "string"
+          },
+          "base_run_id": {
+            "minLength": 1,
+            "title": "Base Run Id",
+            "type": "string"
+          },
+          "justification": {
+            "minLength": 1,
+            "title": "Justification",
+            "type": "string"
+          },
+          "source_reported_at": {
+            "format": "date-time",
+            "title": "Source Reported At",
+            "type": "string"
+          },
+          "urgent_job": {
+            "$ref": "#/components/schemas/Job"
+          }
+        },
+        "required": [
+          "base_run_id",
+          "actor",
+          "actor_role",
+          "justification",
+          "source_reported_at",
+          "urgent_job"
+        ],
+        "title": "RapidBlockRequestCreate",
+        "type": "object"
+      },
+      "RapidBlockResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "base_run_id": {
+            "title": "Base Run Id",
+            "type": "string"
+          },
+          "base_snapshot_id": {
+            "title": "Base Snapshot Id",
+            "type": "string"
+          },
+          "child_run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Child Run Id"
+          },
+          "derived_snapshot_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Derived Snapshot Id"
+          },
+          "reason_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reason Codes",
+            "type": "array"
+          },
+          "request_id": {
+            "title": "Request Id",
+            "type": "string"
+          },
+          "state": {
+            "$ref": "#/components/schemas/RapidBlockState"
+          },
+          "status_url": {
+            "title": "Status Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "state",
+          "base_run_id",
+          "base_snapshot_id",
+          "reason_codes",
+          "status_url"
+        ],
+        "title": "RapidBlockResponse",
+        "type": "object"
+      },
+      "RapidBlockState": {
+        "enum": [
+          "SUBMITTED",
+          "VALIDATING",
+          "REJECTED",
+          "PLANNING",
+          "CANDIDATE_READY",
+          "NO_CANDIDATE"
+        ],
+        "title": "RapidBlockState",
         "type": "string"
       },
       "ReplanRequest": {
@@ -1029,6 +1504,89 @@
         "summary": "Replan",
         "tags": [
           "planning-runs"
+        ]
+      }
+    },
+    "/rapidblock-requests": {
+      "post": {
+        "operationId": "create_rapidblock_request_rapidblock_requests_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RapidBlockRequestCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RapidBlockResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Rapidblock Request",
+        "tags": [
+          "rapidblock"
+        ]
+      }
+    },
+    "/rapidblock-requests/{request_id}": {
+      "get": {
+        "operationId": "get_rapidblock_request_rapidblock_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RapidBlockDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Rapidblock Request",
+        "tags": [
+          "rapidblock"
         ]
       }
     }
