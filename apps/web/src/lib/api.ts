@@ -36,6 +36,21 @@ export interface JobContext {
   priority: number;
 }
 
+export interface ApprovalSummary {
+  reviewer: string;
+  comment: string;
+  approved_at: string;
+  run_id: string;
+  snapshot_id: string;
+  ruleset_version: string;
+}
+
+export interface ValidatorSummary {
+  passed: boolean;
+  issues: Array<Record<string, unknown>>;
+  validated_at: string;
+}
+
 export interface KpiSummary {
   baseline_closure_minutes: number;
   optimized_closure_minutes: number;
@@ -63,12 +78,14 @@ export interface RunDetail {
   snapshot_id: string;
   snapshot_status: string;
   ruleset_version: string;
+  created_at: string;
+  completed_at: string | null;
   parent_run_id: string | null;
   schedule_items: ScheduleItem[];
   unscheduled_jobs: Array<{ job_id: string; reason_codes: string[] }>;
   jobs: JobContext[];
-  validator: { passed: boolean; issues: Array<Record<string, unknown>>; validated_at: string };
-  approval: { reviewer: string; approved_at: string } | null;
+  validator: ValidatorSummary;
+  approval: ApprovalSummary | null;
   changes: Record<string, "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED">;
   export_ready: boolean;
   kpis: KpiSummary;
@@ -77,6 +94,53 @@ export interface RunDetail {
 
 interface RunCreated {
   run_id: string;
+}
+
+export interface RapidBlockJob {
+  job_id: string;
+  department: "TRACK" | "SIGNAL" | "ELECTRICAL" | "CIVIL";
+  asset_id: string;
+  section_id: string;
+  work_type: string;
+  priority: number;
+  duration_minutes: number;
+  duration_min_minutes: number;
+  duration_max_minutes: number;
+  required_resources: string[];
+  allowed_windows: string[];
+  status: "UNSCHEDULED" | "SCHEDULED" | "LOCKED" | "REJECTED" | "INVALID";
+}
+
+export interface RapidBlockRequestPayload {
+  base_run_id: string;
+  actor: string;
+  actor_role: "PLANNER";
+  justification: string;
+  source_reported_at: string;
+  urgent_job: RapidBlockJob;
+}
+
+export interface RapidBlockResponse {
+  request_id: string;
+  state: "SUBMITTED" | "VALIDATING" | "REJECTED" | "PLANNING" | "CANDIDATE_READY" | "NO_CANDIDATE";
+  base_run_id: string;
+  base_snapshot_id: string;
+  derived_snapshot_id: string | null;
+  child_run_id: string | null;
+  reason_codes: string[];
+  status_url: string;
+}
+
+export interface RapidBlockDetail extends RapidBlockResponse {
+  actor: string;
+  actor_role: "PLANNER";
+  justification: string;
+  source_reported_at: string;
+  urgent_job: RapidBlockJob;
+  changed_jobs: Record<string, "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED">;
+  preserved_locked_jobs: string[];
+  validator: ValidatorSummary | null;
+  candidate_plan_status: RunDetail["state"] | null;
 }
 
 export class ApiError extends Error {
@@ -103,8 +167,12 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   return body;
 }
 
-export function validateDataset(payload: unknown): Promise<ValidationResponse> {
-  return requestJson("/datasets/validate", { method: "POST", body: JSON.stringify(payload) });
+export function validateDataset(payload: unknown, contentType = "application/json"): Promise<ValidationResponse> {
+  return requestJson("/datasets/validate", {
+    method: "POST",
+    headers: { "Content-Type": contentType },
+    body: contentType === "text/csv" ? String(payload) : JSON.stringify(payload),
+  });
 }
 
 export async function createPlanningRun(snapshotId: string): Promise<RunDetail> {
@@ -148,6 +216,17 @@ export async function approveRun(runId: string, reviewer: string): Promise<RunDe
     body: JSON.stringify({ reviewer, comment: "Reviewed schedule and independent validator result" }),
   });
   return getPlanningRun(runId);
+}
+
+export function createRapidBlockRequest(payload: RapidBlockRequestPayload): Promise<RapidBlockResponse> {
+  return requestJson("/rapidblock-requests", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getRapidBlockRequest(requestId: string): Promise<RapidBlockDetail> {
+  return requestJson(`/rapidblock-requests/${requestId}`);
 }
 
 export async function downloadRun(runId: string): Promise<void> {
