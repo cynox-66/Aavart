@@ -36,6 +36,27 @@ export interface JobContext {
   priority: number;
 }
 
+export interface KpiSummary {
+  baseline_closure_minutes: number;
+  optimized_closure_minutes: number;
+  scheduled_maintenance_minutes: number;
+  rejected_maintenance_minutes: number;
+  baseline_asset_downtime_minutes: number;
+  optimized_asset_downtime_minutes: number;
+  downtime_reduction_minutes: number;
+  downtime_reduction_percent: number;
+}
+
+export interface AiEstimate {
+  job_id: string;
+  source: "LOCAL_HEURISTIC" | "DETERMINISTIC_FALLBACK";
+  priority: number;
+  duration_minutes: number;
+  duration_min_minutes: number;
+  duration_max_minutes: number;
+  reason_codes: string[];
+}
+
 export interface RunDetail {
   run_id: string;
   state: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
@@ -50,6 +71,8 @@ export interface RunDetail {
   approval: { reviewer: string; approved_at: string } | null;
   changes: Record<string, "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED">;
   export_ready: boolean;
+  kpis: KpiSummary;
+  ai_estimates: AiEstimate[];
 }
 
 interface RunCreated {

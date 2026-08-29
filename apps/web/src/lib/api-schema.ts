@@ -140,10 +140,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/rapidblock-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Rapidblock Request */
+        post: operations["create_rapidblock_request_rapidblock_requests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/rapidblock-requests/{request_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Rapidblock Request */
+        get: operations["get_rapidblock_request_rapidblock_requests__request_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AiEstimate */
+        AiEstimate: {
+            /** Duration Max Minutes */
+            duration_max_minutes: number;
+            /** Duration Min Minutes */
+            duration_min_minutes: number;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Job Id */
+            job_id: string;
+            /** Priority */
+            priority: number;
+            /** Reason Codes */
+            reason_codes: string[];
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "LOCAL_HEURISTIC" | "DETERMINISTIC_FALLBACK";
+        };
         /** ApprovalRequest */
         ApprovalRequest: {
             /** Comment */
@@ -220,6 +274,35 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** Job */
+        Job: {
+            /** Allowed Windows */
+            allowed_windows: string[];
+            /** Asset Id */
+            asset_id: string;
+            /**
+             * Department
+             * @enum {string}
+             */
+            department: "TRACK" | "SIGNAL" | "ELECTRICAL" | "CIVIL";
+            /** Duration Max Minutes */
+            duration_max_minutes: number;
+            /** Duration Min Minutes */
+            duration_min_minutes: number;
+            /** Duration Minutes */
+            duration_minutes: number;
+            /** Job Id */
+            job_id: string;
+            /** Priority */
+            priority: number;
+            /** Required Resources */
+            required_resources: string[];
+            /** Section Id */
+            section_id: string;
+            status: components["schemas"]["JobStatus"];
+            /** Work Type */
+            work_type: string;
+        };
         /** JobContext */
         JobContext: {
             /** Asset Id */
@@ -234,6 +317,30 @@ export interface components {
             section_id: string;
             /** Work Type */
             work_type: string;
+        };
+        /**
+         * JobStatus
+         * @enum {string}
+         */
+        JobStatus: "UNSCHEDULED" | "SCHEDULED" | "LOCKED" | "REJECTED" | "INVALID";
+        /** KpiSummary */
+        KpiSummary: {
+            /** Baseline Asset Downtime Minutes */
+            baseline_asset_downtime_minutes: number;
+            /** Baseline Closure Minutes */
+            baseline_closure_minutes: number;
+            /** Downtime Reduction Minutes */
+            downtime_reduction_minutes: number;
+            /** Downtime Reduction Percent */
+            downtime_reduction_percent: number;
+            /** Optimized Asset Downtime Minutes */
+            optimized_asset_downtime_minutes: number;
+            /** Optimized Closure Minutes */
+            optimized_closure_minutes: number;
+            /** Rejected Maintenance Minutes */
+            rejected_maintenance_minutes: number;
+            /** Scheduled Maintenance Minutes */
+            scheduled_maintenance_minutes: number;
         };
         /** LockRequest */
         LockRequest: {
@@ -279,6 +386,8 @@ export interface components {
         };
         /** PlanningRunDetail */
         PlanningRunDetail: {
+            /** Ai Estimates */
+            ai_estimates: components["schemas"]["AiEstimate"][];
             approval?: components["schemas"]["ApprovalSummary"] | null;
             /** Changes */
             changes: {
@@ -295,6 +404,7 @@ export interface components {
             export_ready: boolean;
             /** Jobs */
             jobs: components["schemas"]["JobContext"][];
+            kpis: components["schemas"]["KpiSummary"];
             /** Parent Run Id */
             parent_run_id?: string | null;
             /** Ruleset Version */
@@ -317,6 +427,87 @@ export interface components {
          * @enum {string}
          */
         PlanningRunState: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
+        /** RapidBlockDetail */
+        RapidBlockDetail: {
+            /** Actor */
+            actor: string;
+            /** Actor Role */
+            actor_role: string;
+            /** Base Run Id */
+            base_run_id: string;
+            /** Base Snapshot Id */
+            base_snapshot_id: string;
+            candidate_plan_status?: components["schemas"]["PlanningRunState"] | null;
+            /** Changed Jobs */
+            changed_jobs: {
+                [key: string]: "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED";
+            };
+            /** Child Run Id */
+            child_run_id?: string | null;
+            /** Derived Snapshot Id */
+            derived_snapshot_id?: string | null;
+            /** Justification */
+            justification: string;
+            /** Preserved Locked Jobs */
+            preserved_locked_jobs: string[];
+            /** Reason Codes */
+            reason_codes: string[];
+            /** Request Id */
+            request_id: string;
+            /**
+             * Source Reported At
+             * Format: date-time
+             */
+            source_reported_at: string;
+            state: components["schemas"]["RapidBlockState"];
+            /** Status Url */
+            status_url: string;
+            urgent_job: components["schemas"]["Job"];
+            validator?: components["schemas"]["ValidatorSummary"] | null;
+        };
+        /** RapidBlockRequestCreate */
+        RapidBlockRequestCreate: {
+            /** Actor */
+            actor: string;
+            /**
+             * Actor Role
+             * @constant
+             */
+            actor_role: "PLANNER";
+            /** Base Run Id */
+            base_run_id: string;
+            /** Justification */
+            justification: string;
+            /**
+             * Source Reported At
+             * Format: date-time
+             */
+            source_reported_at: string;
+            urgent_job: components["schemas"]["Job"];
+        };
+        /** RapidBlockResponse */
+        RapidBlockResponse: {
+            /** Base Run Id */
+            base_run_id: string;
+            /** Base Snapshot Id */
+            base_snapshot_id: string;
+            /** Child Run Id */
+            child_run_id?: string | null;
+            /** Derived Snapshot Id */
+            derived_snapshot_id?: string | null;
+            /** Reason Codes */
+            reason_codes: string[];
+            /** Request Id */
+            request_id: string;
+            state: components["schemas"]["RapidBlockState"];
+            /** Status Url */
+            status_url: string;
+        };
+        /**
+         * RapidBlockState
+         * @enum {string}
+         */
+        RapidBlockState: "SUBMITTED" | "VALIDATING" | "REJECTED" | "PLANNING" | "CANDIDATE_READY" | "NO_CANDIDATE";
         /** ReplanRequest */
         ReplanRequest: {
             /** Affected Section Ids */
@@ -656,6 +847,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PlanningRunCreatedResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_rapidblock_request_rapidblock_requests_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RapidBlockRequestCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RapidBlockResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_rapidblock_request_rapidblock_requests__request_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                request_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RapidBlockDetail"];
                 };
             };
             /** @description Validation Error */
