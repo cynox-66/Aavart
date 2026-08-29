@@ -11,6 +11,7 @@ from railniyojan.contracts.api import (
     ValidationIssue,
 )
 from railniyojan.contracts.models import DatasetPayload
+from railniyojan.planning.store import planning_store
 
 
 def _raw_count(payload: dict[str, Any], key: str) -> int:
@@ -219,10 +220,13 @@ def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
         )
 
     canonical = json.dumps(dataset.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
-    digest = hashlib.sha256(canonical.encode()).hexdigest()[:12].upper()
+    source_hash = hashlib.sha256(canonical.encode()).hexdigest()
+    digest = source_hash[:12].upper()
+    snapshot_id = f"SNAP-{digest}"
+    planning_store.register_snapshot(snapshot_id, source_hash, dataset)
     return DatasetValidationResponse(
         valid=True,
-        snapshot_candidate_id=f"SNAP-{digest}",
+        snapshot_candidate_id=snapshot_id,
         errors=[],
         counts=counts,
     )

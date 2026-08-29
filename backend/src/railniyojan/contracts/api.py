@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from railniyojan.contracts.enums import PlanningRunState
+from railniyojan.contracts.models import ScheduleItem
 
 
 class ApiModel(BaseModel):
@@ -45,6 +46,66 @@ class PlanningRunCreatedResponse(ApiModel):
     ruleset_version: str
     created_at: datetime
     status_url: str
+
+
+class UnscheduledJob(ApiModel):
+    job_id: str
+    reason_codes: list[str] = Field(min_length=1)
+
+
+class ValidatorSummary(ApiModel):
+    passed: bool
+    issues: list[dict[str, Any]] = Field(default_factory=list)
+    validated_at: datetime
+
+
+class ApprovalSummary(ApiModel):
+    reviewer: str
+    comment: str
+    approved_at: datetime
+    run_id: str
+    snapshot_id: str
+    ruleset_version: str
+
+
+class JobContext(ApiModel):
+    job_id: str
+    department: str
+    asset_id: str
+    section_id: str
+    work_type: str
+    priority: int
+
+
+class PlanningRunDetail(ApiModel):
+    run_id: str
+    state: PlanningRunState
+    snapshot_id: str
+    snapshot_status: str
+    ruleset_version: str
+    created_at: datetime
+    completed_at: datetime | None
+    parent_run_id: str | None = None
+    schedule_items: list[ScheduleItem]
+    unscheduled_jobs: list[UnscheduledJob]
+    jobs: list[JobContext]
+    validator: ValidatorSummary
+    approval: ApprovalSummary | None = None
+    changes: dict[str, Literal["SCHEDULED", "REJECTED", "PRESERVED", "CHANGED"]]
+    export_ready: bool
+
+
+class LockResponse(ApiModel):
+    run_id: str
+    job_id: str
+    locked: bool
+    reason_codes: list[str]
+
+
+class ApprovalResponse(ApiModel):
+    run_id: str
+    approved: bool
+    approval: ApprovalSummary
 
 
 class LockRequest(ApiModel):

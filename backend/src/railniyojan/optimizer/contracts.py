@@ -14,7 +14,7 @@ class OptimizerInput(BaseModel):
     ruleset_version: str
     deterministic_seed: int
     dataset: DatasetPayload
-    locked_items: list[ScheduleItem] = Field(default_factory=list)
+    fixed_items: list[ScheduleItem] = Field(default_factory=list)
 
 
 class OptimizerOutput(BaseModel):
@@ -31,4 +31,3 @@ class OptimizerOutput(BaseModel):
 
 class Planner(Protocol):
     def solve(self, planner_input: OptimizerInput) -> OptimizerOutput: ...
-

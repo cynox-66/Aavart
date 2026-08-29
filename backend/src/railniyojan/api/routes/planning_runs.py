@@ -1,70 +1,292 @@
-from typing import Any, NoReturn
+from __future__ import annotations
+
+import csv
+import io
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
+from fastapi.responses import Response
 
+from railniyojan.api.errors import ApiError
 from railniyojan.contracts.api import (
     ApprovalRequest,
-    ErrorResponse,
+    ApprovalResponse,
+    ApprovalSummary,
+    JobContext,
     LockRequest,
+    LockResponse,
     PlanningRunCreatedResponse,
     PlanningRunCreateRequest,
+    PlanningRunDetail,
     ReplanRequest,
+    UnscheduledJob,
+    ValidatorSummary,
 )
+from railniyojan.contracts.enums import PlanningRunState, ScheduleStatus
+from railniyojan.contracts.models import ScheduleItem
+from railniyojan.optimizer.contracts import OptimizerInput
+from railniyojan.optimizer.planner import DeterministicPlanner
+from railniyojan.optimizer.validator import validate_schedule
+from railniyojan.planning.store import RunRecord, SnapshotRecord, planning_store
 
 router = APIRouter(prefix="/planning-runs", tags=["planning-runs"])
-
-foundation_response: dict[int | str, dict[str, Any]] = {
-    501: {
-        "model": ErrorResponse,
-        "description": "Typed foundation route; implementation is assigned to its feature owner.",
-    }
-}
+RULESET_VERSION = "Demo Ruleset v1"
+planner = DeterministicPlanner()
 
 
-def _not_implemented(operation: str) -> NoReturn:
-    error = ErrorResponse(
-        code="FOUNDATION_NOT_IMPLEMENTED",
-        message=f"{operation} is defined but not implemented in the foundation scaffold",
-        details={"contract_status": "typed"},
+def _snapshot_or_404(snapshot_id: str) -> SnapshotRecord:
+    snapshot = planning_store.get_snapshot(snapshot_id)
+    if snapshot is None:
+        raise ApiError(404, "SNAPSHOT_NOT_FOUND", "Validate the dataset before creating a run")
+    return snapshot
+
+
+def _run_or_404(run_id: str) -> RunRecord:
+    run = planning_store.get_run(run_id)
+    if run is None:
+        raise ApiError(404, "RUN_NOT_FOUND", f"Planning run {run_id} was not found")
+    return run
+
+
+def _created(run: RunRecord) -> PlanningRunCreatedResponse:
+    return PlanningRunCreatedResponse(
+        run_id=run.run_id,
+        state=run.state,
+        snapshot_id=run.snapshot_id,
+        ruleset_version=run.ruleset_version,
+        created_at=run.created_at,
+        status_url=f"/planning-runs/{run.run_id}",
     )
-    raise FoundationRouteNotImplemented(error)
 
 
-class FoundationRouteNotImplemented(Exception):
-    def __init__(self, error: ErrorResponse) -> None:
-        self.error = error
+def _execute_run(
+    snapshot: SnapshotRecord,
+    ruleset_version: str,
+    *,
+    parent_run_id: str | None = None,
+    fixed_items: list[ScheduleItem] | None = None,
+    required_locked: list[ScheduleItem] | None = None,
+) -> RunRecord:
+    run_id = planning_store.next_run_id()
+    created_at = datetime.now(UTC)
+    output = planner.solve(
+        OptimizerInput(
+            run_id=run_id,
+            snapshot_id=snapshot.snapshot_id,
+            ruleset_version=ruleset_version,
+            deterministic_seed=26027,
+            dataset=snapshot.dataset,
+            fixed_items=fixed_items or [],
+        )
+    )
+    issues = validate_schedule(
+        snapshot.dataset,
+        output.schedule_items,
+        required_locked=required_locked or [],
+    )
+    if issues:
+        output.state = PlanningRunState.INVALID
+    now = datetime.now(UTC)
+    scheduled = {item.job_id for item in output.schedule_items}
+    changes = {
+        job.job_id: ("SCHEDULED" if job.job_id in scheduled else "REJECTED")
+        for job in snapshot.dataset.jobs
+    }
+    run = RunRecord(
+        run_id=run_id,
+        snapshot_id=snapshot.snapshot_id,
+        ruleset_version=ruleset_version,
+        state=output.state,
+        created_at=created_at,
+        completed_at=now,
+        schedule_items=output.schedule_items,
+        unscheduled_reason_codes=output.unscheduled_reason_codes,
+        validator_passed=not issues,
+        validator_issues=issues,
+        validated_at=now,
+        parent_run_id=parent_run_id,
+        changes=changes,
+    )
+    return planning_store.save_run(run)
 
 
-def foundation_exception_handler(_: object, exc: FoundationRouteNotImplemented) -> JSONResponse:
-    return JSONResponse(status_code=501, content=exc.error.model_dump(mode="json"))
+def _detail(run: RunRecord) -> PlanningRunDetail:
+    snapshot = _snapshot_or_404(run.snapshot_id)
+    export_ready = (
+        run.approval is not None
+        and run.state in {PlanningRunState.FEASIBLE, PlanningRunState.OPTIMAL}
+        and run.validator_passed
+        and snapshot.status == "VALID"
+    )
+    return PlanningRunDetail(
+        run_id=run.run_id,
+        state=run.state,
+        snapshot_id=run.snapshot_id,
+        snapshot_status=snapshot.status,
+        ruleset_version=run.ruleset_version,
+        created_at=run.created_at,
+        completed_at=run.completed_at,
+        parent_run_id=run.parent_run_id,
+        schedule_items=run.schedule_items,
+        unscheduled_jobs=[
+            UnscheduledJob(job_id=job_id, reason_codes=codes)
+            for job_id, codes in sorted(run.unscheduled_reason_codes.items())
+        ],
+        jobs=[
+            JobContext(
+                job_id=job.job_id,
+                department=job.department,
+                asset_id=job.asset_id,
+                section_id=job.section_id,
+                work_type=job.work_type,
+                priority=job.priority,
+            )
+            for job in snapshot.dataset.jobs
+        ],
+        validator=ValidatorSummary(
+            passed=run.validator_passed,
+            issues=run.validator_issues,
+            validated_at=run.validated_at,
+        ),
+        approval=run.approval,
+        changes=run.changes,  # type: ignore[arg-type]
+        export_ready=export_ready,
+    )
 
 
-@router.post("", response_model=PlanningRunCreatedResponse, responses=foundation_response)
-def create_planning_run(_: PlanningRunCreateRequest) -> PlanningRunCreatedResponse:
-    return _not_implemented("planning run creation")
+@router.post("", response_model=PlanningRunCreatedResponse, status_code=201)
+def create_planning_run(request: PlanningRunCreateRequest) -> PlanningRunCreatedResponse:
+    snapshot = _snapshot_or_404(request.snapshot_id)
+    if snapshot.status != "VALID":
+        raise ApiError(409, "STALE_SNAPSHOT", "The snapshot is not valid for planning")
+    if request.ruleset_version != RULESET_VERSION:
+        raise ApiError(400, "INVALID_INPUT", f"ruleset_version must be {RULESET_VERSION}")
+    return _created(_execute_run(snapshot, request.ruleset_version))
 
 
-@router.get("/{run_id}", responses=foundation_response, response_model=None)
-def get_planning_run(run_id: str) -> None:
-    _not_implemented(f"planning run lookup for {run_id}")
+@router.get("/{run_id}", response_model=PlanningRunDetail)
+def get_planning_run(run_id: str) -> PlanningRunDetail:
+    return _detail(_run_or_404(run_id))
 
 
-@router.post("/{run_id}/lock", responses=foundation_response, response_model=None)
-def lock_schedule_item(run_id: str, _: LockRequest) -> None:
-    _not_implemented(f"schedule lock for {run_id}")
+@router.post("/{run_id}/lock", response_model=LockResponse)
+def lock_schedule_item(run_id: str, request: LockRequest) -> LockResponse:
+    run = _run_or_404(run_id)
+    if run.state not in {PlanningRunState.FEASIBLE, PlanningRunState.OPTIMAL}:
+        raise ApiError(409, "INVALID_RUN_STATE", "Only a feasible schedule item can be locked")
+    item = next((item for item in run.schedule_items if item.job_id == request.job_id), None)
+    if item is None:
+        raise ApiError(404, "SCHEDULE_ITEM_NOT_FOUND", "The job is not scheduled in this run")
+    item.locked = True
+    item.status = ScheduleStatus.LOCKED
+    item.reason_codes = ["LOCK_PRESERVED"]
+    planning_store.update_run(run)
+    return LockResponse(
+        run_id=run_id,
+        job_id=request.job_id,
+        locked=True,
+        reason_codes=item.reason_codes,
+    )
 
 
-@router.post("/{run_id}/replan", responses=foundation_response, response_model=None)
-def replan(run_id: str, _: ReplanRequest) -> None:
-    _not_implemented(f"re-plan for {run_id}")
+@router.post("/{run_id}/replan", response_model=PlanningRunCreatedResponse, status_code=201)
+def replan(run_id: str, request: ReplanRequest) -> PlanningRunCreatedResponse:
+    parent = _run_or_404(run_id)
+    snapshot = _snapshot_or_404(parent.snapshot_id)
+    if snapshot.status != "VALID":
+        raise ApiError(409, "STALE_SNAPSHOT", "A stale or invalid snapshot cannot be re-planned")
+    jobs = {job.job_id: job for job in snapshot.dataset.jobs}
+    affected_sections = set(request.affected_section_ids)
+    affected_windows = set(request.affected_window_ids)
+    known_sections = {section.section_id for section in snapshot.dataset.sections}
+    known_windows = {window.window_id for window in snapshot.dataset.windows}
+    if not affected_sections <= known_sections or not affected_windows <= known_windows:
+        raise ApiError(400, "OUTSIDE_PLANNING_SCOPE", "Re-plan scope is outside the snapshot")
+
+    required_locked = [item.model_copy(deep=True) for item in parent.schedule_items if item.locked]
+    fixed = [
+        item.model_copy(deep=True)
+        for item in parent.schedule_items
+        if item.locked
+        or (
+            jobs[item.job_id].section_id not in affected_sections
+            and item.window_id not in affected_windows
+        )
+    ]
+    child = _execute_run(
+        snapshot,
+        parent.ruleset_version,
+        parent_run_id=parent.run_id,
+        fixed_items=fixed,
+        required_locked=required_locked,
+    )
+    old = {item.job_id: item for item in parent.schedule_items}
+    new = {item.job_id: item for item in child.schedule_items}
+    child.changes = {}
+    for job in snapshot.dataset.jobs:
+        before = old.get(job.job_id)
+        after = new.get(job.job_id)
+        if before is not None and after is not None:
+            child.changes[job.job_id] = "PRESERVED" if before == after else "CHANGED"
+        elif after is not None:
+            child.changes[job.job_id] = "SCHEDULED"
+        else:
+            child.changes[job.job_id] = "REJECTED"
+    planning_store.update_run(child)
+    return _created(child)
 
 
-@router.post("/{run_id}/approve", responses=foundation_response, response_model=None)
-def approve(run_id: str, _: ApprovalRequest) -> None:
-    _not_implemented(f"approval for {run_id}")
+@router.post("/{run_id}/approve", response_model=ApprovalResponse)
+def approve(run_id: str, request: ApprovalRequest) -> ApprovalResponse:
+    run = _run_or_404(run_id)
+    snapshot = _snapshot_or_404(run.snapshot_id)
+    if run.approval is not None:
+        raise ApiError(409, "ALREADY_APPROVED", "This run already has an approval")
+    if snapshot.status != "VALID":
+        raise ApiError(409, "STALE_SNAPSHOT", "A stale or invalid snapshot cannot be approved")
+    if run.state not in {PlanningRunState.FEASIBLE, PlanningRunState.OPTIMAL}:
+        raise ApiError(409, "INVALID_RUN_STATE", "Only a feasible validated run can be approved")
+    if not run.validator_passed:
+        raise ApiError(409, "SAFETY_VALIDATION_FAILED", "Independent validation did not pass")
+    approval = ApprovalSummary(
+        reviewer=request.reviewer,
+        comment=request.comment,
+        approved_at=datetime.now(UTC),
+        run_id=run.run_id,
+        snapshot_id=run.snapshot_id,
+        ruleset_version=run.ruleset_version,
+    )
+    run.approval = approval
+    planning_store.update_run(run)
+    return ApprovalResponse(run_id=run.run_id, approved=True, approval=approval)
 
 
-@router.get("/{run_id}/export", responses=foundation_response, response_model=None)
-def export(run_id: str) -> None:
-    _not_implemented(f"export for {run_id}")
+@router.get("/{run_id}/export")
+def export(run_id: str) -> Response:
+    run = _run_or_404(run_id)
+    detail = _detail(run)
+    if not detail.export_ready or run.approval is None:
+        raise ApiError(409, "EXPORT_BLOCKED", "Export requires a valid, safe, human-approved run")
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(
+        [
+            "run_id", "snapshot_id", "ruleset_version", "reviewer", "approved_at",
+            "job_id", "window_id", "start", "end", "status", "reason_codes",
+        ]
+    )
+    for item in run.schedule_items:
+        writer.writerow(
+            [
+                run.run_id, run.snapshot_id, run.ruleset_version, run.approval.reviewer,
+                run.approval.approved_at.isoformat(), item.job_id, item.window_id,
+                item.start.isoformat(), item.end.isoformat(), item.status,
+                "|".join(item.reason_codes),
+            ]
+        )
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{run_id}.csv"'},
+    )

@@ -4,6 +4,13 @@ from typing import Any
 
 import pytest
 
+from railniyojan.planning.store import planning_store
+
+
+@pytest.fixture(autouse=True)
+def clear_demo_store() -> None:
+    planning_store.clear()
+
 
 @pytest.fixture
 def repository_root() -> Path:

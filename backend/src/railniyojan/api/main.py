@@ -1,11 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from railniyojan.api.errors import ApiError, api_error_handler
 from railniyojan.api.routes import datasets, health, planning_runs
-from railniyojan.api.routes.planning_runs import (
-    FoundationRouteNotImplemented,
-    foundation_exception_handler,
-)
 from railniyojan.api.settings import get_settings
 
 
@@ -18,15 +15,12 @@ def create_app() -> FastAPI:
     )
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
         allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    application.add_exception_handler(
-        FoundationRouteNotImplemented,
-        foundation_exception_handler,  # type: ignore[arg-type]
-    )
+    application.add_exception_handler(ApiError, api_error_handler)  # type: ignore[arg-type]
     application.include_router(health.router)
     application.include_router(datasets.router)
     application.include_router(planning_runs.router)
@@ -34,4 +28,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
