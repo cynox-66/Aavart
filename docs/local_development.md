@@ -22,27 +22,34 @@ Keep secrets in an untracked `.env` file. Provide `.env.example` with non-secret
 
 ## Standard workflow
 
-1. Start PostgreSQL/PostGIS and application services.
-2. Apply migrations.
-3. Load the deterministic sample fixture.
-4. Run unit, API, solver, validator, and end-to-end tests.
-5. Open the web UI and run `docs/demo_script.md`.
+1. Copy `.env.example` to `.env`.
+2. Run `make install`.
+3. Run `make test` before changing code.
+4. Run `make dev` to start PostgreSQL/PostGIS and application services.
+5. Run `make migrate` when migration execution is not handled by the environment.
+6. Open `http://localhost:3000` and confirm that the API health state is online.
+7. Use `fixtures/baseline_valid/dataset.json` for the first validation request.
 
-## Required commands
+## Commands
 
-Document the actual repository commands for:
+| Operation | Command |
+|---|---|
+| Install dependencies | `make install` |
+| Start services | `make dev` |
+| Stop services | `docker compose down` |
+| Apply migrations | `make migrate` |
+| Run backend tests | `make test-backend` |
+| Run frontend tests | `make test-web` |
+| Run browser smoke test | `make test-e2e` |
+| Run all tests | `make test` |
+| Lint | `make lint` |
+| Type-check | `make typecheck` |
+| Regenerate OpenAPI and frontend types | `make openapi` |
+| Build containers | `pnpm build:web && docker compose build` |
 
-- install dependencies;
-- start Compose;
-- stop Compose;
-- migrate database;
-- seed fixtures;
-- run backend tests;
-- run frontend tests;
-- run all tests;
-- build production containers.
+There is no seed command yet. The baseline fixture is validated through `POST /datasets/validate`; database snapshot persistence belongs to the upload/validation feature slice.
 
-Do not invent commands here until the corresponding scripts exist.
+The web container packages the verified Next.js standalone output. Run `pnpm build:web` before rebuilding its image; frontend source is not hot-reloaded inside Compose.
 
 ## Troubleshooting rules
 
