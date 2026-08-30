@@ -1,6 +1,7 @@
 {
   "valid": true,
   "snapshot_candidate_id": "SNAP-54CFF41B711E",
+  "source_hash": "54cff41b711ef64976f5644db4ac64e401a9d5afef7770f89b7d95f7cdacedc3",
   "counts": {
     "jobs": 4,
     "windows": 3,
@@ -8,5 +9,6 @@
     "sections": 2,
     "resources": 4
   },
-  "errors": []
+  "errors": [],
+  "source_summaries": []
 }
