@@ -27,11 +27,22 @@ class DatasetCounts(ApiModel):
     resources: int = 0
 
 
+class SourceSummary(ApiModel):
+    source_id: str
+    department: str
+    status: str
+    file_name: str | None = None
+    job_count: int = 0
+    warning_count: int = 0
+
+
 class DatasetValidationResponse(ApiModel):
     valid: bool
     snapshot_candidate_id: str | None
+    source_hash: str | None = None
     errors: list[ValidationIssue]
     counts: DatasetCounts
+    source_summaries: list[SourceSummary] = Field(default_factory=list)
 
 
 class PlanningRunCreateRequest(ApiModel):
@@ -122,6 +133,9 @@ class PlanningRunDetail(ApiModel):
     export_ready: bool
     kpis: KpiSummary
     ai_estimates: list[AiEstimate]
+    intent_id: str | None = None
+    intent: dict[str, Any] | None = None
+    rejected_intent_edits: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class LockResponse(ApiModel):
@@ -142,9 +156,20 @@ class LockRequest(ApiModel):
     reason: str = Field(min_length=1)
 
 
+class PlanningIntentMove(ApiModel):
+    job_id: str = Field(min_length=1)
+    target_window_id: str = Field(min_length=1)
+    reason: str = Field(default="planner requested move", min_length=1)
+
+
 class ReplanRequest(ApiModel):
-    affected_section_ids: list[str] = Field(min_length=1)
-    affected_window_ids: list[str] = Field(min_length=1)
+    affected_section_ids: list[str] = Field(default_factory=list)
+    affected_window_ids: list[str] = Field(default_factory=list)
+    actor: str = Field(default="planner", min_length=1)
+    reason: str = Field(default="planner requested re-optimization", min_length=1)
+    moves: list[PlanningIntentMove] = Field(default_factory=list)
+    exclusions: list[str] = Field(default_factory=list)
+    locked_job_ids: list[str] = Field(default_factory=list)
 
 
 class ApprovalRequest(ApiModel):

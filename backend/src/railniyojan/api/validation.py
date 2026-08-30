@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from railniyojan.contracts.api import (
     DatasetCounts,
     DatasetValidationResponse,
+    SourceSummary,
     ValidationIssue,
 )
 from railniyojan.contracts.models import DatasetPayload
@@ -27,6 +28,30 @@ def _counts(payload: dict[str, Any]) -> DatasetCounts:
         sections=_raw_count(payload, "sections"),
         resources=_raw_count(payload, "resources"),
     )
+
+
+def _source_summaries(payload: dict[str, Any]) -> list[SourceSummary]:
+    metadata = payload.get("metadata")
+    if not isinstance(metadata, dict):
+        return []
+    sources = metadata.get("source_provenance")
+    if not isinstance(sources, list):
+        return []
+    summaries: list[SourceSummary] = []
+    for item in sources:
+        if not isinstance(item, dict):
+            continue
+        summaries.append(
+            SourceSummary(
+                source_id=str(item.get("source_id", "unknown")),
+                department=str(item.get("department", "unknown")),
+                status=str(item.get("status", "unknown")),
+                file_name=item.get("file_name") if isinstance(item.get("file_name"), str) else None,
+                job_count=int(item.get("job_count", 0) or 0),
+                warning_count=int(item.get("warning_count", 0) or 0),
+            )
+        )
+    return summaries
 
 
 def _pydantic_issues(error: ValidationError) -> list[ValidationIssue]:
@@ -185,14 +210,17 @@ def _reference_issues(dataset: DatasetPayload) -> list[ValidationIssue]:
 
 def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
     counts = _counts(payload)
+    source_summaries = _source_summaries(payload)
     try:
         dataset = DatasetPayload.model_validate(payload)
     except ValidationError as error:
         return DatasetValidationResponse(
             valid=False,
             snapshot_candidate_id=None,
+            source_hash=None,
             errors=_pydantic_issues(error),
             counts=counts,
+            source_summaries=source_summaries,
         )
 
     issues: list[ValidationIssue] = []
@@ -215,8 +243,10 @@ def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
         return DatasetValidationResponse(
             valid=False,
             snapshot_candidate_id=None,
+            source_hash=None,
             errors=issues,
             counts=counts,
+            source_summaries=source_summaries,
         )
 
     canonical = json.dumps(dataset.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
@@ -227,6 +257,8 @@ def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
     return DatasetValidationResponse(
         valid=True,
         snapshot_candidate_id=snapshot_id,
+        source_hash=source_hash,
         errors=[],
         counts=counts,
+        source_summaries=source_summaries,
     )

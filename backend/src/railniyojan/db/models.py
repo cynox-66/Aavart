@@ -152,6 +152,7 @@ class PlanningRun(Base):
     id: Mapped[str] = mapped_column(String(100), primary_key=True)
     snapshot_id: Mapped[str] = mapped_column(ForeignKey("snapshots.id"), nullable=False)
     parent_run_id: Mapped[str | None] = mapped_column(ForeignKey("planning_runs.id"))
+    intent_id: Mapped[str | None] = mapped_column(ForeignKey("planning_intents.id"))
     trigger_type: Mapped[str] = mapped_column(String(30), default="BASELINE", nullable=False)
     rapidblock_request_id: Mapped[str | None] = mapped_column(String(100))
     ruleset_version: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -166,6 +167,20 @@ class PlanningRun(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PlanningIntent(Base):
+    __tablename__ = "planning_intents"
+
+    id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    base_run_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    actor: Mapped[str] = mapped_column(String(100), nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+    rejected_edits: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
 
 
 class ScheduleItemRecord(Base):
@@ -268,5 +283,6 @@ Index("ix_windows_section_time", PlanningWindowRecord.section_id, PlanningWindow
 Index("ix_jobs_snapshot", JobRecord.snapshot_id)
 Index("ix_planning_runs_snapshot", PlanningRun.snapshot_id)
 Index("ix_planning_runs_state", PlanningRun.state)
+Index("ix_planning_intents_base_run", PlanningIntent.base_run_id)
 Index("ix_schedule_items_run", ScheduleItemRecord.run_id)
 Index("ix_rapidblock_base_run_state", RapidBlockRequest.base_run_id, RapidBlockRequest.state)

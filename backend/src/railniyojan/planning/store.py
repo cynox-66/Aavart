@@ -40,11 +40,24 @@ class RunRecord:
     validated_at: datetime
     parent_run_id: str | None = None
     rapidblock_request_id: str | None = None
+    intent_id: str | None = None
     trigger_type: str = "BASELINE"
     approval: ApprovalSummary | None = None
     changes: dict[str, str] = field(default_factory=dict)
     kpis: KpiSummary | None = None
     ai_estimates: list[AiEstimate] = field(default_factory=list)
+    rejected_intent_edits: list[dict[str, object]] = field(default_factory=list)
+
+
+@dataclass
+class PlanningIntentRecord:
+    intent_id: str
+    base_run_id: str
+    actor: str
+    reason: str
+    payload: dict[str, Any]
+    rejected_edits: list[dict[str, object]] = field(default_factory=list)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 @dataclass
@@ -91,6 +104,7 @@ class PlanningStore:
     def __init__(self) -> None:
         self._snapshots: dict[str, SnapshotRecord] = {}
         self._runs: dict[str, RunRecord] = {}
+        self._planning_intents: dict[str, PlanningIntentRecord] = {}
         self._rapidblock_requests: dict[str, RapidBlockRecord] = {}
         self._audit_events: list[AuditEventRecord] = []
         self._exports: list[ExportRecord] = []
@@ -149,6 +163,16 @@ class PlanningStore:
             self._runs[run.run_id] = deepcopy(run)
             return deepcopy(run)
 
+    def save_planning_intent(self, intent: PlanningIntentRecord) -> PlanningIntentRecord:
+        with self._lock:
+            self._planning_intents[intent.intent_id] = deepcopy(intent)
+            return deepcopy(intent)
+
+    def get_planning_intent(self, intent_id: str) -> PlanningIntentRecord | None:
+        with self._lock:
+            record = self._planning_intents.get(intent_id)
+            return deepcopy(record) if record else None
+
     def save_rapidblock_request(self, record: RapidBlockRecord) -> RapidBlockRecord:
         with self._lock:
             record.updated_at = datetime.now(UTC)
@@ -187,6 +211,10 @@ class PlanningStore:
         return f"RB-{uuid4().hex[:12].upper()}"
 
     @staticmethod
+    def next_intent_id() -> str:
+        return f"INT-{uuid4().hex[:12].upper()}"
+
+    @staticmethod
     def next_event_id() -> str:
         return f"AUD-{uuid4().hex[:12].upper()}"
 
@@ -198,6 +226,7 @@ class PlanningStore:
         with self._lock:
             self._snapshots.clear()
             self._runs.clear()
+            self._planning_intents.clear()
             self._rapidblock_requests.clear()
             self._audit_events.clear()
             self._exports.clear()

@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from fastapi.testclient import TestClient
@@ -25,6 +26,76 @@ def test_fixture_validation_endpoint(baseline_payload: dict[str, Any]) -> None:
     assert response.status_code == 200
     assert response.json()["valid"] is True
     assert response.json()["counts"]["jobs"] == 4
+    assert response.json()["source_hash"]
+
+
+def test_validate_unique_uploaded_job_flows_into_created_run(
+    baseline_payload: dict[str, Any],
+) -> None:
+    payload = json.loads(json.dumps(baseline_payload))
+    unique_job = dict(payload["jobs"][0])
+    unique_job["job_id"] = "JOB-UPLOAD-999"
+    unique_job["priority"] = 99
+    payload["jobs"] = [unique_job]
+    payload["conflict_groups"] = []
+    validation = client.post("/datasets/validate", json=payload)
+    snapshot_id = validation.json()["snapshot_candidate_id"]
+    created = client.post(
+        "/planning-runs",
+        json={"snapshot_id": snapshot_id, "ruleset_version": "Demo Ruleset v1"},
+    )
+    detail = client.get(f"/planning-runs/{created.json()['run_id']}").json()
+
+    assert validation.status_code == 200
+    assert validation.json()["counts"]["jobs"] == 1
+    assert created.status_code == 201
+    assert {job["job_id"] for job in detail["jobs"]} == {"JOB-UPLOAD-999"}
+
+
+def test_skipped_department_changes_hash_and_job_count(baseline_payload: dict[str, Any]) -> None:
+    full = client.post("/datasets/validate", json=baseline_payload).json()
+    reduced = json.loads(json.dumps(baseline_payload))
+    reduced["jobs"] = [job for job in reduced["jobs"] if job["department"] != "CIVIL"]
+    reduced["conflict_groups"] = [
+        group
+        for group in reduced["conflict_groups"]
+        if not any(member == "JOB-004" for member in group["member_ids"])
+    ]
+    skipped = client.post("/datasets/validate", json=reduced).json()
+
+    assert full["counts"]["jobs"] == 4
+    assert skipped["counts"]["jobs"] == 3
+    assert full["source_hash"] != skipped["source_hash"]
+
+
+def test_monthly_horizon_filtered_payload_validates(
+    baseline_payload: dict[str, Any],
+) -> None:
+    payload = json.loads(json.dumps(baseline_payload))
+    payload["windows"].append(
+        {
+            "window_id": "WIN-FUTURE",
+            "start": "2026-10-15T09:00:00+05:30",
+            "end": "2026-10-15T12:00:00+05:30",
+            "section_id": "SEC-A",
+            "availability": "AVAILABLE",
+        }
+    )
+    payload["jobs"].append(
+        {
+            **payload["jobs"][0],
+            "job_id": "JOB-FUTURE",
+            "allowed_windows": ["WIN-FUTURE"],
+        }
+    )
+    payload["windows"] = [window for window in payload["windows"] if window["window_id"] != "WIN-FUTURE"]
+    payload["jobs"] = [job for job in payload["jobs"] if job["job_id"] != "JOB-FUTURE"]
+    payload["metadata"] = {**payload["metadata"], "horizon": "MONTHLY", "horizon_days": 30}
+    validation = client.post("/datasets/validate", json=payload)
+
+    assert validation.status_code == 200
+    assert validation.json()["valid"] is True
+    assert validation.json()["counts"]["jobs"] == 4
 
 
 def _create_run(baseline_payload: dict[str, Any]) -> tuple[str, str]:
@@ -120,6 +191,82 @@ def test_lock_and_replan_preserve_locked_item(baseline_payload: dict[str, Any]) 
     assert after_locked == before_locked
     assert child["changes"]["JOB-001"] == "PRESERVED"
     assert child["parent_run_id"] == run_id
+
+
+def test_replan_intent_moves_and_excludes_with_lineage(
+    baseline_payload: dict[str, Any],
+) -> None:
+    baseline_payload["jobs"][2]["allowed_windows"] = ["WIN-002", "WIN-003"]
+    baseline_payload["train_paths"] = []
+    run_id, snapshot_id = _create_run(baseline_payload)
+    lock = client.post(
+        f"/planning-runs/{run_id}/lock",
+        json={"job_id": "JOB-001", "reason": "Planner accepted this block"},
+    )
+
+    replan = client.post(
+        f"/planning-runs/{run_id}/replan",
+        json={
+            "actor": "akash",
+            "reason": "review edit acceptance gate",
+            "moves": [
+                {
+                    "job_id": "JOB-003",
+                    "target_window_id": "WIN-003",
+                    "reason": "move to second valid section window",
+                }
+            ],
+            "exclusions": ["JOB-004"],
+            "locked_job_ids": ["JOB-001"],
+        },
+    )
+    child = client.get(f"/planning-runs/{replan.json()['run_id']}").json()
+    moved = next(item for item in child["schedule_items"] if item["job_id"] == "JOB-003")
+
+    assert lock.status_code == 200
+    assert replan.status_code == 201
+    assert child["parent_run_id"] == run_id
+    assert child["snapshot_id"] != snapshot_id
+    assert child["intent_id"]
+    assert child["intent"]["exclusions"] == ["JOB-004"]
+    assert child["rejected_intent_edits"] == []
+    assert {job["job_id"] for job in child["jobs"]} == {"JOB-001", "JOB-002", "JOB-003"}
+    assert moved["window_id"] == "WIN-003"
+    assert child["changes"]["JOB-004"] == "REJECTED"
+    assert planning_store.get_planning_intent(child["intent_id"]) is not None
+    assert any(
+        event.entity_id == child["intent_id"] and event.metadata["child_run_id"] == child["run_id"]
+        for event in planning_store.list_audit_events()
+    )
+
+
+def test_replan_rejects_invalid_move_without_silent_apply(
+    baseline_payload: dict[str, Any],
+) -> None:
+    run_id, _ = _create_run(baseline_payload)
+    replan = client.post(
+        f"/planning-runs/{run_id}/replan",
+        json={
+            "actor": "akash",
+            "reason": "bad move",
+            "moves": [
+                {
+                    "job_id": "JOB-001",
+                    "target_window_id": "WIN-002",
+                    "reason": "invalid cross-section move",
+                }
+            ],
+        },
+    )
+    child = client.get(f"/planning-runs/{replan.json()['run_id']}").json()
+
+    assert replan.status_code == 201
+    assert child["rejected_intent_edits"][0]["code"] == "WINDOW_NOT_ALLOWED"
+    assert all(
+        item["window_id"] != "WIN-002"
+        for item in child["schedule_items"]
+        if item["job_id"] == "JOB-001"
+    )
 
 
 def test_export_requires_approval_and_contains_only_approved_run(

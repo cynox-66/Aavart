@@ -13,6 +13,7 @@ from railniyojan.contracts.models import DatasetPayload, Job, ScheduleItem
 from railniyojan.db.models import (
     Approval,
     AuditEvent,
+    PlanningIntent,
     PlanningRun,
     RapidBlockRequest,
     ScheduleItemRecord,
@@ -25,6 +26,7 @@ from railniyojan.db.models import (
 from railniyojan.planning.store import (
     AuditEventRecord,
     ExportRecord,
+    PlanningIntentRecord,
     RapidBlockRecord,
     RunRecord,
     SnapshotRecord,
@@ -94,6 +96,40 @@ class SqlAlchemyPlanningStore:
                 raise KeyError(run.run_id)
             self._upsert_run(session, run)
             return deepcopy(run)
+
+    def save_planning_intent(self, intent: PlanningIntentRecord) -> PlanningIntentRecord:
+        with self._session_factory.begin() as session:
+            row = session.get(PlanningIntent, intent.intent_id)
+            if row is None:
+                session.add(
+                    PlanningIntent(
+                        id=intent.intent_id,
+                        base_run_id=intent.base_run_id,
+                        actor=intent.actor,
+                        reason=intent.reason,
+                        payload=intent.payload,
+                        rejected_edits=intent.rejected_edits,
+                    )
+                )
+            else:
+                row.payload = intent.payload
+                row.rejected_edits = intent.rejected_edits
+            return deepcopy(intent)
+
+    def get_planning_intent(self, intent_id: str) -> PlanningIntentRecord | None:
+        with self._session_factory() as session:
+            row = session.get(PlanningIntent, intent_id)
+            if row is None:
+                return None
+            return PlanningIntentRecord(
+                intent_id=row.id,
+                base_run_id=row.base_run_id,
+                actor=row.actor,
+                reason=row.reason,
+                payload=row.payload,
+                rejected_edits=row.rejected_edits,
+                created_at=_with_utc(row.created_at),
+            )
 
     def save_rapidblock_request(self, record: RapidBlockRecord) -> RapidBlockRecord:
         with self._session_factory.begin() as session:
@@ -229,6 +265,7 @@ class SqlAlchemyPlanningStore:
                 Approval,
                 RapidBlockRequest,
                 PlanningRun,
+                PlanningIntent,
                 Snapshot,
                 AuditEvent,
             ):
@@ -254,6 +291,7 @@ class SqlAlchemyPlanningStore:
             "changes": run.changes,
             "kpis": run.kpis.model_dump(mode="json") if run.kpis else None,
             "ai_estimates": [item.model_dump(mode="json") for item in run.ai_estimates],
+            "rejected_intent_edits": run.rejected_intent_edits,
         }
         row = session.get(PlanningRun, run.run_id)
         if row is None:
@@ -261,6 +299,7 @@ class SqlAlchemyPlanningStore:
                 id=run.run_id,
                 snapshot_id=run.snapshot_id,
                 parent_run_id=run.parent_run_id,
+                intent_id=run.intent_id,
                 trigger_type=run.trigger_type,
                 rapidblock_request_id=run.rapidblock_request_id,
                 ruleset_version=run.ruleset_version,
@@ -272,6 +311,7 @@ class SqlAlchemyPlanningStore:
             session.add(row)
         row.state = run.state.value
         row.parent_run_id = run.parent_run_id
+        row.intent_id = run.intent_id
         row.trigger_type = run.trigger_type
         row.rapidblock_request_id = run.rapidblock_request_id
         row.completed_at = run.completed_at
@@ -356,6 +396,7 @@ class SqlAlchemyPlanningStore:
             else _with_utc(row.created_at),
             parent_run_id=row.parent_run_id,
             rapidblock_request_id=row.rapidblock_request_id,
+            intent_id=row.intent_id,
             trigger_type=row.trigger_type,
             approval=ApprovalSummary(
                 reviewer=approval_row.reviewer,
@@ -372,4 +413,5 @@ class SqlAlchemyPlanningStore:
             ai_estimates=[
                 AiEstimate.model_validate(item) for item in metadata.get("ai_estimates", [])
             ],
+            rejected_intent_edits=metadata.get("rejected_intent_edits", []),
         )

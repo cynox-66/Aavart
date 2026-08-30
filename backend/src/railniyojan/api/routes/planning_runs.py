@@ -4,7 +4,7 @@ import csv
 import hashlib
 import io
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import cast
 
 from fastapi import APIRouter
@@ -26,7 +26,7 @@ from railniyojan.contracts.api import (
     ValidatorSummary,
 )
 from railniyojan.contracts.enums import PlanningRunState, ScheduleStatus
-from railniyojan.contracts.models import ScheduleItem
+from railniyojan.contracts.models import DatasetPayload, ScheduleItem
 from railniyojan.optimizer.contracts import OptimizerInput
 from railniyojan.optimizer.planner import DeterministicPlanner
 from railniyojan.optimizer.validator import validate_schedule
@@ -35,6 +35,7 @@ from railniyojan.planning.kpis import calculate_kpis
 from railniyojan.planning.store import (
     AuditEventRecord,
     ExportRecord,
+    PlanningIntentRecord,
     PlanningStore,
     RunRecord,
     SnapshotRecord,
@@ -77,8 +78,11 @@ def _execute_run(
     ruleset_version: str,
     *,
     parent_run_id: str | None = None,
+    intent_id: str | None = None,
     fixed_items: list[ScheduleItem] | None = None,
     required_locked: list[ScheduleItem] | None = None,
+    trigger_type: str = "BASELINE",
+    rejected_intent_edits: list[dict[str, object]] | None = None,
 ) -> RunRecord:
     run_id = planning_store.next_run_id()
     created_at = datetime.now(UTC)
@@ -119,15 +123,23 @@ def _execute_run(
         validator_issues=issues,
         validated_at=now,
         parent_run_id=parent_run_id,
+        intent_id=intent_id,
+        trigger_type=trigger_type,
         changes=changes,
         kpis=calculate_kpis(planned_dataset, output.schedule_items),
         ai_estimates=ai_estimates,
+        rejected_intent_edits=rejected_intent_edits or [],
     )
     return cast(PlanningStore, planning_store).save_run(run)
 
 
 def _detail(run: RunRecord) -> PlanningRunDetail:
     snapshot = _snapshot_or_404(run.snapshot_id)
+    intent_record = (
+        cast(PlanningStore, planning_store).get_planning_intent(run.intent_id)
+        if run.intent_id
+        else None
+    )
     export_ready = (
         run.approval is not None
         and run.state in {PlanningRunState.FEASIBLE, PlanningRunState.OPTIMAL}
@@ -172,6 +184,9 @@ def _detail(run: RunRecord) -> PlanningRunDetail:
         export_ready=export_ready,
         kpis=run.kpis or calculate_kpis(snapshot.dataset, run.schedule_items),
         ai_estimates=run.ai_estimates,
+        intent_id=run.intent_id,
+        intent=intent_record.payload if intent_record else None,
+        rejected_intent_edits=run.rejected_intent_edits,
     )
 
 
@@ -188,6 +203,104 @@ def _audit(
             metadata=metadata,
         )
     )
+
+
+def _derive_intent_snapshot(
+    parent: RunRecord,
+    snapshot: SnapshotRecord,
+    request: ReplanRequest,
+    intent_id: str,
+) -> tuple[SnapshotRecord, list[ScheduleItem], list[ScheduleItem], list[dict[str, object]]]:
+    dataset = snapshot.dataset
+    jobs = {job.job_id: job for job in dataset.jobs}
+    windows = {window.window_id: window for window in dataset.windows}
+    parent_items = {item.job_id: item for item in parent.schedule_items}
+    fixed_items = [
+        item.model_copy(deep=True)
+        for item in parent.schedule_items
+        if item.locked or item.job_id in set(request.locked_job_ids)
+    ]
+    fixed_by_job = {item.job_id: item for item in fixed_items}
+    rejected: list[dict[str, object]] = []
+    excluded_job_ids: set[str] = set()
+
+    for job_id in request.exclusions:
+        if job_id not in jobs:
+            rejected.append({"type": "EXCLUSION", "job_id": job_id, "code": "UNKNOWN_JOB"})
+            continue
+        if job_id in fixed_by_job:
+            rejected.append({"type": "EXCLUSION", "job_id": job_id, "code": "LOCKED_JOB_CANNOT_BE_EXCLUDED"})
+            continue
+        excluded_job_ids.add(job_id)
+
+    for move in request.moves:
+        job = jobs.get(move.job_id)
+        window = windows.get(move.target_window_id)
+        if job is None:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "UNKNOWN_JOB"})
+            continue
+        if move.job_id in excluded_job_ids:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "JOB_EXCLUDED"})
+            continue
+        if move.job_id in fixed_by_job and fixed_by_job[move.job_id].window_id != move.target_window_id:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "LOCKED_JOB_CANNOT_MOVE"})
+            continue
+        if window is None:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "UNKNOWN_WINDOW"})
+            continue
+        if move.target_window_id not in job.allowed_windows:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "WINDOW_NOT_ALLOWED"})
+            continue
+        if window.section_id != job.section_id:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "WINDOW_SECTION_MISMATCH"})
+            continue
+        end = window.start + timedelta(minutes=job.duration_minutes)
+        if end > window.end:
+            rejected.append({"type": "MOVE", "job_id": move.job_id, "code": "DURATION_EXCEEDS_WINDOW"})
+            continue
+        fixed_by_job[move.job_id] = ScheduleItem(
+            job_id=move.job_id,
+            window_id=move.target_window_id,
+            start=window.start,
+            end=end,
+            status=ScheduleStatus.LOCKED,
+            reason_codes=["INTENT_MOVE"],
+            locked=True,
+        )
+
+    kept_jobs = [job for job in dataset.jobs if job.job_id not in excluded_job_ids]
+    kept_job_ids = {job.job_id for job in kept_jobs}
+    conflict_groups = []
+    for group in dataset.conflict_groups:
+        members = [member for member in group.member_ids if member not in excluded_job_ids]
+        if len(members) >= 2:
+            conflict_groups.append(group.model_copy(update={"member_ids": members}))
+
+    fixed = [item for item in fixed_by_job.values() if item.job_id in kept_job_ids]
+    derived_payload = dataset.model_dump(mode="json")
+    derived_payload["jobs"] = [job.model_dump(mode="json") for job in kept_jobs]
+    derived_payload["conflict_groups"] = [group.model_dump(mode="json") for group in conflict_groups]
+    derived_payload["metadata"] = {
+        **dataset.metadata,
+        "planning_intent": {
+            "intent_id": intent_id,
+            "base_run_id": parent.run_id,
+            "moves": [move.model_dump(mode="json") for move in request.moves],
+            "exclusions": sorted(excluded_job_ids),
+            "rejected_edits": rejected,
+        },
+    }
+    derived_snapshot_id, source_hash = derive_snapshot_id(derived_payload)
+    derived_snapshot = planning_store.register_snapshot(
+        derived_snapshot_id,
+        source_hash,
+        DatasetPayload.model_validate(derived_payload),
+        parent_snapshot_id=snapshot.snapshot_id,
+        derivation_type="PLANNING_INTENT",
+        derived_from_request_id=intent_id,
+        created_by=request.actor,
+    )
+    return derived_snapshot, fixed, fixed, rejected
 
 
 @router.post("", response_model=PlanningRunCreatedResponse, status_code=201)
@@ -233,34 +346,66 @@ def replan(run_id: str, request: ReplanRequest) -> PlanningRunCreatedResponse:
     if snapshot.status != "VALID":
         raise ApiError(409, "STALE_SNAPSHOT", "A stale or invalid snapshot cannot be re-planned")
     jobs = {job.job_id: job for job in snapshot.dataset.jobs}
-    affected_sections = set(request.affected_section_ids)
-    affected_windows = set(request.affected_window_ids)
+    move_job_ids = {move.job_id for move in request.moves}
+    affected_sections = set(request.affected_section_ids) | {
+        jobs[job_id].section_id for job_id in set(request.exclusions) | move_job_ids if job_id in jobs
+    }
+    affected_windows = set(request.affected_window_ids) | {move.target_window_id for move in request.moves}
     known_sections = {section.section_id for section in snapshot.dataset.sections}
     known_windows = {window.window_id for window in snapshot.dataset.windows}
     if not affected_sections <= known_sections or not affected_windows <= known_windows:
         raise ApiError(400, "OUTSIDE_PLANNING_SCOPE", "Re-plan scope is outside the snapshot")
+    if not affected_sections and not affected_windows and not request.locked_job_ids:
+        raise ApiError(400, "EMPTY_INTENT", "Re-plan requires a move, exclusion, lock, or affected scope")
 
-    required_locked = [item.model_copy(deep=True) for item in parent.schedule_items if item.locked]
+    intent_id = planning_store.next_intent_id()
+    intent_payload = {
+        "affected_section_ids": sorted(affected_sections),
+        "affected_window_ids": sorted(affected_windows),
+        "moves": [move.model_dump(mode="json") for move in request.moves],
+        "exclusions": request.exclusions,
+        "locked_job_ids": request.locked_job_ids,
+    }
+    derived_snapshot, intent_fixed, required_locked, rejected = _derive_intent_snapshot(
+        parent, snapshot, request, intent_id
+    )
+    planning_store.save_planning_intent(
+        PlanningIntentRecord(
+            intent_id=intent_id,
+            base_run_id=parent.run_id,
+            actor=request.actor,
+            reason=request.reason,
+            payload=intent_payload,
+            rejected_edits=rejected,
+        )
+    )
     fixed = [
         item.model_copy(deep=True)
         for item in parent.schedule_items
         if item.locked
         or (
-            jobs[item.job_id].section_id not in affected_sections
+            item.job_id in jobs
+            and jobs[item.job_id].section_id not in affected_sections
             and item.window_id not in affected_windows
         )
     ]
+    fixed_by_job = {item.job_id: item for item in fixed}
+    for item in intent_fixed:
+        fixed_by_job[item.job_id] = item
     child = _execute_run(
-        snapshot,
+        derived_snapshot,
         parent.ruleset_version,
         parent_run_id=parent.run_id,
-        fixed_items=fixed,
+        intent_id=intent_id,
+        fixed_items=list(fixed_by_job.values()),
         required_locked=required_locked,
+        trigger_type="PLANNING_INTENT",
+        rejected_intent_edits=rejected,
     )
     old = {item.job_id: item for item in parent.schedule_items}
     new = {item.job_id: item for item in child.schedule_items}
     child.changes = {}
-    for job in snapshot.dataset.jobs:
+    for job in derived_snapshot.dataset.jobs:
         before = old.get(job.job_id)
         after = new.get(job.job_id)
         if before is not None and after is not None:
@@ -269,7 +414,11 @@ def replan(run_id: str, request: ReplanRequest) -> PlanningRunCreatedResponse:
             child.changes[job.job_id] = "SCHEDULED"
         else:
             child.changes[job.job_id] = "REJECTED"
+    for job_id in request.exclusions:
+        if job_id in jobs and not any(item.get("job_id") == job_id for item in rejected):
+            child.changes[job_id] = "REJECTED"
     planning_store.update_run(child)
+    _audit("planning_intent", intent_id, "INTENT_APPLIED", request.actor, child_run_id=child.run_id)
     return _created(child)
 
 
