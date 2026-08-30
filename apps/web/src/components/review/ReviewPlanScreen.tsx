@@ -18,6 +18,7 @@ interface ReviewPlanScreenProps {
   isBusy: boolean;
   pendingIntentCount?: number;
   isDemoPlan?: boolean;
+  isHistoricalPlan?: boolean;
   onLockJob: (jobId: string) => Promise<void>;
   onChangeWindow: (jobId: string, newWindowId: string) => void;
   onExcludeJob: (jobId: string) => void;
@@ -33,7 +34,7 @@ export function ReviewPlanScreen({
   isDirty,
   lockedCount,
   optimizationStatus,
-  isDemoPlan = false,
+  isHistoricalPlan = false,
   isBusy,
   pendingIntentCount = 0,
   onLockJob,
@@ -73,21 +74,25 @@ export function ReviewPlanScreen({
   };
 
   const isApproved = Boolean(plan.approval);
+  // An archived run is a historical record: it opens read-only whether or not
+  // it carries an approval, so the desk never mutates a past plan.
+  const isReadOnly = isApproved || isHistoricalPlan;
 
   // Mirrors the "Approve Plan Guard" spec: isDirty -> validator -> state.
   let approveBlockedReason: string | undefined;
-  if (isDirty) approveBlockedReason = "Re-optimize the plan before approving.";
+  if (isHistoricalPlan) approveBlockedReason = "This is an archived run, opened read-only.";
+  else if (isDirty) approveBlockedReason = "Re-optimize the plan before approving.";
   else if (!plan.validator.passed) approveBlockedReason = "Independent safety validation failed.";
   else if (!(plan.state === "FEASIBLE" || plan.state === "OPTIMAL")) {
     approveBlockedReason = `Plan is not in an approvable state (${plan.state}).`;
   }
-  const canApprove = !isApproved && !approveBlockedReason;
+  const canApprove = !isReadOnly && !approveBlockedReason;
 
   return (
     <div className="rn-review-workspace">
-      {isDemoPlan && (
+      {isHistoricalPlan && (
         <div className="demo-data-banner">
-          ⚠️ Demo data — this is the illustrative previous-plans sample, not a live backend run.
+          📁 Archived run {plan.run_id}, loaded from the backend and opened read-only.
         </div>
       )}
       <div className="rn-review-grid">
@@ -125,7 +130,7 @@ export function ReviewPlanScreen({
 
           {/* 3. Bottom banner: read-only notice once approved, otherwise the
               re-optimize prompt (hidden once approved per spec). */}
-          {isApproved ? (
+          {isApproved || isHistoricalPlan ? (
             <div className="rn-important-banner approved">
               <div className="rn-important-left">
                 <div className="rn-info-circle-icon">
@@ -134,10 +139,11 @@ export function ReviewPlanScreen({
                   </svg>
                 </div>
                 <div className="rn-important-text">
-                  <strong>Approved</strong>
+                  <strong>{isApproved ? "Approved" : "Archived"}</strong>
                   <p>
-                    This plan was approved by {plan.approval?.reviewer} on {formatStamp(plan.approval?.approved_at)}.
-                    It is now locked for editing.
+                    {isApproved
+                      ? `This plan was approved by ${plan.approval?.reviewer} on ${formatStamp(plan.approval?.approved_at)}. It is now locked for editing.`
+                      : "This run was opened from the archive and was never approved. It is shown read-only."}
                   </p>
                 </div>
               </div>
@@ -184,7 +190,7 @@ export function ReviewPlanScreen({
             totalJobs={plan.jobs.length}
             onPrevJob={handlePrevJob}
             onNextJob={handleNextJob}
-            isApproved={isApproved}
+            isApproved={isReadOnly}
             isBusy={isBusy}
             onLockJob={onLockJob}
             onChangeWindow={onChangeWindow}
@@ -195,7 +201,7 @@ export function ReviewPlanScreen({
             optimizationStatus={optimizationStatus}
             lockedJobCount={lockedCount}
             pendingIntentCount={pendingIntentCount}
-            isApproved={isApproved}
+            isApproved={isReadOnly}
             canApprove={canApprove}
             approveBlockedReason={approveBlockedReason}
             isBusy={isBusy}
