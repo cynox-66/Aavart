@@ -9,6 +9,10 @@ the end.
 
 ## The headline
 
+Measured on the weekly horizon, which is the default. Monthly re-scopes the same
+snapshot to 30 days and is solved by the same model, so it admits more windows and
+more jobs; the properties below hold either way.
+
 | | corridor_1 | corridor_2 |
 |---|---|---|
 | Jobs scheduled | **81 / 90** (90.0%) | **80 / 90** (88.9%) |
@@ -171,6 +175,6 @@ output = DeterministicPlanner().solve(
     )
 )
 kpis = calculate_kpis(planned, output.schedule_items)
-print(kpis.scheduled_jobs, "/", kpis.total_jobs, kpis.downtime_reduction_percent)
+print(kpis.scheduled_jobs, "/", kpis.total_jobs, kpis.closure_reduction_percent)
 print(output.unscheduled_reason_codes)
 ```

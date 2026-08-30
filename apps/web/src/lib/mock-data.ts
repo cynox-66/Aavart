@@ -255,10 +255,8 @@ const generateMockJobs = (): JobDetailView[] => {
   return jobs;
 };
 
-// Scoped strictly to the "Previous Plans" demo path (handleOpenPreviousPlan
-// in app/page.tsx) - PreviousPlansList has no real backend to source
-// historical runs from (no list-runs endpoint exists), so this stays a
-// clearly-labeled demo plan rather than a fallback for a real run.
+// Retained only for isolated UI mock/demo work. The mounted Previous Plans
+// screen now reads real archive rows from GET /planning-runs instead.
 
 export const mockPreviousPlans: Array<{
   runId: string;

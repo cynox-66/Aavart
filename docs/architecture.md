@@ -68,7 +68,7 @@ See `docs/architecture/backend.md`.
 
 ### Optimizer
 
-`railniyojan.optimizer` converts a snapshot and `Demo Ruleset v1` into a CP-SAT model, runs under the configured time budget, returns a candidate plan, and emits stable reason codes.
+`railniyojan.optimizer` converts a validated snapshot and `Demo Ruleset v1` into a CP-SAT model, runs it inside the request path under the configured time budget, returns a candidate plan, and emits stable reason codes.
 
 It is a library the API calls in-process, not a separate worker service. See `docs/architecture/solver.md` and "Execution model" below.
 
@@ -173,6 +173,16 @@ Step 6 is the reason this is not in the demo build. Its payoff is concurrent
 throughput that a single-operator demo does not exercise, and it introduces a
 failure mode the synchronous design does not have.
 
+## Planning horizon
+
+A run is scoped to either a `WEEKLY` (7-day) or `MONTHLY` (30-day) window. This is
+a data-scoping choice, not a second optimizer: the client trims the snapshot to
+the chosen span and stamps `horizon`, `horizon_start` and `horizon_end` into
+metadata, and the API echoes them back as `planning_horizon`, `horizon_start` and
+`horizon_end` so a stored run records the horizon it was planned against. The same
+CP-SAT model, ruleset, and validator apply to both, and the UI says so at the point
+of choice rather than implying a separate monthly planner.
+
 ## Coverage and capacity
 
 The planner does not schedule every submitted job, and the reason is documented
@@ -204,5 +214,5 @@ No Kubernetes, high availability, multi-worker scaling, or live identity integra
 
 - File adapters can later implement TMS, SMMS, TDMS, COA, timetable, and BDMS boundaries.
 - AI estimate services provide priority or duration inputs behind the same deterministic fallback contract.
-- Monthly planning can later create capacity reservations above the weekly planner.
+- Monthly planning currently re-scopes the snapshot to a 30-day window solved by the same model; it can later add capacity reservations above the weekly planner.
 - Multi-corridor planning can later extend topology and conflict scope.

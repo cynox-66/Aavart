@@ -49,6 +49,13 @@ export interface CorridorPreset {
  * before it responds - so a run is never observable in flight. QUEUED and
  * RUNNING were in this union but the backend assigned them nowhere.
  */
+/**
+ * Weekly is the standard horizon. Monthly re-scopes the snapshot to a 30-day
+ * window and is solved by the same CP-SAT model - it is a data-scoping choice,
+ * not a second optimizer, and the UI says so.
+ */
+export type PlanningHorizon = "WEEKLY" | "MONTHLY";
+
 export type RunState =
   | "FEASIBLE"
   | "OPTIMAL"
@@ -126,6 +133,9 @@ export interface ValidationState {
   valid: boolean;
   snapshotCandidateId: string | null;
   sourceHash: string | null;
+  planningHorizon: PlanningHorizon | null;
+  horizonStart: string | null;
+  horizonEnd: string | null;
   issues: ValidationIssueItem[];
   counts: {
     jobs: number;
@@ -205,19 +215,21 @@ export interface KpiView {
   baseline_method: "SERIAL_PER_SECTION";
   serial_baseline_closure_minutes: number;
   optimized_closure_minutes: number;
+  closure_reduction_minutes: number;
+  closure_reduction_percent: number;
   serial_baseline_asset_downtime_minutes: number;
   optimized_asset_downtime_minutes: number;
   asset_downtime_reduction_minutes: number;
   asset_downtime_reduction_percent: number;
-  downtime_reduction_minutes: number;
-  downtime_reduction_percent: number;
+  /** Coverage. Never render a reduction without these beside it. */
+  total_maintenance_minutes: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
-  /** Coverage. Never render the reduction without these beside it. */
   scheduled_jobs: number;
   total_jobs: number;
   job_coverage_percent: number;
-  minute_coverage_percent: number;
+  maintenance_coverage_percent: number;
+  rejected_maintenance_percent: number;
   plan_quality: "OPTIMAL" | "FEASIBLE" | "DEGRADED";
 }
 
@@ -240,6 +252,9 @@ export interface PlanRunView {
     issues: Array<Record<string, unknown>>;
     validated_at: string;
   };
+  planning_horizon: PlanningHorizon | null;
+  horizon_start: string | null;
+  horizon_end: string | null;
   approval: {
     reviewer: string;
     comment: string;
@@ -276,9 +291,11 @@ export interface PlanArchiveEntry {
   totalJobCount: number;
   scheduledJobCount: number;
   validatorPassed: boolean;
-  /** Downtime reduction as reported by the run's KPIs; null when unknown. */
-  downtimeReductionPercent: number | null;
+  /** Both, always. A reduction shown without coverage is the defect this pair fixes. */
+  closureReductionPercent: number | null;
+  maintenanceCoveragePercent: number | null;
   triggerType: string;
+  planningHorizon: PlanningHorizon | null;
 }
 
 export interface RapidBlockFormValues {

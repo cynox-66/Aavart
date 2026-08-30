@@ -3,10 +3,14 @@ import { expect, test, type Page } from "@playwright/test";
 /**
  * Gap 12 regression. Step 2's Continue button and Step 3's solver used to read
  * different facts: Continue trusted local React state that "Mark as Resolved"
- * flipped to valid, while the solver required the snapshot candidate the backend
- * registers only for a clean dataset. The operator was let through one gate and
- * stopped by the next. Both now read `snapshot_candidate_id`, so a rejected
- * dataset must stay rejected no matter what is clicked on this screen.
+ * and "Auto-Fix All" flipped to valid, while the solver required the snapshot
+ * candidate the backend registers only for a clean dataset. The operator was let
+ * through one gate and stopped by the next.
+ *
+ * Both now read `snapshot_candidate_id`, and the local-state controls are gone
+ * entirely - which makes the bug structurally impossible rather than merely
+ * fixed. These tests assert both halves: the gate holds, and no control on the
+ * screen can move it.
  */
 
 const REJECTED_VALIDATION = {
@@ -53,28 +57,28 @@ async function gotoRejectedCheckData(page: Page) {
 const continueButton = (page: Page) => page.getByRole("button", { name: /3\. Create Plan/ });
 
 /**
- * Acknowledge every issue, not just the one the accordion opens on. Only the
- * expanded card exposes its Acknowledge button, so each card has to be opened
- * first - a loop over the visible buttons alone stops after one issue and would
- * leave the old, gameable gate still closed.
+ * Every control the blocked screen offers. If any of these could unlock Continue
+ * the original defect would be back, so the test drives all of them rather than
+ * naming the two that used to exist.
  */
-async function acknowledgeEveryIssue(page: Page) {
+async function clickEveryControlOnTheBlockedScreen(page: Page) {
   const cards = page.locator(".issue-item-card");
   const total = await cards.count();
   expect(total).toBeGreaterThan(1);
 
+  // Expand every issue, which is the only interaction the accordion still has.
   for (let index = 0; index < total; index += 1) {
-    const card = cards.nth(index);
-    if ((await card.getByRole("button", { name: "✓ Acknowledge" }).count()) === 0) {
-      await card.locator(".issue-header-row").click();
-    }
-    await card.getByRole("button", { name: "✓ Acknowledge" }).click();
+    await cards.nth(index).locator(".issue-header-row").click();
   }
 
-  await expect(page.locator(".issue-item-card.resolved")).toHaveCount(total);
+  // Nothing in the issue list may offer to fix, resolve or auto-fix anything.
+  const banned = /mark as resolved|auto-fix|resolve|acknowledge/i;
+  for (const label of await page.locator(".validation-needs-attention-card button").allInnerTexts()) {
+    expect(label).not.toMatch(banned);
+  }
 }
 
-test("a backend-rejected dataset never reaches the solver, however many issues are acknowledged", async ({
+test("a backend-rejected dataset never reaches the solver, whatever is clicked", async ({
   page,
 }) => {
   const solverCalls: string[] = [];
@@ -86,8 +90,8 @@ test("a backend-rejected dataset never reaches the solver, however many issues a
   await gotoRejectedCheckData(page);
   await expect(continueButton(page)).toBeDisabled();
 
-  // Acknowledge every issue - the exact gesture that used to unlock Continue.
-  await acknowledgeEveryIssue(page);
+  // Exercise every control the screen still offers - none may unlock Continue.
+  await clickEveryControlOnTheBlockedScreen(page);
   await expect(continueButton(page)).toBeDisabled();
   expect(solverCalls.filter((method) => method === "POST")).toHaveLength(0);
 });
@@ -100,10 +104,10 @@ test("the validated banner cannot appear without a registered snapshot", async (
   // The snapshot pill is the fact the gate reads; it must show it has none.
   await expect(page.locator(".snapshot-id")).toHaveText("—");
 
-  await acknowledgeEveryIssue(page);
+  await clickEveryControlOnTheBlockedScreen(page);
 
   await expect(page.getByText("Dataset Validated & Ready")).toHaveCount(0);
-  await expect(page.getByText("No validated snapshot")).toBeVisible();
+  await expect(page.getByText("Backend validation must pass before the solver can run")).toBeVisible();
 });
 
 test("the blocked state offers a way back to Select Data", async ({ page }) => {

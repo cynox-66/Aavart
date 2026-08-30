@@ -319,6 +319,12 @@ export interface components {
             counts: components["schemas"]["DatasetCounts"];
             /** Errors */
             errors: components["schemas"]["ValidationIssue"][];
+            /** Horizon End */
+            horizon_end?: string | null;
+            /** Horizon Start */
+            horizon_start?: string | null;
+            /** Planning Horizon */
+            planning_horizon?: ("WEEKLY" | "MONTHLY") | null;
             /** Snapshot Candidate Id */
             snapshot_candidate_id: string | null;
             /** Source Hash */
@@ -405,20 +411,22 @@ export interface components {
              * @constant
              */
             baseline_method: "SERIAL_PER_SECTION";
-            /** Downtime Reduction Minutes */
-            downtime_reduction_minutes: number;
-            /** Downtime Reduction Percent */
-            downtime_reduction_percent: number;
+            /** Closure Reduction Minutes */
+            closure_reduction_minutes: number;
+            /** Closure Reduction Percent */
+            closure_reduction_percent: number;
             /** Job Coverage Percent */
             job_coverage_percent: number;
-            /** Minute Coverage Percent */
-            minute_coverage_percent: number;
+            /** Maintenance Coverage Percent */
+            maintenance_coverage_percent: number;
             /** Optimized Asset Downtime Minutes */
             optimized_asset_downtime_minutes: number;
             /** Optimized Closure Minutes */
             optimized_closure_minutes: number;
             /** Rejected Maintenance Minutes */
             rejected_maintenance_minutes: number;
+            /** Rejected Maintenance Percent */
+            rejected_maintenance_percent: number;
             /** Scheduled Jobs */
             scheduled_jobs: number;
             /** Scheduled Maintenance Minutes */
@@ -429,6 +437,8 @@ export interface components {
             serial_baseline_closure_minutes: number;
             /** Total Jobs */
             total_jobs: number;
+            /** Total Maintenance Minutes */
+            total_maintenance_minutes: number;
         };
         /** LockRequest */
         LockRequest: {
@@ -502,6 +512,10 @@ export interface components {
             created_at: string;
             /** Export Ready */
             export_ready: boolean;
+            /** Horizon End */
+            horizon_end?: string | null;
+            /** Horizon Start */
+            horizon_start?: string | null;
             /** Intent */
             intent?: {
                 [key: string]: unknown;
@@ -513,6 +527,8 @@ export interface components {
             kpis: components["schemas"]["KpiSummary"];
             /** Parent Run Id */
             parent_run_id?: string | null;
+            /** Planning Horizon */
+            planning_horizon?: ("WEEKLY" | "MONTHLY") | null;
             /** Rejected Intent Edits */
             rejected_intent_edits?: {
                 [key: string]: unknown;
@@ -560,9 +576,15 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Horizon End */
+            horizon_end?: string | null;
+            /** Horizon Start */
+            horizon_start?: string | null;
             kpis?: components["schemas"]["KpiSummary"] | null;
             /** Parent Run Id */
             parent_run_id?: string | null;
+            /** Planning Horizon */
+            planning_horizon?: ("WEEKLY" | "MONTHLY") | null;
             /** Ruleset Version */
             ruleset_version: string;
             /** Run Id */

@@ -4,7 +4,7 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from threading import RLock
-from typing import Any
+from typing import Any, NamedTuple
 from uuid import uuid4
 
 from railniyojan.contracts.api import AiEstimate, ApprovalSummary, KpiSummary
@@ -77,6 +77,9 @@ class RunSummaryRecord:
     validator_passed: bool
     approval: ApprovalSummary | None = None
     kpis: KpiSummary | None = None
+    planning_horizon: str | None = None
+    horizon_start: datetime | None = None
+    horizon_end: datetime | None = None
 
 
 @dataclass
@@ -119,9 +122,47 @@ class ExportRecord:
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
-def summarize_run(run: RunRecord) -> RunSummaryRecord:
+class _Horizon(NamedTuple):
+    planning_horizon: str | None
+    horizon_start: datetime | None
+    horizon_end: datetime | None
+
+
+def _horizon_bound(value: object) -> datetime | None:
+    """Snapshot metadata carries horizon bounds as ISO strings from the client.
+
+    Parse them here so the record holds real datetimes. Storing the raw string in
+    a field declared `datetime` would type-check as a lie and only surface as a
+    comparison bug later.
+    """
+    if isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value)
+        except ValueError:
+            return None
+    return None
+
+
+def _snapshot_horizon_fields(snapshot: SnapshotRecord | None) -> _Horizon:
+    metadata = (
+        snapshot.dataset.metadata
+        if snapshot and isinstance(snapshot.dataset.metadata, dict)
+        else {}
+    )
+    horizon = metadata.get("horizon")
+    return _Horizon(
+        planning_horizon=horizon if horizon in {"WEEKLY", "MONTHLY"} else None,
+        horizon_start=_horizon_bound(metadata.get("horizon_start")),
+        horizon_end=_horizon_bound(metadata.get("horizon_end")),
+    )
+
+
+def summarize_run(run: RunRecord, snapshot: SnapshotRecord | None = None) -> RunSummaryRecord:
     """Projects a full RunRecord onto the lightweight archive row."""
     total = len(run.changes) or (len(run.schedule_items) + len(run.unscheduled_reason_codes))
+    horizon = _snapshot_horizon_fields(snapshot)
     return RunSummaryRecord(
         run_id=run.run_id,
         snapshot_id=run.snapshot_id,
@@ -136,6 +177,9 @@ def summarize_run(run: RunRecord) -> RunSummaryRecord:
         validator_passed=run.validator_passed,
         approval=run.approval,
         kpis=run.kpis,
+        planning_horizon=horizon.planning_horizon,
+        horizon_start=horizon.horizon_start,
+        horizon_end=horizon.horizon_end,
     )
 
 
@@ -214,7 +258,10 @@ class PlanningStore:
 
     def list_runs(self) -> list[RunSummaryRecord]:
         with self._lock:
-            summaries = [summarize_run(run) for run in self._runs.values()]
+            summaries = [
+                summarize_run(run, self._snapshots.get(run.snapshot_id))
+                for run in self._runs.values()
+            ]
         summaries.sort(key=lambda summary: (summary.created_at, summary.run_id), reverse=True)
         return summaries
 

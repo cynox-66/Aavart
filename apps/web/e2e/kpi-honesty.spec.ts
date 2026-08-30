@@ -48,7 +48,7 @@ test("the screen shows the backend's number, not one it recomputed", async ({ pa
   page.on("response", async (response) => {
     if (!response.url().includes("/planning-runs/") || response.request().method() !== "GET") return;
     const body = await response.json().catch(() => null);
-    if (body?.kpis) apiPercent = body.kpis.downtime_reduction_percent as number;
+    if (body?.kpis) apiPercent = body.kpis.closure_reduction_percent as number;
   });
 
   await reachReviewScreen(page);

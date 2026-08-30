@@ -13,7 +13,8 @@ Docker Compose should run:
 
 - `web` for Next.js;
 - `api` for FastAPI;
-- `db` for PostgreSQL/PostGIS.
+- `db` for PostgreSQL/PostGIS;
+- `api` for validation, planning, re-plan, approval, export, and archive endpoints.
 
 There is no separate optimizer service: the API solves in-process.
 

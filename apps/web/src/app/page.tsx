@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import {
+  PlanningHorizon,
   CorridorPresetId,
   DepartmentDataSource,
   OptimizationStatus,
@@ -43,6 +44,9 @@ const EMPTY_VALIDATION_STATE: ValidationState = {
   valid: false,
   snapshotCandidateId: null,
   sourceHash: null,
+  planningHorizon: null,
+  horizonStart: null,
+  horizonEnd: null,
   issues: [],
   counts: { jobs: 0, windows: 0, assets: 0, sections: 0, resources: 0 },
   sourceSummaries: [],
@@ -74,10 +78,9 @@ export default function RailNiyojanApp() {
   const [customBaseDataset, setCustomBaseDataset] = useState<Record<string, unknown> | null>(null);
 
   // Active Planning Run State - null until a real plan actually exists.
+  const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [plan, setPlan] = useState<PlanRunView | null>(null);
   const [hasPlanCreated, setHasPlanCreated] = useState(false);
-  // Whether the currently-open plan is the out-of-scope "Previous Plans" demo
-  // path rather than a real backend run (no list-runs endpoint exists yet).
   // Whether the currently-open plan was opened from the archive (Previous
   // Plans) rather than created in this session - it is a real backend run,
   // but it is shown read-only so a historical record is never mutated.
@@ -190,7 +193,7 @@ export default function RailNiyojanApp() {
   const handleProceedToValidation = async () => {
     setIsBusy(true);
     try {
-      const payload = mergeDepartmentSources(sources);
+      const payload = mergeDepartmentSources(sources, horizon);
       const res = await validateDatasetAdapter(payload, "JSON");
       setValidation(res);
       setCurrentView("wizard-step-2");
@@ -200,23 +203,6 @@ export default function RailNiyojanApp() {
     } finally {
       setIsBusy(false);
     }
-  };
-
-  // --- Step 2: Check Data Handlers ---
-  // Acknowledging is a reading aid for triage, nothing more. `valid` and
-  // `snapshotCandidateId` are the backend's answer about this dataset, so
-  // nothing the operator clicks here may overwrite them - doing so is what let
-  // Step 2 hand a rejected dataset to a solver that then refused it.
-  const handleAcknowledgeIssue = (issueId: string) => {
-    setValidation((prev) => ({
-      ...prev,
-      issues: prev.issues.map((i) => (i.id === issueId ? { ...i, resolved: true } : i)),
-    }));
-    showToast(
-      "info",
-      "Issue Acknowledged",
-      "Marked as read. The data still has to be corrected at source and re-uploaded.",
-    );
   };
 
   // --- Step 3: Create Plan Handlers ---
@@ -487,6 +473,8 @@ export default function RailNiyojanApp() {
 
         {currentView === "wizard-step-1" && (
           <SelectDataStep
+            horizon={horizon}
+            onHorizonChange={setHorizon}
             sources={sources}
             selectedCorridorId={selectedCorridorId}
             onSelectCorridor={handleSelectCorridor}
@@ -503,7 +491,6 @@ export default function RailNiyojanApp() {
         {currentView === "wizard-step-2" && (
           <CheckDataStep
             validation={validation}
-            onAcknowledgeIssue={handleAcknowledgeIssue}
             onContinue={() => setCurrentView("wizard-step-3")}
             onBack={() => setCurrentView("wizard-step-1")}
             isBusy={isBusy}

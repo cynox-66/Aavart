@@ -94,16 +94,36 @@ describe("mergeDepartmentSources", () => {
 
     const metadata = merged.metadata ?? {};
     expect(metadata.horizon).toBe("WEEKLY");
-    expect(metadata.horizon_days).toBe(PLANNING_HORIZON_DAYS);
+    expect(metadata.horizon_days).toBe(PLANNING_HORIZON_DAYS.WEEKLY);
     const start = Date.parse(String(metadata.horizon_start));
     const end = Date.parse(String(metadata.horizon_end));
-    expect(end - start).toBe(PLANNING_HORIZON_DAYS * 24 * 60 * 60 * 1000);
+    expect(end - start).toBe(PLANNING_HORIZON_DAYS.WEEKLY * 24 * 60 * 60 * 1000);
 
     for (const window of merged.windows) {
       const windowStart = Date.parse(String(window.start));
       expect(windowStart).toBeGreaterThanOrEqual(start);
       expect(windowStart).toBeLessThan(end);
     }
+  });
+
+  it("widens the window to 30 days for the monthly horizon", () => {
+    // Monthly is a data-scoping choice solved by the same CP-SAT model, so the
+    // only thing that must differ is the span of the snapshot and the label the
+    // backend echoes back.
+    const weekly = mergeDepartmentSources(sources(), "WEEKLY");
+    const monthly = mergeDepartmentSources(sources(), "MONTHLY");
+
+    expect((weekly.metadata ?? {}).horizon).toBe("WEEKLY");
+    expect((monthly.metadata ?? {}).horizon).toBe("MONTHLY");
+    expect((monthly.metadata ?? {}).horizon_days).toBe(PLANNING_HORIZON_DAYS.MONTHLY);
+
+    const span = (payload: DatasetPayloadShape) =>
+      Date.parse(String((payload.metadata ?? {}).horizon_end)) -
+      Date.parse(String((payload.metadata ?? {}).horizon_start));
+    expect(span(monthly)).toBe(PLANNING_HORIZON_DAYS.MONTHLY * 24 * 60 * 60 * 1000);
+    expect(span(monthly)).toBeGreaterThan(span(weekly));
+    // A wider horizon can only admit more windows, never fewer.
+    expect(monthly.windows.length).toBeGreaterThanOrEqual(weekly.windows.length);
   });
 
   it("leaves no job pointing at a window the horizon filter removed", () => {

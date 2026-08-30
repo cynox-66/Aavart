@@ -1,24 +1,24 @@
 # SIH26027 Winning Gap Audit
 
-This is an evidence-based audit of the checkout on 2026-08-30. It is not a progress tracker and it does not convert code presence into product readiness.
+This is an evidence-based audit of the checkout on 2026-08-31. It is not a progress tracker and it does not convert code presence into product readiness.
 
 ## Verdict
 
-The previous biggest failure was real: the mounted UI presented editable planning data while the backend still planned the original baseline fixture. That P0 ingestion/review gap is now fixed and browser-tested. The biggest remaining judge risk is the still-open P0 safety/worker/browser-coverage story: the product must not imply Railway dispatch authority, and the architecture still overstates asynchronous worker behavior.
+The previous biggest failure was real: the mounted UI presented editable planning data while the backend still planned the original baseline fixture. That ingestion/review gap is fixed and browser-tested. The next biggest judge risk is now the still-open P0 safety copy and authority boundary: the product must not imply Railway dispatch authority.
 
 Current honest rating:
 
-- Hackathon demo: 6.5/10 after real mounted ingestion, backend-enforced review intent, and browser acceptance tests for those flows.
-- Product: 2.5/10. There is still no identity, durable default runtime, asynchronous worker, run history, or operational authority integration.
+- Hackathon demo: 7.5/10 after real mounted ingestion, backend-enforced review intent, honest synchronous planning, real archive reopen, stronger browser coverage, and defensible KPI presentation.
+- Product: 3/10. There is still no trusted identity, durable default runtime, operational authority integration, or safety-vetted RapidBlock copy.
 
-The backend has a credible constrained decision-support core. The mounted product now uses that core for selected data and review edits, but still overstates authority/worker behavior in other areas.
+The backend has a credible constrained decision-support core. The mounted product now uses that core for selected data and review edits, and it now describes the planning path more honestly. The remaining credibility risk is unsafe authority language and product-hardening gaps.
 
 ## Audit evidence
 
-- Backend: 27 tests pass with `backend/.venv/bin/pytest -q backend/tests`.
-- Browser coverage: four Playwright specs pass with `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e`. They now cover real upload content, skipped department job-count change, pending review intent, and backend child-run assertions.
+- Backend: 28 tests pass with `UV_CACHE_DIR=/private/tmp/uv-cache backend/.venv/bin/pytest -q backend/tests`.
+- Browser coverage: eight Playwright specs pass with `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e`. They cover real upload content, skipped department job-count change, blocked invalid validation, monthly 30-day mode, pending review intent, export blocking, archive reopen, and backend outage handling.
 - Frontend typecheck passes with `CI=true pnpm --filter @railniyojan/web typecheck`.
-- API surface has no list-runs endpoint, snapshot-entities endpoint, upload endpoint, queue/job-status endpoint, or monthly-planning endpoint.
+- API surface now has `GET /planning-runs` for archive rows, but still has no snapshot-entities endpoint, upload endpoint, queue/job-status endpoint, or separate monthly-planning endpoint.
 - Existing working-tree change: `docs/arnav_handoff.md` is deleted before this audit and was left untouched.
 
 ## P0 — must fix before calling this judge-ready
@@ -39,9 +39,9 @@ Remaining limit: P0 does not introduce custom TMS/SMMS/TDMS schemas yet. Departm
 
 Verification:
 
-- `backend/.venv/bin/pytest -q backend/tests` -> 27 passed.
+- `UV_CACHE_DIR=/private/tmp/uv-cache backend/.venv/bin/pytest -q backend/tests` -> 28 passed.
 - `CI=true pnpm --filter @railniyojan/web typecheck` -> passed.
-- `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e` -> 4 passed.
+- `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e` -> 8 passed.
 
 ### 2. Review edits are backend-enforced planning intent — fixed 2026-08-30
 
@@ -58,26 +58,27 @@ Remaining limit: replan remains synchronous through the public `/planning-runs/{
 
 Verification:
 
-- `backend/.venv/bin/pytest -q backend/tests` -> 27 passed, including valid move+exclusion, invalid move rejection, intent persistence, lineage, and audit coverage.
+- `UV_CACHE_DIR=/private/tmp/uv-cache backend/.venv/bin/pytest -q backend/tests` -> 28 passed, including valid move+exclusion, invalid move rejection, intent persistence, lineage, archive coverage, and KPI assertions.
 - `CI=true pnpm --filter @railniyojan/web typecheck` -> passed.
-- `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e` -> 4 passed.
+- `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e` -> 8 passed.
 
-### 3. The “worker” is a sleeping process and planning is synchronous
+### 3. Planning is now honestly scoped as synchronous — fixed 2026-08-31
 
-Evidence:
+Fixed evidence:
 
-- `backend/src/railniyojan/optimizer/worker.py:8-11` logs “queue execution is not implemented” and sleeps forever.
-- `backend/src/railniyojan/api/routes/planning_runs.py:75-126` executes estimation, CP-SAT, validation, and persistence inside the request path.
-- `compose.yaml:34-45` starts the sleeping worker anyway.
-- `backend/src/railniyojan/contracts/api.py:42-49` returns a completed run state even though the architecture documents `QUEUED -> RUNNING -> ...`.
+- `backend/src/railniyojan/api/routes/planning_runs.py:75-126` still executes estimation, CP-SAT, validation, and persistence inside the request path, but the surrounding product now describes that path honestly instead of pretending a queue exists.
+- `compose.yaml` no longer starts the sleeping `optimizer` service.
+- `docs/architecture.md`, `docs/architecture/backend.md`, `docs/local_development.md`, and `backend/pyproject.toml` now describe a synchronous CP-SAT solve path rather than a worker-backed queue.
+- `apps/web/src/components/planning/CreatePlanStep.tsx` now says it is running the synchronous CP-SAT solver on the validated snapshot.
 
-Why this fails: the architecture and UI imply background execution, cancellation, status polling, and resilience that do not exist. A slow or concurrent run will block the API and a worker restart proves nothing.
+Also removed: `optimizer/worker.py`, the never-assigned `QUEUED` / `RUNNING` members of `PlanningRunState`, and `status_url` (renamed `detail_url`, because it addresses a run that is already complete).
 
-Required change:
+Remaining limit: this is still a synchronous demo path. There is no durable queue, polling, retry, or cancellation contract. `QUEUED` and `RUNNING` return to the enum only alongside a real worker; `docs/architecture.md`, "Execution model", carries the measured cost of synchronous execution and the queued production design.
 
-- Either remove worker claims and explicitly scope the demo to synchronous planning, or implement a real durable queue with claimed jobs, retries, terminal failure, idempotency, and status polling.
-- The API must return `QUEUED`/`RUNNING` before solving if the worker path is retained.
-- Add a browser test for polling, timeout, failed job, and retry behavior.
+Verification:
+
+- `UV_CACHE_DIR=/private/tmp/uv-cache backend/.venv/bin/pytest -q backend/tests` -> 28 passed.
+- `CI=true pnpm --filter @railniyojan/web typecheck` -> passed.
 
 ### 4. Approval and emergency UI copy breaks the safety contract
 
@@ -97,19 +98,22 @@ Required change:
 - Require the same human approval semantics for RapidBlock as every other candidate.
 - Add a copy-level acceptance test that fails on prohibited authority terms in the active UI.
 
-### 5. Browser evidence is far too weak
+### 5. Browser evidence for the mounted core flow is now materially stronger — fixed 2026-08-31
 
-Evidence:
+Fixed evidence:
 
-- `apps/web/e2e/foundation.spec.ts` now covers the fixed P0 ingestion and review-intent gates: unique uploaded job reaches `GET /planning-runs/{run_id}`, skipped department changes mounted validation count, pending edits block approval, and replan returns a backend child run.
-- There are still no browser tests for failed validation, infeasible run, timeout/degraded run, backend outage, refresh/reopen, export blocking, or RapidBlock safety copy.
-- Browser QA remains local Playwright evidence, not a recorded judge-environment run.
+- `apps/web/e2e/foundation.spec.ts` now has eight mounted-path specs.
+- Coverage now includes failed validation blocking, monthly 30-day mode rendering, pending review intent, export blocking before approval, real archive reopen through `GET /planning-runs`, and backend outage handling.
+- The suite still runs against the mounted `apps/web/src/app/page.tsx` flow rather than the unused alternate dashboard.
 
-Required change:
+Remaining limit:
 
-- Make the real mounted page the only tested product surface.
-- Add tests for invalid input, infeasible run, timeout/degraded run, backend outage, refresh/reopen, and export blocking.
-- Record actual browser QA separately from unit/API test results.
+- There is still no browser coverage for timeout/degraded solver states or RapidBlock safety copy.
+- Browser QA is still local Playwright evidence, not recorded judge-environment evidence.
+
+Verification:
+
+- `CI=true PORT=3001 NEXT_PUBLIC_API_URL=http://127.0.0.1:8001 pnpm --filter @railniyojan/web test:e2e` -> 8 passed.
 
 ## P1 — high-impact gaps after the mounted flow is truthful
 
@@ -121,15 +125,16 @@ Impact: fixes made in one surface do not fix the judged product. This is dead co
 
 Action: delete the unused surface or make one explicit canonical app. Do not maintain two planning workflows.
 
-### 7. Previous Plans are fabricated history
+### 7. Previous Plans now uses real backend archive data — fixed 2026-08-31
 
-Evidence:
+Fixed evidence:
 
-- `apps/web/src/app/page.tsx:356-377` loads `demoHistoricalPlan` with hardcoded approval data.
-- `apps/web/src/components/previous-plans/PreviousPlansList.tsx` reads `mockPreviousPlans`.
-- The API has no run-list/history endpoint.
+- `backend/src/railniyojan/api/routes/planning_runs.py` exposes `GET /planning-runs`.
+- `apps/web/src/components/previous-plans/PreviousPlansList.tsx` loads archive rows through `listPlanningRunsAdapter()`.
+- `apps/web/src/app/page.tsx` opens selected archive runs through `fetchPlanningRunAdapter(runId)` and keeps them read-only.
+- `apps/web/e2e/foundation.spec.ts` now approves a run, opens Previous Plans, and reopens that real run on the review desk.
 
-The banner is honest, but the feature still occupies product real estate as if history exists. Either implement `GET /planning-runs` with persisted filters and reopen behavior, or remove the feature from the judge path. Never show fake approved runs as product history.
+Remaining limit: this is still a simple archive list. There is no pagination, retention policy, or reviewer identity trust model yet.
 
 ### 8. Reviewer identity is not trustworthy
 
@@ -141,30 +146,37 @@ Evidence:
 
 Impact: anyone who can call the API can approve as anyone. For a demo, label it as a simulated actor and make that limitation visible. For a product, add authenticated identity and role authorization before claiming auditability.
 
-### 9. KPI “downtime savings” is not a defensible business metric
+### 9. KPI headline now uses closure and coverage instead of fake “downtime savings” — fixed 2026-08-31
 
-Evidence:
+Fixed evidence:
 
-- `backend/src/railniyojan/planning/kpis.py:36-80` builds the baseline by serially stacking jobs by section and sets asset downtime equal to section closure time.
-- It computes optimized closure only from scheduled items, while rejected jobs disappear from the optimized numerator.
-- `backend/src/railniyojan/optimizer/planner.py:127-133` maximizes priority-weighted scheduled jobs, not the reported downtime metric.
-- Current test result is 390 baseline minutes vs 270 optimized minutes and 120 minutes “saved” for the four-job fixture (`backend/tests/test_api.py:68-71`).
+- `backend/src/railniyojan/planning/kpis.py` computes both sides of the comparison over the **scheduled jobs only**, so rejecting work can no longer improve the score. Verified: `calculate_kpis(dataset, [])` returned `100.0` and now returns `0.0`.
+- It reports `closure_reduction_minutes`, `closure_reduction_percent`, `total_maintenance_minutes`, `scheduled_maintenance_minutes`, `rejected_maintenance_minutes`, `maintenance_coverage_percent`, `rejected_maintenance_percent`, `scheduled_jobs`, `total_jobs`, and `job_coverage_percent`.
+- The counterfactual is named: `baseline_method: "SERIAL_PER_SECTION"` with `serial_baseline_closure_minutes`, surfaced in the UI as "one possession per job" rather than an implied human plan.
+- Asset downtime is computed against assets instead of being a byte-identical copy of section closure, so it is now a second real measurement rather than a domain error.
+- The KPI contract in `backend/src/railniyojan/contracts/api.py` and the frontend mapping in `apps/web/src/lib/adapters/planning-adapter.ts` now carry those fields through end to end.
+- `apps/web/src/components/review/PlanImpact.tsx`, `apps/web/src/components/planning/ApprovePlanStep.tsx`, `apps/web/src/components/approved/PlanApprovedScreen.tsx`, and `apps/web/src/components/previous-plans/PreviousPlansList.tsx` render coverage beside every reduction, never a reduction alone.
+- `apps/web/src/lib/adapters/planning-adapter.ts` no longer recomputes the headline from minute totals; the backend is the single source of truth.
+- `backend/tests/test_kpis.py` pins the adversarial cases as properties: scheduling nothing scores 0%, rejecting a long job never beats scheduling it, and asset downtime differs from section closure when a possession is shared.
+- `backend/tests/test_api.py` fixtures were recomputed, not preserved: the old 30.77% "saving" on the baseline fixture was entirely JOB-004's rejection, and now reads 0% with 75% coverage beside it.
 
-Why this fails: the number can improve because work is rejected, and “asset downtime” is just a closure proxy. It is not evidence of operational savings.
+Remaining limit: the baseline is a declared serial-stacking counterfactual, not a railway-authorized business KPI, and the solver objective maximises priority-weighted job count with no closure term — closure reduction is a measured outcome, labelled as such. `docs/solver_capacity.md` carries the measured coverage and what the planner cannot fit.
 
-Required change:
+Verification:
 
-- Define baseline algorithm and optimized objective in domain terms.
-- Track asset occupancy separately from section possession and count rejected work explicitly.
-- Report scheduled maintenance coverage, rejected minutes, closure minutes, asset downtime, and service-level constraints together.
-- Add adversarial fixtures where rejecting jobs cannot improve the headline score.
-- Present confidence and controlled-scenario labels beside every KPI.
+- `UV_CACHE_DIR=/private/tmp/uv-cache backend/.venv/bin/pytest -q backend/tests` -> 28 passed.
+- `CI=true pnpm --filter @railniyojan/web typecheck` -> passed.
 
-### 10. Monthly mode is a dead toggle
+### 10. Monthly mode is now an explicit 30-day filtered mode — fixed 2026-08-31
 
-Evidence: `apps/web/src/components/planning/SelectDataStep.tsx:23-67` changes local state only; all rendered planning output is `WeeklyTimelineSummary`, and there is no monthly API contract.
+Fixed evidence:
 
-Action: either implement monthly capacity reservations, summaries, and a weekly-to-monthly relationship, or remove/disable the toggle and state that the submission is weekly-only. A dead SIH requirement control is worse than an explicit scope boundary.
+- `apps/web/src/components/planning/SelectDataStep.tsx` now labels the control `Monthly (30-day filter)` and explains that it reuses the same CP-SAT solver on a 30-day date-bounded snapshot.
+- `backend/src/railniyojan/api/validation.py` and `backend/src/railniyojan/api/routes/planning_runs.py` now expose `planning_horizon`, `horizon_start`, and `horizon_end`.
+- `apps/web/src/components/review/WeeklyTimelineSummary.tsx` now renders a `30-Day Timeline Overview` when the run was created from monthly mode.
+- `apps/web/e2e/foundation.spec.ts` proves a monthly run comes back with `planning_horizon = "MONTHLY"` and renders the 30-day timeline label.
+
+Remaining limit: monthly still means date-bounded filtering with the same solver, not monthly reservations or a separate monthly optimizer.
 
 ### 11. Data integration is still controlled-only
 
@@ -172,11 +184,14 @@ Evidence: generated fixtures are under `fixtures/generated`; `docs/mock_data_and
 
 This boundary is correct. The gap is the product story: there is no Railway-authorized section mapping, maintenance feed, resource feed, permit/isolation authority, or BDMS integration. Do not claim live integration. Show provenance and freshness per field, and explain the adapter path from TMS/SMMS/TDMS into the canonical snapshot.
 
-### 12. Validation “auto-fix” is not a fix
+### 12. Validation can no longer be locally “fixed” into a solver-ready state — fixed 2026-08-31
 
-Evidence: `apps/web/src/app/page.tsx:154-164` marks issues resolved locally, while `backend/src/railniyojan/api/validation.py:214-226` only registers a snapshot when the original payload is valid.
+Fixed evidence:
 
-Impact: the UI can display a resolved/ready state without changing the candidate payload. Replace the action with a real transformation that is revalidated, or rename it to “acknowledge for review” and keep planning blocked until backend validation passes.
+- `apps/web/src/components/planning/CheckDataStep.tsx` no longer shows `Auto-Fix All Recommended` or `Mark as Resolved`.
+- The Create Plan button now stays blocked until backend validation passes; the screen tells the planner to return to Step 1 and correct the uploaded source.
+- `apps/web/src/app/page.tsx` no longer mutates validation state into a fake ready state.
+- `apps/web/e2e/foundation.spec.ts` now proves invalid uploaded data remains blocked and cannot advance the solver.
 
 ## P2 — important for product credibility, not first demo work
 
@@ -201,11 +216,11 @@ Impact: the UI can display a resolved/ready state without changing the candidate
 
 ## Build order that has the highest expected judge impact
 
-1. Remove unsafe authority/dispatch copy and collapse the duplicate frontend.
-2. Add browser acceptance tests for invalid/failure/reopen/export/RapidBlock paths and run them against the actual demo environment.
-3. Repair KPI definitions and show coverage plus savings, not a single flattering percentage.
-4. Choose honestly between a synchronous demo and a real worker; do not keep a sleeping worker container.
-5. Implement real run history and durable Postgres verification.
+1. Remove unsafe authority/dispatch copy, especially in RapidBlock and approval messaging.
+2. Collapse the duplicate frontend so only the mounted planning path remains.
+3. Add browser acceptance tests for timeout/degraded solver states and RapidBlock safety copy.
+4. Verify durable Postgres restart behavior and make the persistence mode honest by default.
+5. Add trusted identity and role enforcement before claiming reviewer auditability.
 6. Keep monthly described as 30-day date-bounded filtering unless a real monthly optimizer is implemented.
 7. Add authorized integrations and trained ML only when evidence and authority exist.
 
@@ -219,4 +234,4 @@ Impact: the UI can display a resolved/ready state without changing the candidate
 
 ## Bottom line
 
-The backend is a useful constrained prototype. The active product is not yet judge-proof because its most visible controls do not drive backend truth, its worker claim is false, its KPI claim is weakly grounded, and its emergency copy violates the safety boundary. Fix those before adding scope.
+The backend is a useful constrained prototype. The active product now drives backend truth for ingestion, review edits, archive reopen, validation gating, monthly scope, and KPI presentation. It is still not judge-proof because its emergency copy violates the safety boundary, reviewer identity is untrusted, and durable production-style runtime proof is still thin.

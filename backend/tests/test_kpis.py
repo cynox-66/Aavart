@@ -107,8 +107,8 @@ def test_scheduling_nothing_does_not_score_a_reduction() -> None:
     """The headline adversarial case. This returned 100.0 before the fix."""
     kpis = calculate_kpis(_dataset(TWO_JOBS), [])
 
-    assert kpis.downtime_reduction_percent == 0.0
-    assert kpis.downtime_reduction_minutes == 0
+    assert kpis.closure_reduction_percent == 0.0
+    assert kpis.closure_reduction_minutes == 0
     assert kpis.scheduled_jobs == 0
     assert kpis.job_coverage_percent == 0.0
 
@@ -126,7 +126,7 @@ def test_rejecting_a_long_job_never_beats_scheduling_it() -> None:
     # The long job refused; the short one takes the same slot.
     dropped = calculate_kpis(dataset, [_item("JOB-001", 0, 120)])
 
-    assert both.downtime_reduction_percent > dropped.downtime_reduction_percent
+    assert both.closure_reduction_percent > dropped.closure_reduction_percent
     assert both.job_coverage_percent > dropped.job_coverage_percent
 
 
@@ -136,7 +136,7 @@ def test_coverage_is_always_reported_alongside_the_reduction() -> None:
 
     assert (kpis.scheduled_jobs, kpis.total_jobs) == (1, 2)
     assert kpis.job_coverage_percent == 50.0
-    assert kpis.minute_coverage_percent == 50.0
+    assert kpis.maintenance_coverage_percent == 50.0
     assert kpis.scheduled_maintenance_minutes == 120
     assert kpis.rejected_maintenance_minutes == 120
 
@@ -154,7 +154,7 @@ def test_asset_downtime_differs_from_section_closure_when_a_possession_is_shared
 
     # And the two reductions must not be the same number either: co-locating buys
     # a 50% cut in section closure and nothing at all in asset downtime.
-    assert kpis.downtime_reduction_percent == 50.0
+    assert kpis.closure_reduction_percent == 50.0
     assert kpis.asset_downtime_reduction_percent == 0.0
 
 
@@ -167,9 +167,9 @@ def test_co_location_is_what_produces_the_reduction() -> None:
     # Serial baseline for two 120-minute jobs in one section is 240 minutes.
     assert co_located.serial_baseline_closure_minutes == 240
     assert sequential.serial_baseline_closure_minutes == 240
-    assert co_located.downtime_reduction_percent == 50.0
+    assert co_located.closure_reduction_percent == 50.0
     # A plan that saves nothing must say so, not borrow credit from rejection.
-    assert sequential.downtime_reduction_percent == 0.0
+    assert sequential.closure_reduction_percent == 0.0
 
 
 def test_the_baseline_names_its_method() -> None:
@@ -183,8 +183,8 @@ def test_a_worse_than_baseline_plan_floors_at_zero_rather_than_going_negative() 
     dataset = _dataset(TWO_JOBS)
     kpis = calculate_kpis(dataset, [_item("JOB-001", 0, 120), _item("JOB-002", 400, 120)])
 
-    assert kpis.downtime_reduction_minutes == 0
-    assert kpis.downtime_reduction_percent == 0.0
+    assert kpis.closure_reduction_minutes == 0
+    assert kpis.closure_reduction_percent == 0.0
 
 
 def test_sections_are_measured_independently() -> None:
@@ -240,7 +240,7 @@ def test_sections_are_measured_independently() -> None:
     # Concurrent work in two different sections closes both; nothing is saved.
     assert kpis.serial_baseline_closure_minutes == 240
     assert kpis.optimized_closure_minutes == 240
-    assert kpis.downtime_reduction_percent == 0.0
+    assert kpis.closure_reduction_percent == 0.0
 
 
 @pytest.mark.parametrize("fixture_name", ["corridor_1", "corridor_2"])
@@ -292,11 +292,11 @@ def test_real_corridors_report_coverage_consistently(
     )
 
     # Rejection still cannot pay, on the real corridor and not just a toy fixture.
-    assert calculate_kpis(planned, []).downtime_reduction_percent == 0.0
+    assert calculate_kpis(planned, []).closure_reduction_percent == 0.0
 
     # The reduction is real, bounded, and comes from co-location rather than from
     # dropping work: more job-minutes are scheduled than the closure they consume.
-    assert 0 < kpis.downtime_reduction_percent < 100
+    assert 0 < kpis.closure_reduction_percent < 100
     assert kpis.optimized_closure_minutes < kpis.scheduled_maintenance_minutes
 
     # Section closure and asset downtime are genuinely different measurements.

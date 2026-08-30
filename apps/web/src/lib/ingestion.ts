@@ -1,4 +1,5 @@
 import {
+  PlanningHorizon,
   DatasetPayloadShape,
   DepartmentDataSource,
   DepartmentType,
@@ -150,16 +151,19 @@ export async function sourceFromFile(
 }
 
 /**
- * Planning is weekly. A "Monthly (Macro)" toggle used to widen this filter to 30
- * days, but the backend has no notion of a horizon at all - it would have solved
- * a month of demand as one week. Monthly planning is a real feature (a backend
- * parameter, different window generation, a second output view) and is not one
- * this function can fake, so the horizon is a constant until that is built.
+ * How many days of windows and jobs each horizon admits. Monthly is a genuine
+ * data-scoping choice - the same CP-SAT model solves a 30-day snapshot - and the
+ * chosen horizon is stamped into metadata below so the backend can echo it back
+ * and the review screen can label the run truthfully.
  */
-export const PLANNING_HORIZON_DAYS = 7;
+export const PLANNING_HORIZON_DAYS: Record<PlanningHorizon, number> = {
+  WEEKLY: 7,
+  MONTHLY: 30,
+};
 
 export function mergeDepartmentSources(
   sources: DepartmentDataSource[],
+  horizon: PlanningHorizon = "WEEKLY",
 ): DatasetPayloadShape {
   const loaded = sources.filter((source) => source.status === "loaded");
   if (loaded.length === 0) throw new Error("Select at least one department dataset");
@@ -193,7 +197,7 @@ export function mergeDepartmentSources(
     .map((window) => Date.parse(String(window.start)))
     .filter((value) => Number.isFinite(value));
   const horizonStartMs = starts.length ? Math.min(...starts) : Date.now();
-  const horizonDays = PLANNING_HORIZON_DAYS;
+  const horizonDays = PLANNING_HORIZON_DAYS[horizon];
   const horizonEndMs = horizonStartMs + horizonDays * 24 * 60 * 60 * 1000;
   const keptWindowIds = new Set(
     merged.windows
@@ -229,7 +233,7 @@ export function mergeDepartmentSources(
       job_count: source.status === "loaded" ? source.taskCount : 0,
       warning_count: source.warningCount ?? 0,
     })),
-    horizon: "WEEKLY",
+    horizon,
     horizon_start: new Date(horizonStartMs).toISOString(),
     horizon_end: new Date(horizonEndMs).toISOString(),
     horizon_days: horizonDays,

@@ -140,6 +140,8 @@ def _execute_run(
 
 def _detail(run: RunRecord) -> PlanningRunDetail:
     snapshot = _snapshot_or_404(run.snapshot_id)
+    metadata = snapshot.dataset.metadata if isinstance(snapshot.dataset.metadata, dict) else {}
+    planning_horizon = metadata.get("horizon")
     intent_record = (
         cast(PlanningStore, planning_store).get_planning_intent(run.intent_id)
         if run.intent_id
@@ -189,6 +191,9 @@ def _detail(run: RunRecord) -> PlanningRunDetail:
         export_ready=export_ready,
         kpis=run.kpis or calculate_kpis(snapshot.dataset, run.schedule_items),
         ai_estimates=run.ai_estimates,
+        planning_horizon=planning_horizon if planning_horizon in {"WEEKLY", "MONTHLY"} else None,
+        horizon_start=metadata.get("horizon_start"),
+        horizon_end=metadata.get("horizon_end"),
         intent_id=run.intent_id,
         intent=intent_record.payload if intent_record else None,
         rejected_intent_edits=run.rejected_intent_edits,
@@ -210,6 +215,13 @@ def _summary(record: RunSummaryRecord) -> PlanningRunSummary:
         validator_passed=record.validator_passed,
         approval=record.approval,
         kpis=record.kpis,
+        planning_horizon=(
+            record.planning_horizon
+            if record.planning_horizon in {"WEEKLY", "MONTHLY"}
+            else None
+        ),
+        horizon_start=record.horizon_start,
+        horizon_end=record.horizon_end,
     )
 
 

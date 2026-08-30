@@ -22,7 +22,6 @@ export function PlanApprovedScreen({
   const [copied, setCopied] = useState(false);
 
   const integratedBlockCount = plan.schedule_items.filter((s) => s.is_integrated_block).length;
-  const qualityTone = plan.kpis.plan_quality === "OPTIMAL" ? "green" : plan.kpis.plan_quality === "FEASIBLE" ? "amber" : "red";
   const jobCountsByDept = new Map<DepartmentType, number>();
   plan.jobs.forEach((j) => jobCountsByDept.set(j.department, (jobCountsByDept.get(j.department) ?? 0) + 1));
 
@@ -104,8 +103,8 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className={`rn-stat-number ${plan.kpis.downtime_reduction_percent > 0 ? "green" : ""}`}>
-              {formatPercent(-plan.kpis.downtime_reduction_percent)}
+            <div className={`rn-stat-number ${plan.kpis.closure_reduction_percent > 0 ? "green" : ""}`}>
+              {formatPercent(-plan.kpis.closure_reduction_percent)}
             </div>
             <span className="rn-stat-label">
               Section closure vs. one possession per job
@@ -124,8 +123,8 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className={`rn-stat-number ${qualityTone}`}>{plan.kpis.plan_quality}</div>
-            <span className="rn-stat-label">Plan Quality</span>
+            <div className="rn-stat-number green">{formatPercent(plan.kpis.maintenance_coverage_percent)}</div>
+            <span className="rn-stat-label">Maintenance Coverage</span>
           </div>
         </div>
       </div>
@@ -145,7 +144,7 @@ export function PlanApprovedScreen({
               </svg>
             </div>
             <h3 className="rn-tile-title">Export Plan</h3>
-            <p className="rn-tile-desc">Download the approved plan in PDF or CSV format.</p>
+            <p className="rn-tile-desc">Download the approved recommendation in CSV format for operational review.</p>
             <button
               type="button"
               className="rn-btn-tile-action green"
@@ -252,7 +251,7 @@ export function PlanApprovedScreen({
         </div>
         <div className="rn-locked-banner-text">
           <strong>Plan is Locked</strong>
-          <p>This plan is locked and published. To make any changes, please create a new plan version.</p>
+          <p>This plan is locked and approved. To make any changes, please create a new plan version.</p>
         </div>
       </div>
 

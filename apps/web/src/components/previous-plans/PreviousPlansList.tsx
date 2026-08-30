@@ -223,6 +223,7 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                   </button>
                 </th>
                 <th>Closure vs. serial</th>
+                <th>Coverage</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -244,15 +245,18 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                     <strong>{plan.scheduledJobCount}</strong>
                     <span className="neutral-cell"> / {plan.totalJobCount} scheduled</span>
                   </td>
-                  <td
-                    className={
-                      plan.downtimeReductionPercent ? "gain-cell" : "neutral-cell"
-                    }
-                  >
-                    {plan.downtimeReductionPercent === null ? (
+                  <td className={plan.closureReductionPercent ? "gain-cell" : "neutral-cell"}>
+                    {plan.closureReductionPercent === null ? (
                       "—"
                     ) : (
-                      <strong>-{plan.downtimeReductionPercent.toFixed(1)}%</strong>
+                      <strong>-{plan.closureReductionPercent.toFixed(1)}%</strong>
+                    )}
+                  </td>
+                  <td className={plan.maintenanceCoveragePercent === null ? "neutral-cell" : ""}>
+                    {plan.maintenanceCoveragePercent === null ? (
+                      "—"
+                    ) : (
+                      <strong>{plan.maintenanceCoveragePercent.toFixed(1)}%</strong>
                     )}
                   </td>
                   <td>

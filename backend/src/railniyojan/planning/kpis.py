@@ -131,7 +131,7 @@ def calculate_kpis(dataset: DatasetPayload, schedule_items: list[ScheduleItem]) 
         saved = max(0, baseline - optimized)
         return saved, round((saved / baseline) * 100, 2) if baseline else 0.0
 
-    reduction, percent = reduce(baseline_closure, optimized_closure)
+    closure_reduction, closure_percent = reduce(baseline_closure, optimized_closure)
     asset_reduction, asset_percent = reduce(baseline_asset, optimized_asset)
 
     scheduled_minutes = sum(job.duration_minutes for job in scheduled_jobs)
@@ -149,14 +149,18 @@ def calculate_kpis(dataset: DatasetPayload, schedule_items: list[ScheduleItem]) 
         optimized_asset_downtime_minutes=optimized_asset,
         asset_downtime_reduction_minutes=asset_reduction,
         asset_downtime_reduction_percent=asset_percent,
-        downtime_reduction_minutes=reduction,
-        downtime_reduction_percent=percent,
+        closure_reduction_minutes=closure_reduction,
+        closure_reduction_percent=closure_percent,
+        total_maintenance_minutes=total_minutes,
         scheduled_jobs=len(scheduled_jobs),
         total_jobs=total_jobs,
         job_coverage_percent=(
             round((len(scheduled_jobs) / total_jobs) * 100, 2) if total_jobs else 0.0
         ),
-        minute_coverage_percent=(
+        maintenance_coverage_percent=(
             round((scheduled_minutes / total_minutes) * 100, 2) if total_minutes else 0.0
+        ),
+        rejected_maintenance_percent=(
+            round((rejected_minutes / total_minutes) * 100, 2) if total_minutes else 0.0
         ),
     )

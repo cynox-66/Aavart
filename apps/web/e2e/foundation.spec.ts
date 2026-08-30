@@ -27,6 +27,15 @@ function movableFixturePath(): string {
   return filePath;
 }
 
+function invalidFixturePath(): string {
+  const payload = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
+  payload.jobs = [{ ...payload.jobs[0], asset_id: "ASSET-DOES-NOT-EXIST" }];
+  payload.conflict_groups = [];
+  const filePath = path.join(os.tmpdir(), "railniyojan-invalid-upload.json");
+  fs.writeFileSync(filePath, JSON.stringify(payload));
+  return filePath;
+}
+
 async function startPlan(page: import("@playwright/test").Page) {
   await page.goto("/");
   await page.getByRole("button", { name: /Start New Plan/ }).click();
@@ -77,6 +86,27 @@ test("skipping a department changes the validated job count", async ({ page }) =
   await expect(page.getByText("CIVIL: 0 jobs")).toBeVisible();
 });
 
+test("invalid uploaded data stays blocked until backend validation passes", async ({ page }) => {
+  await startPlan(page);
+  await page.locator('input[type="file"]').first().setInputFiles(invalidFixturePath());
+  await page.getByRole("button", { name: "Check Data →" }).click();
+
+  await expect(page.getByRole("heading", { name: /Rejected by validation/ })).toBeVisible();
+  await expect(page.getByText("Backend validation must pass before the solver can run")).toBeVisible();
+  await expect(page.getByRole("button", { name: /3\. Create Plan/ })).toBeDisabled();
+});
+
+test("monthly mode is shown as a 30-day filtered run instead of a dead toggle", async ({ page, request }) => {
+  await startPlan(page);
+  await page.getByRole("button", { name: "Monthly (30-day filter)" }).click();
+  const runId = await validateAndCreate(page);
+
+  await expect(page.getByText("30-Day Timeline Overview")).toBeVisible();
+  const detail = await request.get(`${apiUrl}/planning-runs/${runId}`);
+  expect(detail.ok()).toBeTruthy();
+  expect((await detail.json()).planning_horizon).toBe("MONTHLY");
+});
+
 test("move and exclusion stay pending until backend re-optimization returns a child run", async ({ page, request }) => {
   await startPlan(page);
   const movable = movableFixturePath();
@@ -117,4 +147,36 @@ test("move and exclusion stay pending until backend re-optimization returns a ch
   expect(childRun.intent_id).toBeTruthy();
   expect(childRun.jobs.map((job) => job.job_id)).not.toContain("JOB-004");
   expect(childRun.schedule_items.find((item) => item.job_id === "JOB-003")?.window_id).toBe("WIN-003");
+});
+
+test("export is blocked before approval and archive reopen loads the real backend run", async ({ page }) => {
+  await startPlan(page);
+  const runId = await validateAndCreate(page);
+
+  await page.getByRole("button", { name: "Approve Plan", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Review & Approve Plan" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Export Plan (CSV)" }).click();
+  await expect(page.getByText("Export Failed")).toBeVisible();
+
+  await page.getByRole("button", { name: "Approve Plan", exact: true }).last().click();
+  await expect(page.getByText("Plan Approved!")).toBeVisible({ timeout: 15_000 });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: /View Previous Plans/ }).click();
+  await expect(page.getByText(runId)).toBeVisible();
+  await page.getByRole("button", { name: "Open Review Desk →" }).first().click();
+  await expect(page.getByText(`Archived run ${runId}`)).toBeVisible({ timeout: 15_000 });
+});
+
+test("backend outage during validation surfaces an error instead of fake progress", async ({ page }) => {
+  await startPlan(page);
+  await page.route(`${apiUrl}/datasets/validate`, async (route) => {
+    await route.abort();
+  });
+
+  await page.getByRole("button", { name: "Check Data →" }).click();
+
+  await expect(page.getByText("Validation Failed")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Select Maintenance Planning Data" })).toBeVisible();
 });

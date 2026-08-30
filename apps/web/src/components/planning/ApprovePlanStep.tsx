@@ -44,7 +44,7 @@ export function ApprovePlanStep({
           <h2>Review &amp; Approve Plan</h2>
           <p className="step-desc">
             Confirm the optimized schedule for <strong>{plan.snapshot_id}</strong> meets
-            safety and operational requirements. Once approved, it will be locked and published.
+            safety and operational requirements. Once approved, it will be locked and exported for operational review.
           </p>
         </div>
       </div>
@@ -91,10 +91,12 @@ export function ApprovePlanStep({
           </div>
           <div className="rn-kpi-content">
             <span className="rn-kpi-card-label">Section Closure Time</span>
-            <div className={`rn-kpi-card-value ${plan.kpis.downtime_reduction_percent > 0 ? "green" : ""}`}>
-              {formatPercent(-plan.kpis.downtime_reduction_percent)}
+            <div className={`rn-kpi-card-value ${plan.kpis.closure_reduction_percent > 0 ? "green" : ""}`}>
+              {formatPercent(-plan.kpis.closure_reduction_percent)}
             </div>
-            <span className="rn-kpi-card-sub">vs. one possession per job</span>
+            <span className="rn-kpi-card-sub">
+              {formatDuration(plan.kpis.closure_reduction_minutes)} saved vs. one possession per job
+            </span>
           </div>
         </div>
 
@@ -111,7 +113,8 @@ export function ApprovePlanStep({
               {plan.kpis.job_coverage_percent.toFixed(1)}%
             </div>
             <span className="rn-kpi-card-sub">
-              {plan.kpis.scheduled_jobs} of {plan.kpis.total_jobs} jobs scheduled
+              {plan.kpis.scheduled_jobs} of {plan.kpis.total_jobs} jobs ·{" "}
+              {plan.kpis.maintenance_coverage_percent.toFixed(1)}% of minutes
             </span>
           </div>
         </div>
@@ -229,9 +232,12 @@ export function ApprovePlanStep({
                 detail={`${lockedCount} works locked`}
               />
               <ReadinessRow
-                ok={plan.kpis.downtime_reduction_percent > 0}
+                ok={plan.kpis.closure_reduction_percent > 0}
                 title="Plan beats one possession per job"
-                detail={`Section closure change: ${formatPercent(-plan.kpis.downtime_reduction_percent)}`}
+                detail={
+                  `Closure change ${formatPercent(-plan.kpis.closure_reduction_percent)} ` +
+                  `at ${formatPercent(plan.kpis.maintenance_coverage_percent)} coverage`
+                }
               />
             </div>
           </div>
@@ -301,7 +307,7 @@ export function ApprovePlanStep({
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                <span>Once approved, the plan will be locked and published.</span>
+                <span>Once approved, the plan will be locked and ready for export.</span>
               </div>
             </div>
           </div>

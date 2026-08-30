@@ -5,7 +5,6 @@ import { ValidationState } from "@/types";
 
 interface CheckDataStepProps {
   validation: ValidationState;
-  onAcknowledgeIssue: (issueId: string) => void;
   onContinue: () => void;
   onBack: () => void;
   isBusy?: boolean;
@@ -13,7 +12,6 @@ interface CheckDataStepProps {
 
 export function CheckDataStep({
   validation,
-  onAcknowledgeIssue,
   onContinue,
   onBack,
   isBusy = false,
@@ -24,8 +22,9 @@ export function CheckDataStep({
 
   // The backend registers a snapshot candidate only for a dataset that validated
   // clean, and Step 3 refuses to solve without one. Gate on that single fact so
-  // this button and the solver can never disagree - acknowledging an issue in the
-  // browser changes nothing the backend will accept.
+  // this button and the solver can never disagree. There is deliberately no
+  // control on this screen that can change it: the old "Mark as Resolved" and
+  // "Auto-Fix All" only ever flipped local state the backend had already refused.
   const hasSnapshot = validation.snapshotCandidateId !== null;
 
   return (
@@ -101,9 +100,9 @@ export function CheckDataStep({
                     {validation.issues.length === 1 ? "issue" : "issues"})
                   </h3>
                   <p className="attention-sub">
-                    No snapshot was registered, so the solver cannot run on this dataset. These
-                    records must be corrected at source and the department feed re-uploaded —
-                    nothing on this screen can change what the backend accepts.
+                    No snapshot was registered, so the solver cannot run. Correct the uploaded
+                    source data, re-upload it, and run backend validation again — nothing on this
+                    screen can change what the backend accepts.
                   </p>
                 </div>
                 <button type="button" className="btn-attention-primary" onClick={onBack} disabled={isBusy}>
@@ -154,25 +153,10 @@ export function CheckDataStep({
                           )}
 
                           <div className="issue-actions-row">
-                            {issue.resolved ? (
-                              <span className="resolved-status-text">
-                                ✓ Acknowledged — still must be fixed at source
-                              </span>
-                            ) : (
-                              <>
-                                <button
-                                  type="button"
-                                  className="btn-fix-item"
-                                  onClick={() => onAcknowledgeIssue(issue.id)}
-                                >
-                                  ✓ Acknowledge
-                                </button>
-                                <span className="issue-resolve-note">
-                                  Marks this issue as read. It does not change the dataset or
-                                  unblock the solver.
-                                </span>
-                              </>
-                            )}
+                            <span className="issue-resolve-note">
+                              Backend rejected this candidate. Return to Step 1, update the source
+                              file, and validate again.
+                            </span>
                           </div>
                         </div>
                       )}
@@ -240,7 +224,7 @@ export function CheckDataStep({
         <div className="step-next-group">
           {!hasSnapshot && (
             <span className="validation-hint error">
-              No validated snapshot — correct the data at source and re-upload
+              Backend validation must pass before the solver can run — correct the data at source and re-upload
             </span>
           )}
           <button

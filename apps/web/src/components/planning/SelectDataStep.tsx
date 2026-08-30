@@ -1,10 +1,12 @@
 "use client";
 
-import { CorridorPresetId, DepartmentDataSource } from "@/types";
+import { CorridorPresetId, DepartmentDataSource, PlanningHorizon } from "@/types";
 import { CORRIDOR_PRESETS, getPreset } from "@/lib/corridor-presets";
 
 interface SelectDataStepProps {
   sources: DepartmentDataSource[];
+  horizon: PlanningHorizon;
+  onHorizonChange: (horizon: PlanningHorizon) => void;
   onToggleSourceStatus: (id: string) => void;
   onReplaceFile: (id: string, file: File) => Promise<void>;
   onContinue: () => void;
@@ -20,6 +22,8 @@ interface SelectDataStepProps {
 
 export function SelectDataStep({
   sources,
+  horizon,
+  onHorizonChange,
   onToggleSourceStatus,
   onReplaceFile,
   onContinue,
@@ -63,6 +67,29 @@ export function SelectDataStep({
           <p className="step-desc">
             Load or upload maintenance demands across railway engineering departments. The solver will
             integrate overlapping demands into single track possessions.
+          </p>
+        </div>
+
+        <div className="horizon-switch-box">
+          <label className="switch-label">Planning Horizon:</label>
+          <div className="horizon-toggle-group">
+            <button
+              type="button"
+              className={`toggle-btn ${horizon === "WEEKLY" ? "active" : ""}`}
+              onClick={() => onHorizonChange("WEEKLY")}
+            >
+              Weekly (Standard)
+            </button>
+            <button
+              type="button"
+              className={`toggle-btn ${horizon === "MONTHLY" ? "active" : ""}`}
+              onClick={() => onHorizonChange("MONTHLY")}
+            >
+              Monthly (30-day filter)
+            </button>
+          </div>
+          <p className="validation-hint">
+            Monthly mode uses the same CP-SAT solver on a 30-day date-bounded snapshot. It does not create a separate monthly optimizer.
           </p>
         </div>
       </div>
