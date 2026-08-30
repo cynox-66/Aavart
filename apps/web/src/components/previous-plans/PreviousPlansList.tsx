@@ -222,7 +222,7 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                     Task Count{sortIndicator("tasksCount")}
                   </button>
                 </th>
-                <th>Downtime Gain</th>
+                <th>Closure vs. serial</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -244,7 +244,11 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                     <strong>{plan.scheduledJobCount}</strong>
                     <span className="neutral-cell"> / {plan.totalJobCount} scheduled</span>
                   </td>
-                  <td className={plan.downtimeReductionPercent === null ? "neutral-cell" : "gain-cell"}>
+                  <td
+                    className={
+                      plan.downtimeReductionPercent ? "gain-cell" : "neutral-cell"
+                    }
+                  >
                     {plan.downtimeReductionPercent === null ? (
                       "—"
                     ) : (

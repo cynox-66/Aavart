@@ -104,10 +104,15 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className={`rn-stat-number ${plan.kpis.closure_reduction_percent >= 0 ? "green" : ""}`}>
-              {formatPercent(-plan.kpis.closure_reduction_percent)}
+            <div className={`rn-stat-number ${plan.kpis.downtime_reduction_percent > 0 ? "green" : ""}`}>
+              {formatPercent(-plan.kpis.downtime_reduction_percent)}
             </div>
-            <span className="rn-stat-label">Closure Time vs. Baseline</span>
+            <span className="rn-stat-label">
+              Section closure vs. one possession per job
+            </span>
+            <span className="rn-stat-sub">
+              over the {plan.kpis.scheduled_jobs} of {plan.kpis.total_jobs} jobs scheduled
+            </span>
           </div>
         </div>
 

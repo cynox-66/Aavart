@@ -95,14 +95,31 @@ class JobContext(ApiModel):
 
 
 class KpiSummary(ApiModel):
-    baseline_closure_minutes: int
+    """Plan impact, reported so that rejecting work cannot improve the score.
+
+    Every field is computed over the scheduled jobs only, and coverage is part
+    of the summary rather than an optional extra - see planning/kpis.py.
+    """
+
+    # The counterfactual is named, not implied. "SERIAL_PER_SECTION" means one
+    # possession per job, stacked back to back within each section; it is not a
+    # human-authored plan.
+    baseline_method: Literal["SERIAL_PER_SECTION"]
+    serial_baseline_closure_minutes: int
     optimized_closure_minutes: int
     scheduled_maintenance_minutes: int
     rejected_maintenance_minutes: int
-    baseline_asset_downtime_minutes: int
+    serial_baseline_asset_downtime_minutes: int
     optimized_asset_downtime_minutes: int
+    asset_downtime_reduction_minutes: int
+    asset_downtime_reduction_percent: float
     downtime_reduction_minutes: int
     downtime_reduction_percent: float
+    # Coverage. Never render the reduction without these beside it.
+    scheduled_jobs: int
+    total_jobs: int
+    job_coverage_percent: float
+    minute_coverage_percent: float
 
 
 class AiEstimate(ApiModel):

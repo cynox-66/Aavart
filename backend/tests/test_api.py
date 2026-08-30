@@ -154,10 +154,21 @@ def test_planning_run_returns_schedule_and_unscheduled_reasons(
     assert body["unscheduled_jobs"] == [
         {"job_id": "JOB-004", "reason_codes": ["TRAIN_PATH_CONFLICT"]}
     ]
-    assert body["kpis"]["baseline_closure_minutes"] == 390
+    # These numbers were recomputed, not preserved. The old fixture asserted a
+    # 390-minute baseline against a 270-minute plan for a 30.77% saving - but the
+    # whole 120-minute "saving" was JOB-004's rejection: it counted in the
+    # baseline and vanished from the optimized side. Measured over the three jobs
+    # actually scheduled, this plan co-locates nothing and saves nothing, and the
+    # summary now says so out loud while reporting 3-of-4 coverage beside it.
+    assert body["kpis"]["baseline_method"] == "SERIAL_PER_SECTION"
+    assert body["kpis"]["serial_baseline_closure_minutes"] == 270
     assert body["kpis"]["optimized_closure_minutes"] == 270
-    assert body["kpis"]["downtime_reduction_minutes"] == 120
-    assert body["kpis"]["downtime_reduction_percent"] == 30.77
+    assert body["kpis"]["downtime_reduction_minutes"] == 0
+    assert body["kpis"]["downtime_reduction_percent"] == 0.0
+    assert body["kpis"]["scheduled_jobs"] == 3
+    assert body["kpis"]["total_jobs"] == 4
+    assert body["kpis"]["job_coverage_percent"] == 75.0
+    assert body["kpis"]["rejected_maintenance_minutes"] == 120
     assert {estimate["source"] for estimate in body["ai_estimates"]} == {"LOCAL_HEURISTIC"}
     assert {item["job_id"] for item in body["jobs"]} == {
         "JOB-001",

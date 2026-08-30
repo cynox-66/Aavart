@@ -64,14 +64,21 @@ export interface ValidatorSummary {
 }
 
 export interface KpiSummary {
-  baseline_closure_minutes: number;
+  baseline_method: "SERIAL_PER_SECTION";
+  serial_baseline_closure_minutes: number;
   optimized_closure_minutes: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
-  baseline_asset_downtime_minutes: number;
+  serial_baseline_asset_downtime_minutes: number;
   optimized_asset_downtime_minutes: number;
+  asset_downtime_reduction_minutes: number;
+  asset_downtime_reduction_percent: number;
   downtime_reduction_minutes: number;
   downtime_reduction_percent: number;
+  scheduled_jobs: number;
+  total_jobs: number;
+  job_coverage_percent: number;
+  minute_coverage_percent: number;
 }
 
 export interface AiEstimate {

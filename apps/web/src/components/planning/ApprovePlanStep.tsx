@@ -5,7 +5,7 @@ import { PlanRunView } from "@/types";
 import { CorridorMap } from "@/components/shared/CorridorMap";
 import { WeeklyTimelineSummary } from "@/components/review/WeeklyTimelineSummary";
 import { ExpandedTimelineModal } from "@/components/review/ExpandedTimelineModal";
-import { CURRENT_REVIEWER, formatPercent } from "@/lib/utils";
+import { CURRENT_REVIEWER, formatDuration, formatPercent } from "@/lib/utils";
 
 interface ApprovePlanStepProps {
   plan: PlanRunView;
@@ -31,7 +31,6 @@ export function ApprovePlanStep({
     await onApprove(CURRENT_REVIEWER, notes);
   };
 
-  const scheduledCount = plan.jobs.filter((j) => j.status === "SCHEDULED" || j.status === "LOCKED").length;
   const lockedCount = plan.jobs.filter((j) => j.locked).length;
   const departmentCount = new Set(plan.jobs.map((j) => j.department)).size;
   const qualityTone = plan.kpis.plan_quality === "OPTIMAL" ? "green" : plan.kpis.plan_quality === "FEASIBLE" ? "amber" : "red";
@@ -91,11 +90,11 @@ export function ApprovePlanStep({
             </svg>
           </div>
           <div className="rn-kpi-content">
-            <span className="rn-kpi-card-label">Closure Time</span>
-            <div className={`rn-kpi-card-value ${plan.kpis.closure_reduction_percent >= 0 ? "green" : "red"}`}>
-              {formatPercent(-plan.kpis.closure_reduction_percent)}
+            <span className="rn-kpi-card-label">Section Closure Time</span>
+            <div className={`rn-kpi-card-value ${plan.kpis.downtime_reduction_percent > 0 ? "green" : ""}`}>
+              {formatPercent(-plan.kpis.downtime_reduction_percent)}
             </div>
-            <span className="rn-kpi-card-sub">vs. baseline</span>
+            <span className="rn-kpi-card-sub">vs. one possession per job</span>
           </div>
         </div>
 
@@ -107,9 +106,13 @@ export function ApprovePlanStep({
             </svg>
           </div>
           <div className="rn-kpi-content">
-            <span className="rn-kpi-card-label">Total Tasks</span>
-            <div className="rn-kpi-card-value dark">{plan.jobs.length}</div>
-            <span className="rn-kpi-card-sub">{scheduledCount} scheduled</span>
+            <span className="rn-kpi-card-label">Work Covered</span>
+            <div className={`rn-kpi-card-value ${plan.kpis.job_coverage_percent >= 100 ? "green" : "amber"}`}>
+              {plan.kpis.job_coverage_percent.toFixed(1)}%
+            </div>
+            <span className="rn-kpi-card-sub">
+              {plan.kpis.scheduled_jobs} of {plan.kpis.total_jobs} jobs scheduled
+            </span>
           </div>
         </div>
       </div>
@@ -205,9 +208,15 @@ export function ApprovePlanStep({
                 detail={plan.validator.passed ? "No blocking issues found" : "Issues were flagged - review before approving"}
               />
               <ReadinessRow
-                ok={plan.unscheduled_jobs.length === 0}
+                ok={plan.kpis.scheduled_jobs === plan.kpis.total_jobs}
                 title="All maintenance tasks scheduled"
-                detail={`${scheduledCount} / ${plan.jobs.length} tasks planned`}
+                detail={
+                  plan.kpis.scheduled_jobs === plan.kpis.total_jobs
+                    ? `All ${plan.kpis.total_jobs} jobs placed`
+                    : `${plan.kpis.total_jobs - plan.kpis.scheduled_jobs} of ` +
+                      `${plan.kpis.total_jobs} jobs unscheduled ` +
+                      `(${formatDuration(plan.kpis.rejected_maintenance_minutes)} of work)`
+                }
               />
               <ReadinessRow
                 ok={plan.state === "OPTIMAL" || plan.state === "FEASIBLE"}
@@ -220,9 +229,9 @@ export function ApprovePlanStep({
                 detail={`${lockedCount} works locked`}
               />
               <ReadinessRow
-                ok={plan.kpis.closure_reduction_percent >= 0}
-                title="Plan impact vs. baseline"
-                detail={`Closure time change: ${formatPercent(-plan.kpis.closure_reduction_percent)}`}
+                ok={plan.kpis.downtime_reduction_percent > 0}
+                title="Plan beats one possession per job"
+                detail={`Section closure change: ${formatPercent(-plan.kpis.downtime_reduction_percent)}`}
               />
             </div>
           </div>

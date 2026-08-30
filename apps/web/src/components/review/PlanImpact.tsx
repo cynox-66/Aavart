@@ -25,8 +25,17 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
     <div className="rn-card rn-plan-impact-card">
       <div className="rn-card-header">
         <div className="rn-card-title-group">
-          <h2 className="rn-card-title">PLAN IMPACT (vs. Baseline)</h2>
-          <button type="button" className="rn-info-icon-btn" title="Optimizer Impact Info">
+          <h2 className="rn-card-title">PLAN IMPACT</h2>
+          <button
+            type="button"
+            className="rn-info-icon-btn"
+            title={
+              "The solver maximises priority-weighted job count; it has no closure term. " +
+              "Closure reduction is a measured outcome of that objective, not the quantity " +
+              "being optimised. Both columns cover the scheduled jobs only - read them with " +
+              "Work Covered beside them."
+            }
+          >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="16" x2="12" y2="12" />
@@ -46,11 +55,14 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             </svg>
           </div>
           <div className="rn-impact-info">
-            <span className="rn-impact-label">Closure Time</span>
-            <div className={`rn-impact-value ${kpis.closure_reduction_percent >= 0 ? "green" : "red"}`}>
-              {formatPercent(-kpis.closure_reduction_percent)}
+            <span className="rn-impact-label">Section Closure Time</span>
+            <div className={`rn-impact-value ${kpis.downtime_reduction_percent > 0 ? "green" : ""}`}>
+              {formatPercent(-kpis.downtime_reduction_percent)}
             </div>
-            <span className="rn-impact-sub">vs. baseline (unoptimized) plan</span>
+            <span className="rn-impact-sub">
+              {formatDuration(kpis.optimized_closure_minutes)} vs.{" "}
+              {formatDuration(kpis.serial_baseline_closure_minutes)} one possession per job
+            </span>
           </div>
         </div>
 
@@ -67,10 +79,37 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
           </div>
           <div className="rn-impact-info">
             <span className="rn-impact-label">Asset Downtime</span>
-            <div className={`rn-impact-value ${kpis.downtime_reduction_percent >= 0 ? "green" : "red"}`}>
-              {formatPercent(-kpis.downtime_reduction_percent)}
+            <div className={`rn-impact-value ${kpis.asset_downtime_reduction_percent > 0 ? "green" : ""}`}>
+              {formatPercent(-kpis.asset_downtime_reduction_percent)}
             </div>
-            <span className="rn-impact-sub">vs. baseline (unoptimized) plan</span>
+            <span className="rn-impact-sub">
+              {formatDuration(kpis.optimized_asset_downtime_minutes)} vs.{" "}
+              {formatDuration(kpis.serial_baseline_asset_downtime_minutes)} one possession per job
+            </span>
+          </div>
+        </div>
+
+        {/*
+          Coverage, as a headline rather than a footnote. The reduction above is
+          measured over the scheduled jobs only, so it says nothing about the work
+          this plan refused - these two numbers only mean something together.
+        */}
+        <div className="rn-impact-item">
+          <div className="rn-impact-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
+              <path d="M9 11l3 3L22 4" />
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+            </svg>
+          </div>
+          <div className="rn-impact-info">
+            <span className="rn-impact-label">Work Covered</span>
+            <div className={`rn-impact-value ${kpis.job_coverage_percent >= 100 ? "green" : "amber"}`}>
+              {kpis.job_coverage_percent.toFixed(1)}%
+            </div>
+            <span className="rn-impact-sub">
+              {kpis.scheduled_jobs} of {kpis.total_jobs} jobs ·{" "}
+              {kpis.minute_coverage_percent.toFixed(1)}% of maintenance minutes
+            </span>
           </div>
         </div>
 
@@ -86,7 +125,7 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             <span className="rn-impact-label">Plan Quality</span>
             <div className={`rn-impact-value ${quality.tone}`}>{quality.label}</div>
             <span className="rn-impact-sub">
-              {jobCounts.scheduled} of {jobCounts.total} jobs scheduled · independent validator {validatorPassed ? "passed" : "flagged issues"}
+              Independent validator {validatorPassed ? "passed" : "flagged issues"}
             </span>
           </div>
         </div>
@@ -108,8 +147,8 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
       {/* Comparison Modal - every figure is a real KPI/count from this run */}
       <ConfirmModal
         isOpen={isCompareOpen}
-        title="Baseline vs. CP-SAT Optimized Comparison"
-        description="Quantitative breakdown reported by the solver for this run."
+        title="Serial baseline vs. CP-SAT optimized"
+        description="Both columns cover the scheduled jobs only. The baseline is one possession per job, stacked back to back within each section - not a human-authored plan."
         confirmLabel="Close"
         cancelLabel="Back"
         onConfirm={() => setIsCompareOpen(false)}
@@ -120,7 +159,7 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             <thead>
               <tr>
                 <th>Operational Metric</th>
-                <th>Baseline</th>
+                <th>Serial baseline</th>
                 <th>Optimized</th>
                 <th>Net Change</th>
               </tr>
@@ -128,9 +167,19 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             <tbody>
               <tr>
                 <td><strong>Total Section Closures</strong></td>
-                <td>{formatDuration(kpis.baseline_closure_minutes)}</td>
+                <td>{formatDuration(kpis.serial_baseline_closure_minutes)}</td>
                 <td>{formatDuration(kpis.optimized_closure_minutes)}</td>
-                <td className="gain-cell"><strong>{formatPercent(-kpis.closure_reduction_percent)}</strong></td>
+                <td className={kpis.downtime_reduction_percent > 0 ? "gain-cell" : "neutral-cell"}>
+                  <strong>{formatPercent(-kpis.downtime_reduction_percent)}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Asset Downtime</strong></td>
+                <td>{formatDuration(kpis.serial_baseline_asset_downtime_minutes)}</td>
+                <td>{formatDuration(kpis.optimized_asset_downtime_minutes)}</td>
+                <td className={kpis.asset_downtime_reduction_percent > 0 ? "gain-cell" : "neutral-cell"}>
+                  <strong>{formatPercent(-kpis.asset_downtime_reduction_percent)}</strong>
+                </td>
               </tr>
               <tr>
                 <td><strong>Maintenance Work Done</strong></td>

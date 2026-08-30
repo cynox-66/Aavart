@@ -2777,6 +2777,16 @@ button:disabled {
   color: var(--text-muted);
 }
 
+/* Coverage line under the headline reduction. The reduction is measured over
+   the scheduled jobs only, so it never appears without this. */
+.rn-stat-sub {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
 .rn-whats-next-section {
   margin-bottom: 2rem;
 }

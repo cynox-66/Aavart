@@ -128,10 +128,6 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     };
   });
 
-  const closureReduction = run.kpis.baseline_closure_minutes > 0
-    ? ((run.kpis.baseline_closure_minutes - run.kpis.optimized_closure_minutes) / run.kpis.baseline_closure_minutes) * 100
-    : 0;
-
   return {
     run_id: run.run_id,
     snapshot_id: run.snapshot_id,
@@ -145,16 +141,10 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     schedule_items,
     unscheduled_jobs: run.unscheduled_jobs,
     sections,
+    // Pass the backend's numbers straight through. The headline percentage is
+    // computed once, in planning/kpis.py, and never re-derived here.
     kpis: {
-      baseline_closure_minutes: run.kpis.baseline_closure_minutes,
-      optimized_closure_minutes: run.kpis.optimized_closure_minutes,
-      closure_reduction_percent: closureReduction,
-      baseline_asset_downtime_minutes: run.kpis.baseline_asset_downtime_minutes,
-      optimized_asset_downtime_minutes: run.kpis.optimized_asset_downtime_minutes,
-      downtime_reduction_minutes: run.kpis.downtime_reduction_minutes,
-      downtime_reduction_percent: run.kpis.downtime_reduction_percent,
-      scheduled_maintenance_minutes: run.kpis.scheduled_maintenance_minutes,
-      rejected_maintenance_minutes: run.kpis.rejected_maintenance_minutes,
+      ...run.kpis,
       plan_quality: run.state === "OPTIMAL" ? "OPTIMAL" : run.state === "FEASIBLE" ? "FEASIBLE" : "DEGRADED",
     },
     changes: run.changes,

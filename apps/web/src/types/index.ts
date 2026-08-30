@@ -192,16 +192,29 @@ export interface JobDetailView {
   };
 }
 
+/**
+ * Mirrors the backend's KpiSummary field for field. There is deliberately no
+ * derived percentage here: the adapter used to recompute the headline from the
+ * minute totals, which left two sources of truth for the same number and meant
+ * a backend fix would not have reached the screen.
+ */
 export interface KpiView {
-  baseline_closure_minutes: number;
+  baseline_method: "SERIAL_PER_SECTION";
+  serial_baseline_closure_minutes: number;
   optimized_closure_minutes: number;
-  closure_reduction_percent: number;
-  baseline_asset_downtime_minutes: number;
+  serial_baseline_asset_downtime_minutes: number;
   optimized_asset_downtime_minutes: number;
+  asset_downtime_reduction_minutes: number;
+  asset_downtime_reduction_percent: number;
   downtime_reduction_minutes: number;
   downtime_reduction_percent: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
+  /** Coverage. Never render the reduction without these beside it. */
+  scheduled_jobs: number;
+  total_jobs: number;
+  job_coverage_percent: number;
+  minute_coverage_percent: number;
   plan_quality: "OPTIMAL" | "FEASIBLE" | "DEGRADED";
 }
 

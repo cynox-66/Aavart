@@ -193,6 +193,24 @@
             ],
             "title": "Snapshot Candidate Id"
           },
+          "source_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Hash"
+          },
+          "source_summaries": {
+            "items": {
+              "$ref": "#/components/schemas/SourceSummary"
+            },
+            "title": "Source Summaries",
+            "type": "array"
+          },
           "valid": {
             "title": "Valid",
             "type": "boolean"
@@ -396,14 +414,20 @@
       },
       "KpiSummary": {
         "additionalProperties": false,
+        "description": "Plan impact, reported so that rejecting work cannot improve the score.\n\nEvery field is computed over the scheduled jobs only, and coverage is part\nof the summary rather than an optional extra - see planning/kpis.py.",
         "properties": {
-          "baseline_asset_downtime_minutes": {
-            "title": "Baseline Asset Downtime Minutes",
+          "asset_downtime_reduction_minutes": {
+            "title": "Asset Downtime Reduction Minutes",
             "type": "integer"
           },
-          "baseline_closure_minutes": {
-            "title": "Baseline Closure Minutes",
-            "type": "integer"
+          "asset_downtime_reduction_percent": {
+            "title": "Asset Downtime Reduction Percent",
+            "type": "number"
+          },
+          "baseline_method": {
+            "const": "SERIAL_PER_SECTION",
+            "title": "Baseline Method",
+            "type": "string"
           },
           "downtime_reduction_minutes": {
             "title": "Downtime Reduction Minutes",
@@ -411,6 +435,14 @@
           },
           "downtime_reduction_percent": {
             "title": "Downtime Reduction Percent",
+            "type": "number"
+          },
+          "job_coverage_percent": {
+            "title": "Job Coverage Percent",
+            "type": "number"
+          },
+          "minute_coverage_percent": {
+            "title": "Minute Coverage Percent",
             "type": "number"
           },
           "optimized_asset_downtime_minutes": {
@@ -425,20 +457,43 @@
             "title": "Rejected Maintenance Minutes",
             "type": "integer"
           },
+          "scheduled_jobs": {
+            "title": "Scheduled Jobs",
+            "type": "integer"
+          },
           "scheduled_maintenance_minutes": {
             "title": "Scheduled Maintenance Minutes",
+            "type": "integer"
+          },
+          "serial_baseline_asset_downtime_minutes": {
+            "title": "Serial Baseline Asset Downtime Minutes",
+            "type": "integer"
+          },
+          "serial_baseline_closure_minutes": {
+            "title": "Serial Baseline Closure Minutes",
+            "type": "integer"
+          },
+          "total_jobs": {
+            "title": "Total Jobs",
             "type": "integer"
           }
         },
         "required": [
-          "baseline_closure_minutes",
+          "baseline_method",
+          "serial_baseline_closure_minutes",
           "optimized_closure_minutes",
           "scheduled_maintenance_minutes",
           "rejected_maintenance_minutes",
-          "baseline_asset_downtime_minutes",
+          "serial_baseline_asset_downtime_minutes",
           "optimized_asset_downtime_minutes",
+          "asset_downtime_reduction_minutes",
+          "asset_downtime_reduction_percent",
           "downtime_reduction_minutes",
-          "downtime_reduction_percent"
+          "downtime_reduction_percent",
+          "scheduled_jobs",
+          "total_jobs",
+          "job_coverage_percent",
+          "minute_coverage_percent"
         ],
         "title": "KpiSummary",
         "type": "object"
@@ -494,6 +549,33 @@
           "reason_codes"
         ],
         "title": "LockResponse",
+        "type": "object"
+      },
+      "PlanningIntentMove": {
+        "additionalProperties": false,
+        "properties": {
+          "job_id": {
+            "minLength": 1,
+            "title": "Job Id",
+            "type": "string"
+          },
+          "reason": {
+            "default": "planner requested move",
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "target_window_id": {
+            "minLength": 1,
+            "title": "Target Window Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id",
+          "target_window_id"
+        ],
+        "title": "PlanningIntentMove",
         "type": "object"
       },
       "PlanningRunCreateRequest": {
@@ -610,6 +692,29 @@
             "title": "Export Ready",
             "type": "boolean"
           },
+          "intent": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent"
+          },
+          "intent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intent Id"
+          },
           "jobs": {
             "items": {
               "$ref": "#/components/schemas/JobContext"
@@ -630,6 +735,14 @@
               }
             ],
             "title": "Parent Run Id"
+          },
+          "rejected_intent_edits": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Rejected Intent Edits",
+            "type": "array"
           },
           "ruleset_version": {
             "title": "Ruleset Version",
@@ -1052,11 +1165,16 @@
       "ReplanRequest": {
         "additionalProperties": false,
         "properties": {
+          "actor": {
+            "default": "planner",
+            "minLength": 1,
+            "title": "Actor",
+            "type": "string"
+          },
           "affected_section_ids": {
             "items": {
               "type": "string"
             },
-            "minItems": 1,
             "title": "Affected Section Ids",
             "type": "array"
           },
@@ -1064,15 +1182,37 @@
             "items": {
               "type": "string"
             },
-            "minItems": 1,
             "title": "Affected Window Ids",
             "type": "array"
+          },
+          "exclusions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Exclusions",
+            "type": "array"
+          },
+          "locked_job_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Locked Job Ids",
+            "type": "array"
+          },
+          "moves": {
+            "items": {
+              "$ref": "#/components/schemas/PlanningIntentMove"
+            },
+            "title": "Moves",
+            "type": "array"
+          },
+          "reason": {
+            "default": "planner requested re-optimization",
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
           }
         },
-        "required": [
-          "affected_section_ids",
-          "affected_window_ids"
-        ],
         "title": "ReplanRequest",
         "type": "object"
       },
@@ -1139,6 +1279,51 @@
         ],
         "title": "ScheduleStatus",
         "type": "string"
+      },
+      "SourceSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "department": {
+            "title": "Department",
+            "type": "string"
+          },
+          "file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "File Name"
+          },
+          "job_count": {
+            "default": 0,
+            "title": "Job Count",
+            "type": "integer"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "warning_count": {
+            "default": 0,
+            "title": "Warning Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "source_id",
+          "department",
+          "status"
+        ],
+        "title": "SourceSummary",
+        "type": "object"
       },
       "UnscheduledJob": {
         "additionalProperties": false,
