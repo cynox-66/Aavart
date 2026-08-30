@@ -75,6 +75,12 @@ class JobContext(ApiModel):
     section_id: str
     work_type: str
     priority: int
+    duration_minutes: int
+    # Exposed so the frontend can construct a valid RapidBlock urgent_job for
+    # this section without a separate "snapshot entities" endpoint - these
+    # are real resource/window ids known to be valid for this job's section.
+    required_resources: list[str]
+    allowed_windows: list[str]
 
 
 class KpiSummary(ApiModel):

@@ -212,7 +212,7 @@ export function PlannerDashboard() {
               if (!selectedSchedule) return;
               perform("lock", async () => setRun(await lockScheduleItem(run.run_id, selectedSchedule.job_id)));
             }}
-            onApprove={() => perform("approve", async () => setRun(await approveRun(run.run_id, reviewer)))}
+            onApprove={() => perform("approve", async () => setRun(await approveRun(run.run_id, reviewer, "Reviewed schedule and independent validator result")))}
             onExport={() => perform("export", () => downloadRun(run.run_id))}
           />
         </div>

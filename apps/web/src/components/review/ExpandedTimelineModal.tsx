@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { DepartmentType, JobDetailView, PlanRunView } from "@/types";
-import { formatStamp, formatTime } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
+import { DepartmentType, PlanRunView } from "@/types";
+import { formatDateRange, formatStamp, formatTime, getScheduleDateRange } from "@/lib/utils";
 
 interface ExpandedTimelineModalProps {
   isOpen: boolean;
@@ -21,10 +21,22 @@ export function ExpandedTimelineModal({
 }: ExpandedTimelineModalProps) {
   const [filterDept, setFilterDept] = useState<DepartmentType | "ALL">("ALL");
   const [zoomLevel, setZoomLevel] = useState<"1x" | "2x">("1x");
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    dialogRef.current?.focus();
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   const jobsMap = new Map(plan.jobs.map((j) => [j.job_id, j]));
+  const { start, end } = getScheduleDateRange(plan.schedule_items);
 
   const filteredSchedule = plan.schedule_items.filter((item) => {
     const job = jobsMap.get(item.job_id);
@@ -34,11 +46,11 @@ export function ExpandedTimelineModal({
 
   return (
     <div className="modal-backdrop expanded-timeline-backdrop" role="dialog" aria-modal="true">
-      <div className="expanded-timeline-dialog">
+      <div className="expanded-timeline-dialog" ref={dialogRef} tabIndex={-1}>
         <div className="expanded-top-bar">
           <div>
             <span className="mono-kicker">DETAILED OPERATIONS VIEW</span>
-            <h2>High-Resolution Corridor Timeline (18 Aug – 24 Aug 2026)</h2>
+            <h2>High-Resolution Corridor Timeline ({formatDateRange(start, end)})</h2>
           </div>
 
           <div className="expanded-controls-group">
@@ -89,14 +101,14 @@ export function ExpandedTimelineModal({
               const isIntegrated = item.is_integrated_block;
 
               return (
-                <div
+                <button
+                  type="button"
                   key={item.job_id}
                   className={`expanded-job-card ${isSelected ? "selected" : ""} ${
                     isIntegrated ? "integrated" : ""
                   }`}
                   onClick={() => onSelectJobId(item.job_id)}
-                  role="button"
-                  tabIndex={0}
+                  aria-pressed={isSelected}
                 >
                   <div className="job-card-topline">
                     <div className="job-id-dept">
@@ -127,9 +139,19 @@ export function ExpandedTimelineModal({
                       <span key={c} className="reason-pill-sm">{c}</span>
                     ))}
                   </div>
-                </div>
+                </button>
               );
             })}
+            {filteredSchedule.length === 0 && (
+              <div className="rn-empty-state">
+                <strong>No scheduled work matches this filter</strong>
+                <p>
+                  {filterDept === "ALL"
+                    ? "This plan has no scheduled items yet."
+                    : `No ${filterDept} jobs are scheduled in this plan. Try a different department.`}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

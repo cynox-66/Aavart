@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { AppView } from "@/types";
 import { WorkflowStepper } from "@/components/navigation/WorkflowStepper";
+import { isBackendAlive } from "@/lib/adapters/planning-adapter";
 
 interface AppHeaderProps {
   currentView: AppView;
@@ -9,15 +11,49 @@ interface AppHeaderProps {
   planId?: string;
   isPlanCreated?: boolean;
   isApproved?: boolean;
+  canGoBack?: boolean;
+  onGoBack?: () => void;
 }
 
 export function AppHeader({
   currentView,
   onNavigate,
+  planId,
   isPlanCreated = false,
   isApproved = false,
+  canGoBack = false,
+  onGoBack,
 }: AppHeaderProps) {
   const isEmergency = currentView === "rapid-block";
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [now, setNow] = useState<Date | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Tick the clock from an interval rather than setting state in the effect
+    // body; the first tick is scheduled, not synchronous.
+    const clockId = setInterval(() => setNow(new Date()), 30_000);
+    const firstTick = window.setTimeout(() => {
+      setMounted(true);
+      setNow(new Date());
+    }, 0);
+
+    let cancelled = false;
+    const checkHealth = () => {
+      isBackendAlive().then((ok) => {
+        if (!cancelled) setIsOnline(ok);
+      });
+    };
+    checkHealth();
+    const healthId = setInterval(checkHealth, 15_000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(clockId);
+      clearInterval(healthId);
+      window.clearTimeout(firstTick);
+    };
+  }, []);
   const isWizard =
     currentView === "wizard-step-1" ||
     currentView === "wizard-step-2" ||
@@ -28,13 +64,26 @@ export function AppHeader({
 
   return (
     <header className="rn-header">
-      {/* 1. Brand / Logo */}
+      {/* 1. Back affordance + Brand / Logo */}
       <div className="rn-brand-block">
+        {canGoBack && currentView !== "home" && (
+          <button
+            type="button"
+            className="rn-back-btn"
+            onClick={onGoBack}
+            aria-label="Go back to the previous screen"
+            title="Back (or use your browser's Back button)"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+        )}
         <button
           type="button"
           className="rn-brand-btn"
           onClick={() => onNavigate("home")}
-          title="Go to RailNiyojan Home"
+          title={planId ? `Go to Home (active plan ${planId})` : "Go to RailNiyojan Home"}
         >
           <div className="rn-logo-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F2850" strokeWidth="2">
@@ -74,8 +123,16 @@ export function AppHeader({
         )}
       </div>
 
-      {/* 3. Right: Date, Time, User Profile */}
+      {/* 3. Right: Backend Status, Date, Time, User Profile */}
       <div className="rn-header-meta">
+        <div
+          className={`rn-backend-status ${isOnline === null ? "unknown" : isOnline ? "online" : "offline"}`}
+          title={isOnline === null ? "Checking backend..." : isOnline ? "Backend reachable" : "Backend unreachable"}
+        >
+          <span className="rn-status-dot" />
+          <span>{isOnline === null ? "Checking..." : isOnline ? "Backend Online" : "Backend Unreachable"}</span>
+        </div>
+
         <div className="rn-datetime-group">
           <div className="rn-date-item">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -84,7 +141,7 @@ export function AppHeader({
               <line x1="8" y1="2" x2="8" y2="6" />
               <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
-            <span>26 Aug 2026</span>
+            <span>{mounted && now ? now.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—"}</span>
           </div>
 
           <div className="rn-time-item">
@@ -92,19 +149,16 @@ export function AppHeader({
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
-            <span>10:42 AM</span>
+            <span>{mounted && now ? now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "—"}</span>
           </div>
         </div>
 
-        <div className="rn-user-pill">
+        <div className="rn-user-pill" title="Signed in as the demo planner (no authentication in this build)">
           <div className="rn-user-avatar">AR</div>
           <div className="rn-user-text">
             <span className="rn-user-role">Divisional Manager</span>
             <span className="rn-user-div">WR - Vadodara</span>
           </div>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
         </div>
       </div>
     </header>

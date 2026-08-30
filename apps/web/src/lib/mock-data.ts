@@ -1,162 +1,61 @@
+import baselineDatasetFixture from "../../../../fixtures/baseline_valid/dataset.json";
 import {
   DepartmentDataSource,
+  DepartmentType,
   JobDetailView,
   PlanRunView,
-  RapidBlockImpactView,
-  SectionInfo,
-  ValidationIssueItem,
-  ValidationState,
 } from "@/types";
+
+// Pre-submission staging data for the "Select Data" step - this represents
+// what the planner is about to load, not a backend result, so it isn't
+// subject to the "never fake a result" rule the same way. Task counts are
+// derived from the real baseline fixture (the same file actually posted to
+// /datasets/validate) so the numbers shown here match what gets validated.
+const fixtureJobs = (baselineDatasetFixture as { jobs?: Array<{ department: DepartmentType }> }).jobs ?? [];
+const countByDept = (dept: DepartmentType) => fixtureJobs.filter((j) => j.department === dept).length;
 
 export const initialDepartmentSources: DepartmentDataSource[] = [
   {
     id: "tms",
     name: "Track Management System (TMS)",
     department: "TRACK",
-    fileName: "WR_VAD_TMS_2026_W36.csv",
-    taskCount: 12,
+    fileName: "baseline_valid/dataset.json",
+    taskCount: countByDept("TRACK"),
     status: "loaded",
-    updatedAt: "Today, 04:30 AM",
-    sourceType: "CSV",
+    updatedAt: "Baseline demo dataset",
+    sourceType: "JSON",
   },
   {
     id: "smms",
     name: "Signal Maintenance System (SMMS)",
     department: "SIGNAL",
-    fileName: "WR_VAD_SMMS_2026_W36.json",
-    taskCount: 8,
+    fileName: "baseline_valid/dataset.json",
+    taskCount: countByDept("SIGNAL"),
     status: "loaded",
-    updatedAt: "Today, 05:15 AM",
+    updatedAt: "Baseline demo dataset",
     sourceType: "JSON",
   },
   {
     id: "tdms",
     name: "Traction & OHE System (TDMS)",
     department: "ELECTRICAL",
-    fileName: "WR_VAD_TDMS_2026_W36.csv",
-    taskCount: 6,
+    fileName: "baseline_valid/dataset.json",
+    taskCount: countByDept("ELECTRICAL"),
     status: "loaded",
-    updatedAt: "Yesterday, 23:10 PM",
-    sourceType: "CSV",
-  },
-];
-
-export const mockCorridorSections: SectionInfo[] = [
-  {
-    section_id: "ST-01",
-    name: "BRC – VDA",
-    from_node: "BRC",
-    to_node: "VDA",
-    km_start: 0,
-    km_end: 52,
-    tracks_total: 2,
-    tracks_available: 2,
-    status: "CLEAR",
-    active_constraints: 0,
-    total_works: 4,
+    updatedAt: "Baseline demo dataset",
+    sourceType: "JSON",
   },
   {
-    section_id: "ST-02",
-    name: "VDA – AKW",
-    from_node: "VDA",
-    to_node: "AKW",
-    km_start: 52,
-    km_end: 146,
-    tracks_total: 2,
-    tracks_available: 1,
-    status: "CAUTION",
-    active_constraints: 3,
-    total_works: 8,
-  },
-  {
-    section_id: "ST-03",
-    name: "AKW – BHU",
-    from_node: "AKW",
-    to_node: "BHU",
-    km_start: 146,
-    km_end: 198,
-    tracks_total: 2,
-    tracks_available: 0,
-    status: "RESTRICTED",
-    active_constraints: 5,
-    total_works: 7,
-  },
-  {
-    section_id: "ST-04",
-    name: "BHU – SUR",
-    from_node: "BHU",
-    to_node: "SUR",
-    km_start: 198,
-    km_end: 256,
-    tracks_total: 2,
-    tracks_available: 2,
-    status: "CLEAR",
-    active_constraints: 1,
-    total_works: 7,
-  },
-];
-
-export const mockValidationIssues: ValidationIssueItem[] = [
-  {
-    id: "ISSUE-01",
-    severity: "error",
-    code: "HEADWAY_VIOLATION",
-    message: "TMS Task #12 requires ST-03 possession adjacent to 12952 Rajdhani express path.",
-    field: "scheduled_window",
-    jobId: "JOB-042",
-    department: "TRACK",
-    suggestedFix: "Shift window to Fri 22:00–Sat 00:00 night maintenance block.",
-    resolved: false,
-  },
-  {
-    id: "ISSUE-02",
-    severity: "warning",
-    code: "ISOLATION_CONFLICT",
-    message: "TDMS 25kV feeder shutdown overlapping with SMMS point interlocking test at VDA.",
-    field: "isolation_zone",
-    jobId: "JOB-008",
-    department: "ELECTRICAL",
-    suggestedFix: "Bundle into single integrated power & signaling block.",
-    resolved: false,
-  },
-  {
-    id: "ISSUE-03",
-    severity: "warning",
-    code: "CREW_CAPACITY_LIMIT",
-    message: "Western Railway civil inspection crew capacity exceeded on Monday morning.",
-    field: "crew_assignment",
-    jobId: "JOB-019",
+    id: "civil",
+    name: "Civil Engineering Works",
     department: "CIVIL",
-    suggestedFix: "Auto-spread task to Tuesday morning window.",
-    resolved: false,
+    fileName: "baseline_valid/dataset.json",
+    taskCount: countByDept("CIVIL"),
+    status: "loaded",
+    updatedAt: "Baseline demo dataset",
+    sourceType: "JSON",
   },
 ];
-
-export const mockDefaultValidationState: ValidationState = {
-  valid: false,
-  snapshotCandidateId: "SNAP-014",
-  issues: mockValidationIssues,
-  counts: {
-    jobs: 26,
-    windows: 14,
-    assets: 26,
-    sections: 4,
-    resources: 12,
-  },
-};
-
-export const mockValidValidationState: ValidationState = {
-  valid: true,
-  snapshotCandidateId: "SNAP-014",
-  issues: mockValidationIssues.map((i) => ({ ...i, resolved: true })),
-  counts: {
-    jobs: 26,
-    windows: 14,
-    assets: 26,
-    sections: 4,
-    resources: 12,
-  },
-};
 
 // 26 Maintenance Jobs Matching "26 / 26 tasks planned"
 const generateMockJobs = (): JobDetailView[] => {
@@ -342,7 +241,11 @@ const generateMockJobs = (): JobDetailView[] => {
   return jobs;
 };
 
-export const mockBaselinePlan: PlanRunView = {
+// Scoped strictly to the "Previous Plans" demo path (handleOpenPreviousPlan
+// in app/page.tsx) - PreviousPlansList has no real backend to source
+// historical runs from (no list-runs endpoint exists), so this stays a
+// clearly-labeled demo plan rather than a fallback for a real run.
+export const demoHistoricalPlan: PlanRunView = {
   run_id: "RUN-WR-014",
   snapshot_id: "SNAP-014",
   ruleset_version: "Demo Ruleset v1",
@@ -351,7 +254,12 @@ export const mockBaselinePlan: PlanRunView = {
   completed_at: "2026-08-26T10:42:00+05:30",
   parent_run_id: null,
   export_ready: true,
-  sections: mockCorridorSections,
+  sections: [
+    { section_id: "ST-01", name: "BRC – VDA", from_node: "BRC", to_node: "VDA", km_start: 0, km_end: 52, tracks_total: 2, tracks_available: 2, status: "CLEAR", active_constraints: 0, total_works: 4 },
+    { section_id: "ST-02", name: "VDA – AKW", from_node: "VDA", to_node: "AKW", km_start: 52, km_end: 146, tracks_total: 2, tracks_available: 1, status: "CAUTION", active_constraints: 3, total_works: 8 },
+    { section_id: "ST-03", name: "AKW – BHU", from_node: "AKW", to_node: "BHU", km_start: 146, km_end: 198, tracks_total: 2, tracks_available: 0, status: "RESTRICTED", active_constraints: 5, total_works: 7 },
+    { section_id: "ST-04", name: "BHU – SUR", from_node: "BHU", to_node: "SUR", km_start: 198, km_end: 256, tracks_total: 2, tracks_available: 2, status: "CLEAR", active_constraints: 1, total_works: 7 },
+  ],
   kpis: {
     baseline_closure_minutes: 390,
     optimized_closure_minutes: 250,
@@ -495,55 +403,3 @@ export const mockPreviousPlans: Array<{
   },
 ];
 
-export const mockRapidBlockImpact: RapidBlockImpactView = {
-  requestId: "RBR-2026-08-26-001",
-  state: "CANDIDATE_READY",
-  baseRunId: "RUN-WR-014",
-  childRunId: "RUN-WR-014-EMG-01",
-  derivedSnapshotId: "SNAP-014-EMG",
-  incidentLocation: {
-    sectionId: "ST-03",
-    kmMarker: "Km 512/8",
-    incidentType: "Rail Fracture (TMS)",
-  },
-  rescheduledJobs: [
-    {
-      jobId: "JOB-015",
-      department: "SIGNAL",
-      sectionId: "ST-03",
-      previousWindow: "Fri 22:00 – 23:30",
-      newWindow: "Sat 04:00 – 05:30 (+6h shift)",
-    },
-    {
-      jobId: "JOB-008",
-      department: "ELECTRICAL",
-      sectionId: "ST-02",
-      previousWindow: "Wed 10:00 – 12:00",
-      newWindow: "Wed 14:00 – 16:00 (+4h shift)",
-    },
-    {
-      jobId: "JOB-027",
-      department: "TRACK",
-      sectionId: "ST-04",
-      previousWindow: "Thu 16:00 – 18:00",
-      newWindow: "Thu 18:30 – 20:30 (+2.5h shift)",
-    },
-  ],
-  delayedTrains: [
-    {
-      trainId: "12952",
-      trainName: "Mumbai Rajdhani Express",
-      delayMinutes: 18,
-      affectedSection: "ST-03 (AKW–BHU)",
-    },
-    {
-      trainId: "22954",
-      trainName: "Gujarat Superfast Express",
-      delayMinutes: 25,
-      affectedSection: "ST-03 (AKW–BHU)",
-    },
-  ],
-  preservedLockedJobs: ["JOB-042"],
-  reasonCodes: ["RAPIDBLOCK_CANDIDATE", "LOCK_PRESERVED"],
-  isCandidateReady: true,
-};

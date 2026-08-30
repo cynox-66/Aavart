@@ -2,6 +2,7 @@
 
 import { JobDetailView, PlanRunView } from "@/types";
 import { JobActions } from "@/components/review/JobActions";
+import { formatDuration, getDepartmentLabel, mapReasonCodeToLabel } from "@/lib/utils";
 
 interface JobInspectorProps {
   plan: PlanRunView;
@@ -14,9 +15,14 @@ interface JobInspectorProps {
   isBusy: boolean;
   onLockJob: (jobId: string) => Promise<void>;
   onChangeWindow: (jobId: string, newWindowId: string) => void;
-  onFindAlternative: (jobId: string) => void;
   onExcludeJob: (jobId: string) => void;
 }
+
+const PRIORITY_BADGE: Record<JobDetailView["priority_label"], { label: string; className: string }> = {
+  HIGH: { label: "High Priority", className: "rn-priority-badge-red" },
+  MEDIUM: { label: "Medium Priority", className: "rn-priority-badge-amber" },
+  LOW: { label: "Low Priority", className: "rn-priority-badge-gray" },
+};
 
 export function JobInspector({
   plan,
@@ -29,11 +35,22 @@ export function JobInspector({
   isBusy,
   onLockJob,
   onChangeWindow,
-  onFindAlternative,
   onExcludeJob,
 }: JobInspectorProps) {
-  const currentJob = selectedJob || plan.jobs[1] || plan.jobs[0];
-  const displayIndex = currentIndex >= 0 ? currentIndex + 1 : 2;
+  const currentJob = selectedJob || plan.jobs[0];
+  const displayIndex = currentIndex >= 0 ? currentIndex + 1 : 1;
+
+  if (!currentJob) {
+    return (
+      <aside className="rn-job-inspector-card" aria-label="Job Inspector">
+        <h2 className="rn-inspector-title">JOB INSPECTOR</h2>
+        <p>No jobs in this plan.</p>
+      </aside>
+    );
+  }
+
+  const section = plan.sections.find((s) => s.section_id === currentJob.section_id);
+  const priorityBadge = PRIORITY_BADGE[currentJob.priority_label];
 
   return (
     <aside className="rn-job-inspector-card" aria-label="Job Inspector">
@@ -52,7 +69,7 @@ export function JobInspector({
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
-          <span className="rn-pager-text">{displayIndex} of {totalJobs || 26}</span>
+          <span className="rn-pager-text">{displayIndex} of {totalJobs}</span>
           <button
             type="button"
             className="rn-pager-arrow"
@@ -69,9 +86,9 @@ export function JobInspector({
       {/* Main Job Identification Header */}
       <div className="rn-job-id-header">
         <h3 className="rn-job-main-title">
-          {currentJob.job_id} ({currentJob.department === "TRACK" ? "Track Maintenance" : currentJob.department === "SIGNAL" ? "Signal Work" : "OHE Maintenance"})
+          {currentJob.job_id} ({currentJob.work_type})
         </h3>
-        <span className="rn-priority-badge-red">High Priority</span>
+        <span className={priorityBadge.className}>{priorityBadge.label}</span>
       </div>
 
       {/* Key-Value Details with Icons */}
@@ -84,7 +101,7 @@ export function JobInspector({
             </svg>
             <span>Department</span>
           </div>
-          <div className="rn-kv-val">Engineering (TMS)</div>
+          <div className="rn-kv-val">{getDepartmentLabel(currentJob.department).name}</div>
         </div>
 
         <div className="rn-kv-row">
@@ -95,7 +112,11 @@ export function JobInspector({
             </svg>
             <span>Section</span>
           </div>
-          <div className="rn-kv-val">ST-03 (AKW – BHU)</div>
+          <div className="rn-kv-val">
+            {section?.from_node && section?.to_node
+              ? `${currentJob.section_id} (${section.from_node} – ${section.to_node})`
+              : currentJob.section_id}
+          </div>
         </div>
 
         <div className="rn-kv-row">
@@ -109,7 +130,7 @@ export function JobInspector({
             </svg>
             <span>Location</span>
           </div>
-          <div className="rn-kv-val">Km 512/8 – 518/4</div>
+          <div className="rn-kv-val">{currentJob.location_km ?? "—"}</div>
         </div>
 
         <div className="rn-kv-row">
@@ -120,7 +141,9 @@ export function JobInspector({
             </svg>
             <span>Duration</span>
           </div>
-          <div className="rn-kv-val">120 min</div>
+          <div className="rn-kv-val">
+            {currentJob.duration_minutes > 0 ? formatDuration(currentJob.duration_minutes) : "—"}
+          </div>
         </div>
 
         <div className="rn-kv-row">
@@ -131,9 +154,9 @@ export function JobInspector({
               <line x1="8" y1="2" x2="8" y2="6" />
               <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
-            <span>Preferred Window</span>
+            <span>Assigned Window</span>
           </div>
-          <div className="rn-kv-val">Fri 22:00 – Sat 00:00</div>
+          <div className="rn-kv-val">{currentJob.preferred_window ?? currentJob.scheduled_window_id ?? "Unscheduled"}</div>
         </div>
 
         <div className="rn-kv-row">
@@ -143,45 +166,47 @@ export function JobInspector({
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
-            <span>Reason</span>
+            <span>Status</span>
           </div>
-          <div className="rn-kv-val">Rail fracture detected</div>
+          <div className="rn-kv-val">{currentJob.status}</div>
         </div>
       </div>
 
-      {/* WHY THIS TIME? Section */}
+      {/* WHY THIS TIME? - one line per real reason code from the solver */}
       <div className="rn-why-this-time-block">
         <h3 className="rn-sidebar-section-heading">WHY THIS TIME?</h3>
         <div className="rn-why-checklist">
-          <div className="rn-why-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="3">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span>Window available</span>
-          </div>
-          <div className="rn-why-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="3">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span>Compatible with signal work</span>
-          </div>
-          <div className="rn-why-item">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="3">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-            <span>Safety priority</span>
-          </div>
+          {currentJob.reason_codes.length === 0 && (
+            <div className="rn-why-item">
+              <span>No specific reason codes recorded for this job.</span>
+            </div>
+          )}
+          {currentJob.reason_codes.map((code) => {
+            const { label, tone } = mapReasonCodeToLabel(code);
+            const iconColor = tone === "good" ? "#16A34A" : tone === "bad" ? "#DC2626" : tone === "warn" ? "#F59E0B" : "#64748B";
+            return (
+              <div className="rn-why-item" key={code}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="3">
+                  {tone === "bad" ? (
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                  ) : (
+                    <polyline points="20 6 9 17 4 12" />
+                  )}
+                </svg>
+                <span>{label}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 4 Grid Actions */}
+      {/* 3 Grid Actions */}
       <JobActions
         job={currentJob}
         isApproved={isApproved}
         isBusy={isBusy}
         onLockJob={onLockJob}
         onChangeWindow={onChangeWindow}
-        onFindAlternative={onFindAlternative}
         onExcludeJob={onExcludeJob}
       />
     </aside>

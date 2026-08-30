@@ -34,6 +34,9 @@ export interface JobContext {
   section_id: string;
   work_type: string;
   priority: number;
+  duration_minutes: number;
+  required_resources: string[];
+  allowed_windows: string[];
 }
 
 export interface ApprovalSummary {
@@ -210,10 +213,10 @@ export async function replanRun(
   return getPlanningRun(created.run_id);
 }
 
-export async function approveRun(runId: string, reviewer: string): Promise<RunDetail> {
+export async function approveRun(runId: string, reviewer: string, comment: string): Promise<RunDetail> {
   await requestJson(`/planning-runs/${runId}/approve`, {
     method: "POST",
-    body: JSON.stringify({ reviewer, comment: "Reviewed schedule and independent validator result" }),
+    body: JSON.stringify({ reviewer, comment: comment || "Reviewed schedule and independent validator result" }),
   });
   return getPlanningRun(runId);
 }
@@ -241,4 +244,64 @@ export async function downloadRun(runId: string): Promise<void> {
   link.download = `${runId}.csv`;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+/* --------------------------------------------------------------------------
+ * RailRadar — live public train data (proxied and cached by our backend).
+ * Optional context for planners; never a planning input.
+ * ------------------------------------------------------------------------ */
+
+export interface RailRadarEnvelope<T> {
+  source: string;
+  provider: string;
+  fetched_at: string;
+  from_cache: boolean;
+  stale: boolean;
+  data: T;
+}
+
+export interface LiveTrainStation {
+  code: string;
+  name: string;
+  lat?: number;
+  lng?: number;
+}
+
+export interface LiveTrainData {
+  trainNumber: string;
+  trainName: string;
+  status: string;
+  isLive: boolean;
+  startDate: string;
+  lastUpdatedAt: string;
+  delayMinutes: number;
+  train: {
+    number: string;
+    name: string;
+    type: string;
+    source: LiveTrainStation;
+    destination: LiveTrainStation;
+  };
+  currentLocation: {
+    stationCode: string;
+    stationName: string;
+    status: string;
+    delayMinutes: number;
+    distanceFromOriginKm: number;
+  } | null;
+  nextHalt?: { stationCode?: string; stationName?: string } | null;
+  previousHalt?: { stationCode?: string; stationName?: string } | null;
+}
+
+/** Live running status for a 5-digit Indian Railways train number. */
+export async function getLiveTrain(trainNumber: string): Promise<RailRadarEnvelope<LiveTrainData>> {
+  const response = await fetch(`${apiUrl}/railradar/trains/${trainNumber}/live`);
+  const body = await response.json();
+  if (!response.ok) {
+    throw new ApiError(
+      "RAILRADAR_UNAVAILABLE",
+      typeof body?.detail === "string" ? body.detail : `Live lookup failed (${response.status})`,
+    );
+  }
+  return body as RailRadarEnvelope<LiveTrainData>;
 }

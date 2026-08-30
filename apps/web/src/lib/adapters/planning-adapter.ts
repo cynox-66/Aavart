@@ -1,9 +1,13 @@
 import baselineDatasetFixture from "../../../../../fixtures/baseline_valid/dataset.json";
 import {
+  ApiError,
   approveRun,
   createPlanningRun,
+  createRapidBlockRequest,
   downloadRun,
   getApiHealth,
+  getPlanningRun,
+  getRapidBlockRequest,
   lockScheduleItem,
   replanRun,
   validateDataset,
@@ -11,11 +15,7 @@ import {
   type ValidationResponse,
 } from "@/lib/api";
 import {
-  mockBaselinePlan,
-  mockCorridorSections,
-  mockRapidBlockImpact,
-} from "@/lib/mock-data";
-import {
+  DepartmentType,
   JobDetailView,
   PlanRunView,
   RapidBlockFormValues,
@@ -23,9 +23,15 @@ import {
   ScheduleItemView,
   ValidationState,
 } from "@/types";
+import { RAPID_BLOCK_ACTOR, formatTime } from "@/lib/utils";
+
+function toApiError(err: unknown, fallbackMessage: string): ApiError {
+  if (err instanceof ApiError) return err;
+  const message = err instanceof Error ? err.message : fallbackMessage;
+  return new ApiError("REQUEST_FAILED", message || fallbackMessage);
+}
 
 export function mapBackendRunToView(run: RunDetail): PlanRunView {
-  const jobsMap = new Map(run.jobs.map((j) => [j.job_id, j]));
   const scheduleMap = new Map(run.schedule_items.map((s) => [s.job_id, s]));
   const aiMap = new Map(run.ai_estimates.map((a) => [a.job_id, a]));
 
@@ -33,32 +39,36 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     const s = scheduleMap.get(j.job_id);
     const ai = aiMap.get(j.job_id);
     const unscheduled = run.unscheduled_jobs.find((u) => u.job_id === j.job_id);
-    const reason_codes = s?.reason_codes ?? unscheduled?.reason_codes ?? ai?.reason_codes ?? ["PRIORITY_FIT"];
+    const reason_codes = s?.reason_codes ?? unscheduled?.reason_codes ?? ai?.reason_codes ?? [];
 
     let priority_label: "HIGH" | "MEDIUM" | "LOW" = "MEDIUM";
     if (j.priority >= 80) priority_label = "HIGH";
     else if (j.priority < 60) priority_label = "LOW";
 
     const isLocked = Boolean(s?.locked);
-    const status = s?.status === "SCHEDULED" ? (isLocked ? "LOCKED" : "SCHEDULED") : "UNSCHEDULED";
+    const status = isLocked ? "LOCKED" : s?.status === "SCHEDULED" ? "SCHEDULED" : "UNSCHEDULED";
 
     return {
       job_id: j.job_id,
-      department: (j.department as any) || "TRACK",
+      department: (j.department as DepartmentType) || "TRACK",
       asset_id: j.asset_id,
       section_id: j.section_id,
+      // The backend does not report a km marker per job - this is a real,
+      // honestly-derived label (not an invented km range).
       location_km: `Section ${j.section_id} / ${j.asset_id}`,
       work_type: j.work_type,
       priority: j.priority,
       priority_label,
-      duration_minutes: ai?.duration_minutes ?? 120,
-      preferred_window: s?.window_id ?? "Regular Night Window",
+      duration_minutes: j.duration_minutes ?? ai?.duration_minutes ?? 0,
+      preferred_window: s?.window_id,
       scheduled_start: s?.start,
       scheduled_end: s?.end,
       scheduled_window_id: s?.window_id,
       status,
       locked: isLocked,
       reason_codes,
+      required_resources: j.required_resources,
+      allowed_windows: j.allowed_windows,
       ai_estimate: ai
         ? {
             source: ai.source,
@@ -81,24 +91,16 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     is_integrated_block: s.reason_codes.some((c) => c.includes("SHARED") || c.includes("MULTI")),
   }));
 
+  // The backend's PlanningRunDetail carries no section topology/track/status
+  // data at all - only section_id is known (via each job). Report only what
+  // is real (the section id and its real job count); everything else is
+  // left unset so the UI can render "unknown" rather than an invented value.
   const uniqueSections = Array.from(new Set(run.jobs.map((j) => j.section_id)));
-  const sections = uniqueSections.map((secId, index) => {
-    const matchingMock = mockCorridorSections.find((s) => s.section_id === secId);
-    if (matchingMock) return matchingMock;
-    return {
-      section_id: secId,
-      name: `Section ${secId}`,
-      from_node: `Node-${index + 1}`,
-      to_node: `Node-${index + 2}`,
-      km_start: index * 50,
-      km_end: (index + 1) * 50,
-      tracks_total: 2,
-      tracks_available: 2,
-      status: "CLEAR" as const,
-      active_constraints: 1,
-      total_works: run.jobs.filter((j) => j.section_id === secId).length,
-    };
-  });
+  const sections = uniqueSections.map((secId) => ({
+    section_id: secId,
+    name: secId,
+    total_works: run.jobs.filter((j) => j.section_id === secId).length,
+  }));
 
   const closureReduction = run.kpis.baseline_closure_minutes > 0
     ? ((run.kpis.baseline_closure_minutes - run.kpis.optimized_closure_minutes) / run.kpis.baseline_closure_minutes) * 100
@@ -144,6 +146,13 @@ export async function isBackendAlive(): Promise<boolean> {
   }
 }
 
+/**
+ * Every adapter below calls the real backend and, on failure, rethrows a
+ * real ApiError instead of silently substituting mock/fabricated data.
+ * Callers (app/page.tsx) are responsible for surfacing the error and
+ * leaving state unchanged - a failure must never look like a success.
+ */
+
 export async function validateDatasetAdapter(
   payload: unknown,
   format: "CSV" | "JSON" = "JSON",
@@ -155,7 +164,7 @@ export async function validateDatasetAdapter(
     );
     return {
       valid: res.valid,
-      snapshotCandidateId: res.snapshot_candidate_id ?? "SNAP-014-CANDIDATE",
+      snapshotCandidateId: res.snapshot_candidate_id,
       issues: res.errors.map((err, i) => ({
         id: `API-ERR-${i + 1}`,
         code: err.code,
@@ -167,20 +176,8 @@ export async function validateDatasetAdapter(
       })),
       counts: res.counts,
     };
-  } catch {
-    // Offline simulated validation
-    return {
-      valid: true,
-      snapshotCandidateId: "SNAP-014",
-      issues: [],
-      counts: {
-        jobs: 26,
-        windows: 18,
-        assets: 24,
-        sections: 4,
-        resources: 12,
-      },
-    };
+  } catch (err) {
+    throw toApiError(err, "Could not validate dataset with the backend.");
   }
 }
 
@@ -188,52 +185,20 @@ export async function createPlanningRunAdapter(snapshotId: string): Promise<Plan
   try {
     const detail = await createPlanningRun(snapshotId);
     return mapBackendRunToView(detail);
-  } catch {
-    // Return high-fidelity baseline plan
-    return {
-      ...mockBaselinePlan,
-      snapshot_id: snapshotId || mockBaselinePlan.snapshot_id,
-    };
+  } catch (err) {
+    throw toApiError(err, "Could not create a planning run.");
   }
 }
 
 export async function lockScheduleItemAdapter(
   runId: string,
   jobId: string,
-  currentPlan: PlanRunView,
 ): Promise<PlanRunView> {
   try {
     const detail = await lockScheduleItem(runId, jobId);
     return mapBackendRunToView(detail);
-  } catch {
-    // Local state fallback
-    const updatedJobs = currentPlan.jobs.map((j) =>
-      j.job_id === jobId
-        ? {
-            ...j,
-            locked: true,
-            status: "LOCKED" as const,
-            reason_codes: Array.from(new Set([...j.reason_codes, "LOCK_PRESERVED"])),
-          }
-        : j,
-    );
-
-    const updatedSchedule = currentPlan.schedule_items.map((s) =>
-      s.job_id === jobId
-        ? {
-            ...s,
-            locked: true,
-            status: "LOCKED" as const,
-            reason_codes: Array.from(new Set([...s.reason_codes, "LOCK_PRESERVED"])),
-          }
-        : s,
-    );
-
-    return {
-      ...currentPlan,
-      jobs: updatedJobs,
-      schedule_items: updatedSchedule,
-    };
+  } catch (err) {
+    throw toApiError(err, "Could not lock this job.");
   }
 }
 
@@ -241,37 +206,12 @@ export async function replanRunAdapter(
   runId: string,
   affectedSections: string[],
   affectedWindows: string[],
-  currentPlan: PlanRunView,
 ): Promise<PlanRunView> {
   try {
     const detail = await replanRun(runId, affectedSections, affectedWindows);
     return mapBackendRunToView(detail);
-  } catch {
-    // High-fidelity fallback simulating a replan run with preserved locks
-    const newRunId = `RUN-WR-${Math.floor(Math.random() * 800 + 100)}`;
-    const changes: Record<string, "SCHEDULED" | "REJECTED" | "PRESERVED" | "CHANGED"> = {};
-
-    currentPlan.jobs.forEach((j) => {
-      if (j.locked) {
-        changes[j.job_id] = "PRESERVED";
-      } else {
-        changes[j.job_id] = "CHANGED";
-      }
-    });
-
-    return {
-      ...currentPlan,
-      run_id: newRunId,
-      parent_run_id: runId,
-      created_at: new Date().toISOString(),
-      changes,
-      kpis: {
-        ...currentPlan.kpis,
-        optimized_closure_minutes: 240,
-        closure_reduction_percent: 38.5,
-        downtime_reduction_percent: 61.2,
-      },
-    };
+  } catch (err) {
+    throw toApiError(err, "Re-optimization failed.");
   }
 }
 
@@ -279,68 +219,132 @@ export async function approveRunAdapter(
   runId: string,
   reviewer: string,
   comment: string,
-  currentPlan: PlanRunView,
 ): Promise<PlanRunView> {
   try {
-    const detail = await approveRun(runId, reviewer);
+    const detail = await approveRun(runId, reviewer, comment);
     return mapBackendRunToView(detail);
-  } catch {
-    return {
-      ...currentPlan,
-      export_ready: true,
-      approval: {
-        reviewer,
-        comment,
-        approved_at: new Date().toISOString(),
-        run_id: runId,
-        snapshot_id: currentPlan.snapshot_id,
-        ruleset_version: currentPlan.ruleset_version,
-      },
-    };
+  } catch (err) {
+    throw toApiError(err, "Could not approve this plan.");
   }
 }
 
-export async function exportRunAdapter(runId: string, currentPlan?: PlanRunView): Promise<void> {
+export async function exportRunAdapter(runId: string): Promise<void> {
   try {
     await downloadRun(runId);
-  } catch {
-    // Generate browser download for CSV
-    const rows = [
-      ["Job ID", "Department", "Section", "Window ID", "Start Time", "End Time", "Status", "Reason Codes"],
-      ...(currentPlan?.jobs.map((j) => [
-        j.job_id,
-        j.department,
-        j.section_id,
-        j.scheduled_window_id ?? "-",
-        j.scheduled_start ?? "-",
-        j.scheduled_end ?? "-",
-        j.status,
-        j.reason_codes.join(";"),
-      ]) ?? []),
-    ];
-
-    const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `RailNiyojan_${runId}_ApprovedSchedule.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  } catch (err) {
+    throw toApiError(err, "Export failed.");
   }
 }
 
+const INCIDENT_TYPE_DEPARTMENT: Array<{ suffix: string; department: DepartmentType }> = [
+  { suffix: "(TMS)", department: "TRACK" },
+  { suffix: "(SMMS)", department: "SIGNAL" },
+  { suffix: "(TDMS)", department: "ELECTRICAL" },
+];
+
+function inferDepartment(incidentType: string, fallback: DepartmentType): DepartmentType {
+  const match = INCIDENT_TYPE_DEPARTMENT.find((d) => incidentType.includes(d.suffix));
+  return match?.department ?? fallback;
+}
+
+/**
+ * Finds a real job in the given section whose required_resources/
+ * allowed_windows are known (from GET /planning-runs/{id}) - there is no
+ * dedicated "snapshot entities" endpoint, so an existing job in the same
+ * section is used as a real, valid template for those two fields.
+ */
+function findTemplateJob(plan: PlanRunView, sectionId: string): JobDetailView | undefined {
+  return plan.jobs.find(
+    (j) => j.section_id === sectionId && (j.required_resources?.length ?? 0) > 0 && (j.allowed_windows?.length ?? 0) > 0,
+  );
+}
+
+/**
+ * Submits a real emergency job to POST /rapidblock-requests, built from a
+ * template job in the same section for the two fields no API exposes a full
+ * list for (required_resources, allowed_windows). If no such template job
+ * exists in the selected section, this throws rather than fabricating a
+ * resource/window id - the caller shows that as a real error.
+ */
 export async function submitRapidBlockAdapter(
   form: RapidBlockFormValues,
-  baseRunId: string,
+  plan: PlanRunView,
 ): Promise<RapidBlockImpactView> {
+  const template = findTemplateJob(plan, form.sectionId);
+  if (!template || !template.required_resources || !template.allowed_windows) {
+    throw new ApiError(
+      "NO_TEMPLATE_JOB",
+      `No existing job with known resources/windows in section ${form.sectionId} - cannot build a valid emergency request without a snapshot-entities endpoint.`,
+    );
+  }
+
+  const department = inferDepartment(form.incidentType, template.department);
+  const response = await createRapidBlockRequest({
+    base_run_id: plan.run_id,
+    actor: RAPID_BLOCK_ACTOR,
+    actor_role: "PLANNER",
+    justification: form.notes || form.incidentType,
+    source_reported_at: new Date().toISOString(),
+    urgent_job: {
+      job_id: `JOB-EMG-${Date.now()}`,
+      department,
+      asset_id: template.asset_id,
+      section_id: form.sectionId,
+      work_type: form.incidentType,
+      priority: 100,
+      duration_minutes: form.durationMinutes,
+      duration_min_minutes: form.durationMinutes,
+      duration_max_minutes: form.durationMinutes + 60,
+      required_resources: template.required_resources,
+      allowed_windows: template.allowed_windows,
+      status: "UNSCHEDULED",
+    },
+  });
+
+  if (response.state === "REJECTED") {
+    const code = response.reason_codes[0] ?? "REJECTED";
+    throw new ApiError(code, `Rapid Block request rejected: ${code.replaceAll("_", " ").toLowerCase()}.`);
+  }
+
+  const detail = await getRapidBlockRequest(response.request_id);
+  const isCandidateReady = detail.state === "CANDIDATE_READY";
+
+  let rescheduledJobs: RapidBlockImpactView["rescheduledJobs"] = [];
+  if (isCandidateReady && detail.child_run_id) {
+    const childRun = await getPlanningRun(detail.child_run_id);
+    rescheduledJobs = Object.entries(detail.changed_jobs)
+      .filter(([, status]) => status === "CHANGED")
+      .map(([jobId]) => {
+        const job = plan.jobs.find((j) => j.job_id === jobId);
+        const prevItem = plan.schedule_items.find((s) => s.job_id === jobId);
+        const newItem = childRun.schedule_items.find((s) => s.job_id === jobId);
+        return {
+          jobId,
+          department: job?.department ?? "TRACK",
+          sectionId: job?.section_id ?? "",
+          previousWindow: prevItem ? `${prevItem.window_id} (${formatTime(prevItem.start)}–${formatTime(prevItem.end)})` : "Unscheduled",
+          newWindow: newItem ? `${newItem.window_id} (${formatTime(newItem.start)}–${formatTime(newItem.end)})` : "Unscheduled",
+        };
+      });
+  }
+
   return {
-    ...mockRapidBlockImpact,
-    baseRunId,
+    requestId: response.request_id,
+    state: detail.state,
+    baseRunId: plan.run_id,
+    childRunId: detail.child_run_id,
+    derivedSnapshotId: detail.derived_snapshot_id,
     incidentLocation: {
       sectionId: form.sectionId,
-      kmMarker: form.sectionId === "ST-03" ? "Km 512/4" : "Km 84/2",
+      kmMarker: "—",
       incidentType: form.incidentType,
     },
+    rescheduledJobs,
+    // No backend field reports affected commercial trains - not fabricated.
+    delayedTrains: [],
+    preservedLockedJobs: detail.preserved_locked_jobs,
+    reasonCodes: detail.reason_codes,
+    isCandidateReady,
+    isSimulated: false,
   };
 }

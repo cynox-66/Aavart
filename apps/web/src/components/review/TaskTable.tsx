@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { DepartmentType, JobDetailView, PlanRunView } from "@/types";
+import { DepartmentType, PlanRunView } from "@/types";
 import { formatStamp, formatTime } from "@/lib/utils";
 
 interface TaskTableProps {
@@ -17,7 +17,10 @@ export function TaskTable({ plan, selectedJobId, onSelectJobId }: TaskTableProps
   const [searchTerm, setSearchTerm] = useState("");
   const [deptFilter, setDeptFilter] = useState<DepartmentType | "ALL">("ALL");
 
-  const scheduleMap = new Map(plan.schedule_items.map((s) => [s.job_id, s]));
+  const scheduleMap = useMemo(
+    () => new Map(plan.schedule_items.map((s) => [s.job_id, s])),
+    [plan.schedule_items],
+  );
 
   const integratedCount = plan.schedule_items.filter((s) => s.is_integrated_block).length;
   const totalCount = plan.jobs.length;
@@ -77,7 +80,7 @@ export function TaskTable({ plan, selectedJobId, onSelectJobId }: TaskTableProps
           <select
             className="table-dept-select"
             value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value as any)}
+            onChange={(e) => setDeptFilter(e.target.value as DepartmentType)}
           >
             <option value="ALL">All Departments</option>
             <option value="TRACK">Track (TMS)</option>

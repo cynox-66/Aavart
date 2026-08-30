@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { errorMessage } from "@/lib/utils";
 
 interface CreatePlanStepProps {
   snapshotId: string;
@@ -23,13 +24,15 @@ const pipelineSteps: PipelineStep[] = [
 ];
 
 export function CreatePlanStep({
-  snapshotId,
   onPlanReady,
   onCancel,
   onTriggerSolve,
 }: CreatePlanStepProps) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(3); // 0-indexed: 3 is Step 4 ("Optimizing to reduce disruption")
-  const [progressPercent, setProgressPercent] = useState(72);
+  // Starts at step 0 / low progress - these only ever advance once the real
+  // onTriggerSolve() call is actually in flight (see the effect below), and
+  // never reach 100%/"done" until that promise resolves.
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [progressPercent, setProgressPercent] = useState(8);
   const [isCompleted, setIsCompleted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,23 +48,18 @@ export function CreatePlanStep({
     let cancelled = false;
 
     async function runOptimization() {
-      // Advance pipeline stages smoothly
-      const timer1 = setTimeout(() => {
-        if (!cancelled) {
-          setCurrentStepIndex(3);
-          setProgressPercent(72);
-        }
-      }, 1200);
-
-      const timer2 = setTimeout(() => {
-        if (!cancelled) {
-          setCurrentStepIndex(4);
-          setProgressPercent(90);
-        }
-      }, 2400);
+      // Purely a "still working" visual heartbeat while the real solve call
+      // is in flight - it never marks the plan complete on its own; only the
+      // real onTriggerSolve() result below does that.
+      const heartbeat = setInterval(() => {
+        if (cancelled) return;
+        setCurrentStepIndex((idx) => Math.min(idx + 1, 3));
+        setProgressPercent((p) => Math.min(p + 20, 85));
+      }, 1500);
 
       try {
         const success = await onTriggerSolve();
+        clearInterval(heartbeat);
         if (!cancelled) {
           if (success) {
             setCurrentStepIndex(5);
@@ -69,14 +67,15 @@ export function CreatePlanStep({
             setIsCompleted(true);
             setTimeout(() => {
               if (!cancelled) onPlanReady();
-            }, 800);
+            }, 400);
           } else {
             setError("Solver failed to compute a conflict-free schedule.");
           }
         }
-      } catch (err: any) {
+      } catch (err) {
+        clearInterval(heartbeat);
         if (!cancelled) {
-          setError(err?.message || "Optimization engine unavailable.");
+          setError(errorMessage(err) || "Optimization engine unavailable.");
         }
       }
     }
