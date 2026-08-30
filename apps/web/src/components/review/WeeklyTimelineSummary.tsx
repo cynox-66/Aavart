@@ -1,14 +1,15 @@
 "use client";
 
-import { PlanRunView } from "@/types";
+import { PlanRunView, OptimizationStatus } from "@/types";
 import { formatDateRange, formatTime, getScheduleDateRange, getDepartmentLabel } from "@/lib/utils";
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect, useState, useCallback } from "react";
 
 interface WeeklyTimelineSummaryProps {
   plan: PlanRunView;
   selectedJobId: string | null;
   onSelectJobId: (jobId: string) => void;
   onExpandTimeline: () => void;
+  optimizationStatus?: OptimizationStatus;
 }
 
 /** Build day boundaries (midnight-to-midnight) spanning the schedule range. */
@@ -34,11 +35,17 @@ function getDayColumns(start: Date | null, end: Date | null): Array<{ label: str
   return days;
 }
 
+/** Unique key for a schedule item in the map. */
+function barKey(sectionId: string, jobId: string) {
+  return `${sectionId}::${jobId}`;
+}
+
 export function WeeklyTimelineSummary({
   plan,
   selectedJobId,
   onExpandTimeline,
   onSelectJobId,
+  optimizationStatus,
 }: WeeklyTimelineSummaryProps) {
   const { start, end } = getScheduleDateRange(plan.schedule_items);
   const spanMs = start && end ? end.getTime() - start.getTime() : 0;
@@ -96,6 +103,87 @@ export function WeeklyTimelineSummary({
   const horizonWindow = plan.horizon_start && plan.horizon_end
     ? formatDateRange(new Date(plan.horizon_start), new Date(plan.horizon_end))
     : formatDateRange(start, end);
+
+  // ──────────────────────────────────────────────────────────────────────
+  //  Dramatic Re-optimization Animation Logic
+  //  1. Snapshot old positions.
+  //  2. When re-optimization completes, hold bars at OLD positions (HOLD_OLD).
+  //  3. Then release them to NEW positions with a dramatic spring transition (MOVING).
+  // ──────────────────────────────────────────────────────────────────────
+
+  type BarSnapshot = { left: number; width: number; top: number };
+  const prevPositions = useRef<Map<string, BarSnapshot>>(new Map());
+  
+  const [animState, setAnimState] = useState<"IDLE" | "HOLD_OLD" | "MOVING">("IDLE");
+  const [barDelays, setBarDelays] = useState<Map<string, number>>(new Map());
+
+  const prevRunId = useRef<string>(plan.run_id);
+  const prevOptStatus = useRef<OptimizationStatus | undefined>(optimizationStatus);
+
+  // Snapshot current positions so we always have "before" data
+  const snapshotPositions = useCallback(() => {
+    const snap = new Map<string, BarSnapshot>();
+    for (const { section, items } of rows) {
+      items.forEach((item, index) => {
+        const key = barKey(section.section_id, item.job_id);
+        snap.set(key, {
+          left: barLeft(item.start),
+          width: barWidth(item.start, item.end),
+          top: 4 + index * 24,
+        });
+      });
+    }
+    prevPositions.current = snap;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan.run_id]);
+
+  // Trigger animation sequence when re-optimization completes
+  useEffect(() => {
+    const justReoptimized =
+      (optimizationStatus === "UPDATED" && prevOptStatus.current === "REOPTIMIZING") ||
+      (plan.run_id !== prevRunId.current && optimizationStatus === "UPDATED");
+
+    if (justReoptimized && prevPositions.current.size > 0) {
+      // 1. Compute staggered delays for a satisfying cascade effect
+      const delays = new Map<string, number>();
+      let i = 0;
+      for (const { section, items } of rows) {
+        items.forEach((item) => {
+          delays.set(barKey(section.section_id, item.job_id), i * 40); // 40ms stagger
+          i++;
+        });
+      }
+      setBarDelays(delays);
+
+      // 2. Lock bars into their OLD positions instantly
+      setAnimState("HOLD_OLD");
+
+      // 3. Next frame, let them transition to NEW positions
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAnimState("MOVING");
+          
+          // 4. Clean up after the longest animation finishes (1.2s duration + max delay)
+          const totalTime = (i * 40) + 1400; 
+          setTimeout(() => {
+            setAnimState("IDLE");
+          }, totalTime);
+        });
+      });
+    } else {
+      // Normal render, just snapshot
+      snapshotPositions();
+    }
+
+    prevRunId.current = plan.run_id;
+    prevOptStatus.current = optimizationStatus;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan.run_id, optimizationStatus]);
+
+  // Initial snapshot on mount
+  useEffect(() => {
+    snapshotPositions();
+  }, [snapshotPositions]);
 
   return (
     <div className="rn-card rn-timeline-card">
@@ -188,17 +276,44 @@ export function WeeklyTimelineSummary({
                 const isSelected = selectedJobId === item.job_id;
                 const isIntegrated = !!item.is_integrated_block;
                 const isLocked = !!item.locked;
+                
+                const key = barKey(section.section_id, item.job_id);
+                const oldPos = prevPositions.current.get(key);
+                const delay = barDelays.get(key) || 0;
+
+                // Determine final render positions
+                let renderLeft = barLeft(item.start);
+                let renderWidth = barWidth(item.start, item.end);
+                let renderTop = 4 + index * 24;
+                
+                let barClassName = `wt-bar${isSelected ? " wt-bar-selected" : ""}${isIntegrated ? " wt-bar-integrated" : ""}${isLocked ? " wt-bar-locked" : ""}`;
+                const animStyle: React.CSSProperties = {};
+
+                if (animState === "HOLD_OLD" && oldPos) {
+                  // Force to old position instantly (no transition)
+                  barClassName += " wt-bar-hold";
+                  renderLeft = oldPos.left;
+                  renderWidth = oldPos.width;
+                  renderTop = oldPos.top;
+                } else if (animState === "MOVING") {
+                  // Let it transition to the new position
+                  barClassName += " wt-bar-moving";
+                  animStyle.transitionDelay = `${delay}ms`;
+                }
+
                 return (
                   <button
                     type="button"
                     key={item.job_id}
-                    className={`wt-bar${isSelected ? " wt-bar-selected" : ""}${isIntegrated ? " wt-bar-integrated" : ""}${isLocked ? " wt-bar-locked" : ""}`}
+                    className={barClassName}
                     style={{
-                      left: `${barLeft(item.start)}%`,
-                      width: `${barWidth(item.start, item.end)}%`,
-                      top: `${4 + index * 24}px`,
+                      left: `${renderLeft}%`,
+                      width: `${renderWidth}%`,
+                      top: `${renderTop}px`,
                       backgroundColor: isIntegrated ? "var(--block-purple)" : color,
                       borderColor: isIntegrated ? "var(--block-purple-dark)" : color,
+                      color: color, // useful for box-shadow currentColor in CSS
+                      ...animStyle,
                     }}
                     onClick={() => onSelectJobId(item.job_id)}
                     title={barTooltip(item)}
