@@ -10,5 +10,8 @@
     "resources": 4
   },
   "errors": [],
-  "source_summaries": []
+  "source_summaries": [],
+  "planning_horizon": null,
+  "horizon_start": null,
+  "horizon_end": null
 }
