@@ -6,13 +6,18 @@
 **/.ruff_cache
 **/.mypy_cache
 **/.venv
+
+# Generated JS/Next.js artifacts. These are rebuilt inside the image
+# (see apps/web/Dockerfile), so the host copies must never enter the build
+# context -- `next dev` writes into .next/cache concurrently, which stalls
+# the context upload.
 **/node_modules
 **/.next
-!apps/web/.next/
-!apps/web/.next/standalone/
-!apps/web/.next/standalone/**
-!apps/web/.next/static/
-!apps/web/.next/static/**
+**/.turbo
+**/*.tsbuildinfo
+
 **/test-results
+**/playwright-report
+**/coverage
 .pnpm-store
 .env
