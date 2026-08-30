@@ -10,11 +10,12 @@ import {
   ToastMessage,
   ValidationState,
 } from "@/types";
-import { demoHistoricalPlan, initialDepartmentSources } from "@/lib/mock-data";
+import { initialDepartmentSources } from "@/lib/mock-data";
 import {
   approveRunAdapter,
   createPlanningRunAdapter,
   exportRunAdapter,
+  fetchPlanningRunAdapter,
   lockScheduleItemAdapter,
   replanRunAdapter,
   validateDatasetAdapter,
@@ -58,7 +59,10 @@ export default function RailNiyojanApp() {
   const [hasPlanCreated, setHasPlanCreated] = useState(false);
   // Whether the currently-open plan is the out-of-scope "Previous Plans" demo
   // path rather than a real backend run (no list-runs endpoint exists yet).
-  const [isDemoPlan, setIsDemoPlan] = useState(false);
+  // Whether the currently-open plan was opened from the archive (Previous
+  // Plans) rather than created in this session - it is a real backend run,
+  // but it is shown read-only so a historical record is never mutated.
+  const [isHistoricalPlan, setIsHistoricalPlan] = useState(false);
 
   // Constraint Dirty Tracking - real section/window ids touched this session,
   // fed into the real replan call instead of hardcoded literals.
@@ -185,7 +189,7 @@ export default function RailNiyojanApp() {
         // result rather than silently activating a plan they backed out of.
         if (solveAbortedRef.current) return false;
         setPlan(newPlan);
-        setIsDemoPlan(false);
+        setIsHistoricalPlan(false);
         setHasPlanCreated(true);
         setIsDirty(false);
         setLockedCount(0);
@@ -346,7 +350,7 @@ export default function RailNiyojanApp() {
   const handleNewPlanVersion = () => {
     setPlan(null);
     setHasPlanCreated(false);
-    setIsDemoPlan(false);
+    setIsHistoricalPlan(false);
     setValidation(EMPTY_VALIDATION_STATE);
     setIsDirty(false);
     setLockedCount(0);
@@ -359,26 +363,27 @@ export default function RailNiyojanApp() {
   };
 
   // --- Past Plans Handler ---
-  // Previous Plans stays a demo feature (no backend list-runs endpoint
-  // exists) - opening one loads the clearly-labeled demo plan, never a real
-  // run, and the reviewer screen is told isDemoPlan so it can say so.
-  const handleOpenPreviousPlan = (runId: string) => {
-    setPlan({
-      ...demoHistoricalPlan,
-      run_id: runId,
-      approval: {
-        reviewer: "Arnav Pathak",
-        comment: "Historical approved run (demo data)",
-        approved_at: "2026-08-23T12:00:00Z",
-        run_id: runId,
-        snapshot_id: "SNAP-013",
-        ruleset_version: "Demo Ruleset v1",
-      },
-    });
-    setIsDemoPlan(true);
-    setIsDirty(false);
-    setCurrentView("wizard-step-4");
-    showToast("info", "Opened Past Plan (Demo Data)", `Viewing ${runId} in read-only mode - not sourced from the live backend.`);
+  // Loads the full historical run from GET /planning-runs/{run_id} and opens
+  // it on the review desk read-only. A failed fetch leaves the current plan
+  // untouched and surfaces the real error rather than showing sample data.
+  const handleOpenPreviousPlan = async (runId: string) => {
+    setIsBusy(true);
+    try {
+      const historical = await fetchPlanningRunAdapter(runId);
+      setPlan(historical);
+      setIsHistoricalPlan(true);
+      setIsDirty(false);
+      setLockedCount(historical.jobs.filter((job) => job.locked).length);
+      setDirtySectionIds(new Set());
+      setDirtyWindowIds(new Set());
+      setOptimizationStatus("UP_TO_DATE");
+      setCurrentView("wizard-step-4");
+      showToast("info", "Opened Archived Plan", `Viewing ${runId} in read-only mode.`);
+    } catch (err) {
+      showToast("error", "Could Not Open Plan", errorMessage(err));
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   // --- Rapid Block Handler ---
@@ -387,7 +392,7 @@ export default function RailNiyojanApp() {
   // post-dispatch state going forward.
   const handleDispatchApproved = (newPlan: PlanRunView) => {
     setPlan(newPlan);
-    setIsDemoPlan(false);
+    setIsHistoricalPlan(false);
     setIsDirty(false);
     setDirtySectionIds(new Set());
     setDirtyWindowIds(new Set());
@@ -462,7 +467,7 @@ export default function RailNiyojanApp() {
               lockedCount={lockedCount}
               optimizationStatus={optimizationStatus}
               isBusy={isBusy}
-              isDemoPlan={isDemoPlan}
+              isHistoricalPlan={isHistoricalPlan}
               pendingIntentCount={pendingMoves.length + pendingExclusions.size}
               onLockJob={handleLockJob}
               onChangeWindow={handleChangeWindow}
@@ -505,7 +510,7 @@ export default function RailNiyojanApp() {
 
         {currentView === "previous-plans" && (
           <PreviousPlansList
-            onSelectPlan={handleOpenPreviousPlan}
+            onSelectPlan={(runId) => void handleOpenPreviousPlan(runId)}
             onBackToHome={() => setCurrentView("home")}
           />
         )}
