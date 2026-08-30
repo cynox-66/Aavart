@@ -224,24 +224,24 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               </div>
             </button>
 
-            {/* Emergency Block Planning - Red Card, disabled until a plan exists */}
+            {/* Rapid-Block Review - Red Card, disabled until a plan exists */}
             <button
               type="button"
               className={`rn-action-card rn-action-emergency ${!hasActivePlan ? "disabled" : ""}`}
               onClick={() => onNavigate("rapid-block")}
               disabled={!hasActivePlan}
-              title={hasActivePlan ? undefined : "Create a plan first — Rapid Block injects an emergency job into an active run."}
+              title={hasActivePlan ? undefined : "Create a plan first — Rapid Block adds an incident to an active run."}
             >
               <div className="rn-action-icon-box">
                 <span style={{ fontSize: "24px" }}>🚨</span>
               </div>
 
               <div className="rn-action-details">
-                <h3>Emergency Block Planning</h3>
+                <h3>Rapid-Block Review</h3>
                 <p>
                   {hasActivePlan && activePlanId
-                    ? `Inject an urgent incident into ${activePlanId} and re-optimize around it.`
-                    : "Create a plan first — this injects an urgent incident into an active run."}
+                    ? `Add an urgent incident to ${activePlanId} and re-optimize around it.`
+                    : "Create a plan first — this adds an urgent incident to an active run."}
                 </p>
               </div>
 

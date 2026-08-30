@@ -4337,8 +4337,8 @@ button:disabled {
 .arrow-shift { color: var(--text-dim); }
 .new-time { color: var(--text-main); font-weight: 700; }
 
-/* --- Dispatch action bar --- */
-.emergency-dispatch-action-bar {
+/* --- Review action bar --- */
+.emergency-review-action-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4351,7 +4351,7 @@ button:disabled {
   border-radius: var(--radius-md);
 }
 
-.dispatch-notice {
+.review-notice {
   display: flex;
   align-items: flex-start;
   gap: 0.55rem;
@@ -4361,21 +4361,21 @@ button:disabled {
 
 .notice-icon { display: flex; flex-shrink: 0; margin-top: 0.05rem; }
 
-.dispatch-notice strong {
+.review-notice strong {
   display: block;
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--status-orange-dark);
 }
 
-.dispatch-notice p {
+.review-notice p {
   font-size: 0.73rem;
   color: #8A5A17;
   line-height: 1.45;
   margin-top: 0.1rem;
 }
 
-.dispatch-notice code {
+.review-notice code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.7rem;
   font-weight: 700;
@@ -4384,7 +4384,7 @@ button:disabled {
   padding: 0.05rem 0.28rem;
 }
 
-.dispatch-cta-group {
+.review-cta-group {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -4392,7 +4392,7 @@ button:disabled {
   flex-shrink: 0;
 }
 
-.btn-approve-emergency-dispatch {
+.btn-approve-emergency-recommendation {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4408,16 +4408,16 @@ button:disabled {
   transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 
-.btn-approve-emergency-dispatch:hover:not(:disabled) {
+.btn-approve-emergency-recommendation:hover:not(:disabled) {
   background: #DC2626;
   transform: translateY(-1px);
   box-shadow: 0 5px 14px rgba(220, 38, 38, 0.38);
 }
 
-.btn-approve-emergency-dispatch:active:not(:disabled) { transform: translateY(0); }
-.btn-approve-emergency-dispatch:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-approve-emergency-recommendation:active:not(:disabled) { transform: translateY(0); }
+.btn-approve-emergency-recommendation:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.dispatch-cta-hint {
+.review-cta-hint {
   font-size: 0.66rem;
   color: #8A5A17;
   text-align: center;
@@ -4577,7 +4577,7 @@ button:disabled { cursor: not-allowed; }
 }
 
 /* ==========================================================================
-   Modals (ConfirmModal) — used by window-change, comparison, share, dispatch
+   Modals (ConfirmModal) — used by window-change, comparison, share
    ========================================================================== */
 .modal-backdrop {
   position: fixed;

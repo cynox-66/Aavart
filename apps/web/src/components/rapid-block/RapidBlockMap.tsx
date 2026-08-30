@@ -22,13 +22,13 @@ export function RapidBlockMap({ impact, selectedSectionId, sections }: RapidBloc
             <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" />
             <circle cx="12" cy="10" r="3" />
           </svg>
-          <h3>2. Live Map &amp; Blast Radius</h3>
+          <h3>2. Live Map &amp; Impact Scope</h3>
         </div>
 
         {hasImpact ? (
           <span className="impact-detected-badge">
             <span className="pulse-dot-red" aria-hidden="true" />
-            Emergency Impact Detected
+            Incident Impact Detected
           </span>
         ) : (
           <span className="impact-idle-badge">Awaiting incident</span>
@@ -52,7 +52,7 @@ export function RapidBlockMap({ impact, selectedSectionId, sections }: RapidBloc
         </div>
         {!hasImpact && (
           <span className="blast-radius-label">
-            Submit the incident form to compute the blast radius.
+            Submit the incident form to compute the impact scope.
           </span>
         )}
       </div>

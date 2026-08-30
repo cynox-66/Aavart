@@ -354,7 +354,7 @@ export default function RailNiyojanApp() {
       // Replace: once approved, Back should not return to the sign-off form
       // for an already-approved plan.
       setCurrentView("plan-approved", { replace: true });
-      showToast("success", "Plan Digitally Approved", "Official dispatch clearance granted.");
+      showToast("success", "Plan Approved", "Recommendation approved for operational review.");
     } catch (err) {
       showToast("error", "Approval Failed", errorMessage(err));
     } finally {
@@ -426,8 +426,8 @@ export default function RailNiyojanApp() {
   // --- Rapid Block Handler ---
   // Adopts the approved emergency child run as the new active plan, so the
   // rest of the app (header, review screen, etc.) reflects the real
-  // post-dispatch state going forward.
-  const handleDispatchApproved = (newPlan: PlanRunView) => {
+  // post-approval state going forward.
+  const handleRapidBlockApproved = (newPlan: PlanRunView) => {
     setPlan(newPlan);
     setIsHistoricalPlan(false);
     setIsDirty(false);
@@ -436,7 +436,7 @@ export default function RailNiyojanApp() {
     setPendingMoves([]);
     setPendingExclusions(new Set());
     setOptimizationStatus("UP_TO_DATE");
-    showToast("success", "Emergency Dispatch Successful", `${newPlan.run_id} is now the active plan.`);
+    showToast("success", "Rapid-Block Recommendation Approved", `${newPlan.run_id} is now the active plan.`);
   };
 
 
@@ -560,7 +560,7 @@ export default function RailNiyojanApp() {
               plan={plan}
               onExitToHome={() => setCurrentView("home")}
               onShowToast={showToast}
-              onDispatchApproved={handleDispatchApproved}
+              onRapidBlockApproved={handleRapidBlockApproved}
             />
           ) : (
             <NoPlanRedirect onNavigateHome={() => setCurrentView("home")} message="Create a plan first - Rapid Block needs an active run to inject an emergency job into." />

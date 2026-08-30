@@ -116,7 +116,7 @@ export function AppHeader({
         ) : isEmergency ? (
           <div className="rn-emergency-badge">
             <span className="rn-pulse-red" />
-            <strong>RAPID BLOCK EMERGENCY DESK</strong>
+            <strong>RAPID BLOCK REVIEW DESK</strong>
           </div>
         ) : null}
       </div>
@@ -151,11 +151,11 @@ export function AppHeader({
           </div>
         </div>
 
-        <div className="rn-user-pill" title="Signed in as the demo planner (no authentication in this build)">
-          <div className="rn-user-avatar">AR</div>
+        <div className="rn-user-pill" title="Signed in as a simulated reviewer (no authentication in this build)">
+          <div className="rn-user-avatar">DR</div>
           <div className="rn-user-text">
-            <span className="rn-user-role">Divisional Manager</span>
-            <span className="rn-user-div">WR - Vadodara</span>
+            <span className="rn-user-role">Demo Reviewer</span>
+            <span className="rn-user-div">Simulated Account</span>
           </div>
         </div>
       </div>
