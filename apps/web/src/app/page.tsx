@@ -4,6 +4,8 @@ import { useCallback, useRef, useState } from "react";
 import {
   DepartmentDataSource,
   OptimizationStatus,
+  PendingMoveIntent,
+  PlanningHorizon,
   PlanRunView,
   ToastMessage,
   ValidationState,
@@ -18,6 +20,7 @@ import {
   validateDatasetAdapter,
 } from "@/lib/adapters/planning-adapter";
 import { errorMessage } from "@/lib/utils";
+import { mergeDepartmentSources, sourceFromFile } from "@/lib/ingestion";
 import { useViewHistory } from "@/lib/use-view-history";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { ToastContainer } from "@/components/layout/Toast";
@@ -34,8 +37,10 @@ import { RapidBlockView } from "@/components/rapid-block/RapidBlockView";
 const EMPTY_VALIDATION_STATE: ValidationState = {
   valid: false,
   snapshotCandidateId: null,
+  sourceHash: null,
   issues: [],
   counts: { jobs: 0, windows: 0, assets: 0, sections: 0, resources: 0 },
+  sourceSummaries: [],
 };
 
 export default function RailNiyojanApp() {
@@ -45,6 +50,7 @@ export default function RailNiyojanApp() {
 
   // Ingestion & Validation State
   const [sources, setSources] = useState<DepartmentDataSource[]>(initialDepartmentSources);
+  const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [validation, setValidation] = useState<ValidationState>(EMPTY_VALIDATION_STATE);
 
   // Active Planning Run State - null until a real plan actually exists.
@@ -60,6 +66,8 @@ export default function RailNiyojanApp() {
   const [lockedCount, setLockedCount] = useState(0);
   const [dirtySectionIds, setDirtySectionIds] = useState<Set<string>>(new Set());
   const [dirtyWindowIds, setDirtyWindowIds] = useState<Set<string>>(new Set());
+  const [pendingMoves, setPendingMoves] = useState<PendingMoveIntent[]>([]);
+  const [pendingExclusions, setPendingExclusions] = useState<Set<string>>(new Set());
   const [optimizationStatus, setOptimizationStatus] = useState<OptimizationStatus>("UP_TO_DATE");
 
   // Global Async State & Notifications
@@ -70,6 +78,7 @@ export default function RailNiyojanApp() {
   // Set when the user cancels mid-solve so a late-arriving solver result is
   // discarded instead of activating a plan they backed out of.
   const solveAbortedRef = useRef(false);
+  const solvePromiseRef = useRef<Promise<boolean> | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Helper for Toasts
@@ -107,26 +116,23 @@ export default function RailNiyojanApp() {
     );
   };
 
-  const handleReplaceFile = (id: string, fileName: string) => {
-    setSources((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? {
-              ...s,
-              fileName,
-              status: "loaded",
-              updatedAt: "Just now",
-            }
-          : s,
-      ),
-    );
-    showToast("info", "Dataset File Updated", `Loaded ${fileName} for ${id.toUpperCase()}`);
+  const handleReplaceFile = async (id: string, file: File) => {
+    try {
+      const current = sources.find((source) => source.id === id);
+      if (!current) throw new Error(`Unknown source ${id}`);
+      const nextSource = await sourceFromFile(current, file);
+      setSources((prev) => prev.map((source) => (source.id === id ? nextSource : source)));
+      showToast("info", "Dataset File Updated", `Loaded ${file.name} for ${id.toUpperCase()}`);
+    } catch (err) {
+      showToast("error", "File Read Failed", errorMessage(err) || "Could not read this dataset file.");
+    }
   };
 
   const handleProceedToValidation = async () => {
     setIsBusy(true);
     try {
-      const res = await validateDatasetAdapter(null, "JSON");
+      const payload = mergeDepartmentSources(sources, horizon);
+      const res = await validateDatasetAdapter(payload, "JSON");
       setValidation(res);
       setCurrentView("wizard-step-2");
     } catch (err) {
@@ -165,30 +171,40 @@ export default function RailNiyojanApp() {
 
   // --- Step 3: Create Plan Handlers ---
   const handleTriggerSolve = useCallback(async (): Promise<boolean> => {
+    if (solvePromiseRef.current) return solvePromiseRef.current;
     if (!validation.snapshotCandidateId) {
       showToast("error", "No Validated Snapshot", "Validate a dataset before creating a plan.");
       return false;
     }
+    const snapshotCandidateId = validation.snapshotCandidateId;
     solveAbortedRef.current = false;
-    try {
-      const newPlan = await createPlanningRunAdapter(validation.snapshotCandidateId);
-      // The user cancelled while the solver was still running - discard the
-      // result rather than silently activating a plan they backed out of.
-      if (solveAbortedRef.current) return false;
-      setPlan(newPlan);
-      setIsDemoPlan(false);
-      setHasPlanCreated(true);
-      setIsDirty(false);
-      setLockedCount(0);
-      setDirtySectionIds(new Set());
-      setDirtyWindowIds(new Set());
-      setOptimizationStatus("UP_TO_DATE");
-      return true;
-    } catch (err) {
-      if (solveAbortedRef.current) return false;
-      showToast("error", "Solver Error", errorMessage(err) || "Optimization failed.");
-      return false;
-    }
+    const solvePromise = (async () => {
+      try {
+        const newPlan = await createPlanningRunAdapter(snapshotCandidateId);
+        // The user cancelled while the solver was still running - discard the
+        // result rather than silently activating a plan they backed out of.
+        if (solveAbortedRef.current) return false;
+        setPlan(newPlan);
+        setIsDemoPlan(false);
+        setHasPlanCreated(true);
+        setIsDirty(false);
+        setLockedCount(0);
+        setDirtySectionIds(new Set());
+        setDirtyWindowIds(new Set());
+        setPendingMoves([]);
+        setPendingExclusions(new Set());
+        setOptimizationStatus("UP_TO_DATE");
+        return true;
+      } catch (err) {
+        if (solveAbortedRef.current) return false;
+        showToast("error", "Solver Error", errorMessage(err) || "Optimization failed.");
+        return false;
+      } finally {
+        solvePromiseRef.current = null;
+      }
+    })();
+    solvePromiseRef.current = solvePromise;
+    return solvePromise;
   }, [validation.snapshotCandidateId, showToast]);
 
   const handleCancelSolve = useCallback(() => {
@@ -237,45 +253,27 @@ export default function RailNiyojanApp() {
 
   const handleChangeWindow = (jobId: string, newWindowId: string) => {
     trackDirtyJob(jobId, newWindowId);
-    setPlan((prev) => {
-      if (!prev) return prev;
-      const updatedJobs = prev.jobs.map((j) =>
-        j.job_id === jobId
-          ? {
-              ...j,
-              scheduled_window_id: newWindowId,
-              preferred_window: newWindowId,
-              locked: true,
-              status: "LOCKED" as const,
-            }
-          : j,
-      );
-      return { ...prev, jobs: updatedJobs };
-    });
+    setPendingMoves((prev) => [
+      ...prev.filter((move) => move.job_id !== jobId),
+      { job_id: jobId, target_window_id: newWindowId, reason: "planner requested window change" },
+    ]);
     setIsDirty(true);
     setLockedCount((prev) => prev + 1);
     setOptimizationStatus("UNSAVED_CONSTRAINTS");
-    showToast("info", `Window Adjusted for ${jobId}`, "Constraint modified locally. Re-optimize to have the solver confirm it.");
+    showToast("info", `Move queued for ${jobId}`, "Pending intent queued. Re-optimize to have the backend confirm it.");
   };
 
   const handleExcludeJob = (jobId: string) => {
     trackDirtyJob(jobId);
-    setPlan((prev) => {
-      if (!prev) return prev;
-      const updatedJobs = prev.jobs.map((j) =>
-        j.job_id === jobId ? { ...j, status: "UNSCHEDULED" as const } : j,
-      );
-      const updatedSchedule = prev.schedule_items.filter((s) => s.job_id !== jobId);
-      return { ...prev, jobs: updatedJobs, schedule_items: updatedSchedule };
-    });
+    setPendingExclusions((prev) => new Set(prev).add(jobId));
     setIsDirty(true);
     setOptimizationStatus("UNSAVED_CONSTRAINTS");
-    showToast("warning", `Job ${jobId} Excluded`, "Task removed from weekly schedule.");
+    showToast("warning", `Exclusion queued for ${jobId}`, "Pending intent queued. Re-optimize to have the backend confirm it.");
   };
 
   const handleReoptimize = async () => {
     if (!plan) return;
-    if (dirtySectionIds.size === 0 || dirtyWindowIds.size === 0) {
+    if (dirtySectionIds.size === 0 && dirtyWindowIds.size === 0 && pendingMoves.length === 0 && pendingExclusions.size === 0) {
       showToast("info", "Nothing to Re-Optimize", "Lock, move, or exclude a job first so the solver knows what changed.");
       return;
     }
@@ -286,11 +284,16 @@ export default function RailNiyojanApp() {
         plan.run_id,
         Array.from(dirtySectionIds),
         Array.from(dirtyWindowIds),
+        pendingMoves,
+        Array.from(pendingExclusions),
+        plan.jobs.filter((job) => job.locked).map((job) => job.job_id),
       );
       setPlan(replanned);
       setIsDirty(false);
       setDirtySectionIds(new Set());
       setDirtyWindowIds(new Set());
+      setPendingMoves([]);
+      setPendingExclusions(new Set());
       setOptimizationStatus("UPDATED");
       showToast(
         "success",
@@ -349,6 +352,8 @@ export default function RailNiyojanApp() {
     setLockedCount(0);
     setDirtySectionIds(new Set());
     setDirtyWindowIds(new Set());
+    setPendingMoves([]);
+    setPendingExclusions(new Set());
     setOptimizationStatus("UP_TO_DATE");
     setCurrentView("wizard-step-1");
   };
@@ -386,6 +391,8 @@ export default function RailNiyojanApp() {
     setIsDirty(false);
     setDirtySectionIds(new Set());
     setDirtyWindowIds(new Set());
+    setPendingMoves([]);
+    setPendingExclusions(new Set());
     setOptimizationStatus("UP_TO_DATE");
     showToast("success", "Emergency Dispatch Successful", `${newPlan.run_id} is now the active plan.`);
   };
@@ -417,6 +424,8 @@ export default function RailNiyojanApp() {
         {currentView === "wizard-step-1" && (
           <SelectDataStep
             sources={sources}
+            horizon={horizon}
+            onHorizonChange={setHorizon}
             onToggleSourceStatus={handleToggleSource}
             onReplaceFile={handleReplaceFile}
             onContinue={handleProceedToValidation}
@@ -454,6 +463,7 @@ export default function RailNiyojanApp() {
               optimizationStatus={optimizationStatus}
               isBusy={isBusy}
               isDemoPlan={isDemoPlan}
+              pendingIntentCount={pendingMoves.length + pendingExclusions.size}
               onLockJob={handleLockJob}
               onChangeWindow={handleChangeWindow}
               onExcludeJob={handleExcludeJob}

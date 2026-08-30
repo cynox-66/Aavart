@@ -38,14 +38,22 @@ export function CreatePlanStep({
 
   // The solve is a mount-once pipeline. onTriggerSolve/onPlanReady are re-created
   // by the parent on every render, and onTriggerSolve itself sets parent state, so
-  // without this guard the effect re-fires forever and floods the API with runs.
+  // callback refs keep the in-flight effect from cancelling itself mid-solve.
   const hasSolvedRef = useRef(false);
+  const onTriggerSolveRef = useRef(onTriggerSolve);
+  const onPlanReadyRef = useRef(onPlanReady);
+
+  useEffect(() => {
+    onTriggerSolveRef.current = onTriggerSolve;
+    onPlanReadyRef.current = onPlanReady;
+  }, [onTriggerSolve, onPlanReady]);
 
   useEffect(() => {
     if (hasSolvedRef.current) return;
     hasSolvedRef.current = true;
 
     let cancelled = false;
+    let finished = false;
 
     async function runOptimization() {
       // Purely a "still working" visual heartbeat while the real solve call
@@ -58,7 +66,8 @@ export function CreatePlanStep({
       }, 1500);
 
       try {
-        const success = await onTriggerSolve();
+        const success = await onTriggerSolveRef.current();
+        finished = true;
         clearInterval(heartbeat);
         if (!cancelled) {
           if (success) {
@@ -66,13 +75,14 @@ export function CreatePlanStep({
             setProgressPercent(100);
             setIsCompleted(true);
             setTimeout(() => {
-              if (!cancelled) onPlanReady();
+              if (!cancelled) onPlanReadyRef.current();
             }, 400);
           } else {
             setError("Solver failed to compute a conflict-free schedule.");
           }
         }
       } catch (err) {
+        finished = true;
         clearInterval(heartbeat);
         if (!cancelled) {
           setError(errorMessage(err) || "Optimization engine unavailable.");
@@ -84,8 +94,9 @@ export function CreatePlanStep({
 
     return () => {
       cancelled = true;
+      if (!finished) hasSolvedRef.current = false;
     };
-  }, [onTriggerSolve, onPlanReady]);
+  }, []);
 
   return (
     <div className="rn-create-plan-container">

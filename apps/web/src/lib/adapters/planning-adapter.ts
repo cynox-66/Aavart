@@ -1,4 +1,3 @@
-import baselineDatasetFixture from "../../../../../fixtures/baseline_valid/dataset.json";
 import {
   ApiError,
   approveRun,
@@ -18,6 +17,7 @@ import {
   DepartmentType,
   JobDetailView,
   PlanRunView,
+  PendingMoveIntent,
   RapidBlockFormValues,
   RapidBlockImpactView,
   ScheduleItemView,
@@ -134,6 +134,9 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     changes: run.changes,
     validator: run.validator,
     approval: run.approval,
+    intent_id: run.intent_id,
+    intent: run.intent,
+    rejected_intent_edits: run.rejected_intent_edits,
   };
 }
 
@@ -158,13 +161,15 @@ export async function validateDatasetAdapter(
   format: "CSV" | "JSON" = "JSON",
 ): Promise<ValidationState> {
   try {
+    if (payload == null) throw new ApiError("INVALID_INPUT", "No dataset payload was provided.");
     const res: ValidationResponse = await validateDataset(
-      payload || baselineDatasetFixture,
+      payload,
       format === "CSV" ? "text/csv" : "application/json",
     );
     return {
       valid: res.valid,
       snapshotCandidateId: res.snapshot_candidate_id,
+      sourceHash: res.source_hash,
       issues: res.errors.map((err, i) => ({
         id: `API-ERR-${i + 1}`,
         code: err.code,
@@ -175,6 +180,7 @@ export async function validateDatasetAdapter(
         resolved: false,
       })),
       counts: res.counts,
+      sourceSummaries: res.source_summaries,
     };
   } catch (err) {
     throw toApiError(err, "Could not validate dataset with the backend.");
@@ -206,9 +212,20 @@ export async function replanRunAdapter(
   runId: string,
   affectedSections: string[],
   affectedWindows: string[],
+  moves: PendingMoveIntent[] = [],
+  exclusions: string[] = [],
+  lockedJobIds: string[] = [],
 ): Promise<PlanRunView> {
   try {
-    const detail = await replanRun(runId, affectedSections, affectedWindows);
+    const detail = await replanRun(runId, {
+      affected_section_ids: affectedSections,
+      affected_window_ids: affectedWindows,
+      actor: "planner",
+      reason: "planner requested re-optimization",
+      moves,
+      exclusions,
+      locked_job_ids: lockedJobIds,
+    });
     return mapBackendRunToView(detail);
   } catch (err) {
     throw toApiError(err, "Re-optimization failed.");

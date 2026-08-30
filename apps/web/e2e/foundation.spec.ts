@@ -1,35 +1,116 @@
 import { expect, test } from "@playwright/test";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
-test("renders the RailNiyojan planning desk", async ({ page }) => {
+const baselinePath = path.resolve(process.cwd(), "../../fixtures/baseline_valid/dataset.json");
+const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+function uniqueFixturePath(): string {
+  const payload = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
+  payload.jobs = [{ ...payload.jobs[0], job_id: "JOB-UPLOAD-999", priority: 99 }];
+  payload.conflict_groups = [];
+  const filePath = path.join(os.tmpdir(), "railniyojan-unique-upload.json");
+  fs.writeFileSync(filePath, JSON.stringify(payload));
+  return filePath;
+}
+
+function movableFixturePath(): string {
+  const payload = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
+  payload.jobs = payload.jobs.map((job: { job_id: string; allowed_windows: string[] }) =>
+    job.job_id === "JOB-003" ? { ...job, allowed_windows: ["WIN-002", "WIN-003"] } : job,
+  );
+  payload.train_paths = [];
+  const filePath = path.join(os.tmpdir(), "railniyojan-movable-upload.json");
+  fs.writeFileSync(filePath, JSON.stringify(payload));
+  return filePath;
+}
+
+async function startPlan(page: import("@playwright/test").Page) {
+  await page.goto("/");
+  await page.getByRole("button", { name: /Start New Plan/ }).click();
+}
+
+async function validateAndCreate(page: import("@playwright/test").Page): Promise<string> {
+  await page.getByRole("button", { name: "Check Data →" }).click();
+  await expect(page.getByText("Backend hash")).toBeVisible();
+  const created = page.waitForResponse((response) =>
+    response.url().includes("/planning-runs") &&
+    response.request().method() === "POST" &&
+    response.status() === 201,
+  );
+  await page.getByRole("button", { name: /3\. Create Plan/ }).click();
+  const runId = ((await (await created).json()) as { run_id: string }).run_id;
+  await expect(page.getByText("Plan Quality")).toBeVisible({ timeout: 15_000 });
+  return runId;
+}
+
+test("renders the mounted RailNiyojan planning desk", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("RailNiyojan");
-  await expect(page.getByRole("heading", { name: "Build a reviewable block plan" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "1. Validate dataset" })).toBeVisible();
-  await expect(page.getByText("Not for operational sanctioning.")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "RailNiyojan" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Start New Plan/ })).toBeVisible();
 });
 
-test("completes the guarded planning workflow", async ({ page }) => {
-  await page.goto("/");
+test("uploads a real fixture and carries its unique job into the run", async ({ page, request }) => {
+  await startPlan(page);
+  await page.locator('input[type="file"]').first().setInputFiles(uniqueFixturePath());
+  const runId = await validateAndCreate(page);
 
-  await page.getByRole("button", { name: "1. Validate dataset" }).click();
-  await expect(page.getByText("Dataset valid")).toBeVisible();
+  await expect(page.getByText("JOB-UPLOAD-999")).toBeVisible();
+  const detail = await request.get(`${apiUrl}/planning-runs/${runId}`);
+  expect(detail.ok()).toBeTruthy();
+  expect((await detail.json()).jobs.map((job: { job_id: string }) => job.job_id)).toContain("JOB-UPLOAD-999");
+});
 
-  await page.getByRole("button", { name: "2. Create plan" }).click();
-  await expect(page.getByText("OPTIMAL", { exact: true })).toBeVisible();
-  await expect(page.getByText("TRAIN_PATH_CONFLICT")).toBeVisible();
+test("skipping a department changes the validated job count", async ({ page }) => {
+  await startPlan(page);
+  await page.locator(".dept-source-card", { hasText: "Civil Engineering Works" }).getByRole("button", { name: "Skip" }).click();
+  await page.getByRole("button", { name: "Check Data →" }).click();
 
-  const jobOne = page.locator(".schedule-row").filter({ hasText: "JOB-001" });
-  await jobOne.getByRole("button", { name: "Lock" }).click();
-  await expect(jobOne.getByRole("button", { name: "Locked" })).toBeVisible();
+  await expect(page.getByText("Backend hash")).toBeVisible();
+  await expect(page.locator(".val-stat-box").filter({ hasText: "Total Maintenance Jobs" })).toContainText("3");
+  await expect(page.getByText("CIVIL: 0 jobs")).toBeVisible();
+});
 
-  await page.getByRole("button", { name: "3. Re-plan affected work" }).click();
-  await expect(page.getByText("LOCK_PRESERVED")).toBeVisible();
+test("move and exclusion stay pending until backend re-optimization returns a child run", async ({ page, request }) => {
+  await startPlan(page);
+  const movable = movableFixturePath();
+  const inputs = page.locator('input[type="file"]');
+  for (let index = 0; index < 4; index += 1) {
+    await inputs.nth(index).setInputFiles(movable);
+  }
+  const parentRunId = await validateAndCreate(page);
 
-  await page.getByRole("button", { name: "4. Approve" }).click();
-  await expect(page.getByRole("button", { name: "Approved" })).toBeVisible();
+  await page.getByRole("button", { name: "Select JOB-003 (SCHEDULED)" }).click();
+  await page.getByRole("button", { name: /Change Window/ }).click();
+  await page.locator(".rn-window-id-input").fill("WIN-003");
+  await page.getByRole("button", { name: "Move Job" }).click();
+  await expect(page.getByText("1 move/exclusion intent queued.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Approve Plan", exact: true })).toBeDisabled();
 
-  const download = page.waitForEvent("download");
-  await page.getByRole("button", { name: "5. Export CSV" }).click();
-  await download;
+  await page.getByRole("button", { name: "Select JOB-004 (SCHEDULED)" }).click();
+  await page.getByRole("button", { name: /Exclude from Plan/ }).click();
+  await expect(page.getByText("2 move/exclusion intents queued.")).toBeVisible();
+
+  const replanned = page.waitForResponse((response) =>
+    response.url().includes(`/planning-runs/${parentRunId}/replan`) &&
+    response.request().method() === "POST" &&
+    response.status() === 201,
+  );
+  await page.getByRole("button", { name: /Re-Optimize Plan/ }).last().click();
+  const createdChild = (await (await replanned).json()) as { run_id: string };
+  const childDetail = await request.get(`${apiUrl}/planning-runs/${createdChild.run_id}`);
+  expect(childDetail.ok()).toBeTruthy();
+  const childRun = (await childDetail.json()) as {
+    parent_run_id: string | null;
+    intent_id: string | null;
+    jobs: Array<{ job_id: string }>;
+    schedule_items: Array<{ job_id: string; window_id: string }>;
+  };
+  await expect(page.getByText("Re-optimization complete", { exact: true })).toBeVisible({ timeout: 15_000 });
+  expect(childRun.parent_run_id).toBe(parentRunId);
+  expect(childRun.intent_id).toBeTruthy();
+  expect(childRun.jobs.map((job) => job.job_id)).not.toContain("JOB-004");
+  expect(childRun.schedule_items.find((item) => item.job_id === "JOB-003")?.window_id).toBe("WIN-003");
 });

@@ -242,7 +242,13 @@ export function PlannerDashboard() {
             disabled={busy !== null || !replanItem || !replanSection}
             onClick={() => perform("replan", async () => {
               if (replanItem && replanSection) {
-                const nextRun = await replanRun(run.run_id, [replanSection], [replanItem.window_id]);
+                const nextRun = await replanRun(run.run_id, {
+                  affected_section_ids: [replanSection],
+                  affected_window_ids: [replanItem.window_id],
+                  actor: "planner",
+                  reason: "planner requested re-optimization",
+                  locked_job_ids: run.schedule_items.filter((item) => item.locked).map((item) => item.job_id),
+                });
                 setRun(nextRun);
                 setSelectedJobId(replanItem.job_id);
               }

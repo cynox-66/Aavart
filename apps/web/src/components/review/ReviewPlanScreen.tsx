@@ -16,6 +16,7 @@ interface ReviewPlanScreenProps {
   lockedCount: number;
   optimizationStatus: OptimizationStatus;
   isBusy: boolean;
+  pendingIntentCount?: number;
   isDemoPlan?: boolean;
   onLockJob: (jobId: string) => Promise<void>;
   onChangeWindow: (jobId: string, newWindowId: string) => void;
@@ -34,6 +35,7 @@ export function ReviewPlanScreen({
   optimizationStatus,
   isDemoPlan = false,
   isBusy,
+  pendingIntentCount = 0,
   onLockJob,
   onChangeWindow,
   onExcludeJob,
@@ -192,6 +194,7 @@ export function ReviewPlanScreen({
           <GlobalPlanActions
             optimizationStatus={optimizationStatus}
             lockedJobCount={lockedCount}
+            pendingIntentCount={pendingIntentCount}
             isApproved={isApproved}
             canApprove={canApprove}
             approveBlockedReason={approveBlockedReason}

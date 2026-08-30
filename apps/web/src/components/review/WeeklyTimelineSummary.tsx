@@ -29,13 +29,14 @@ export function WeeklyTimelineSummary({
     return { section, items };
   });
 
-  const barStyle = (itemStart: string, itemEnd: string) => {
-    if (!start || spanMs <= 0) return { left: "0%", width: "100%" };
+  const barStyle = (itemStart: string, itemEnd: string, rowIndex: number) => {
+    const top = `${5 + rowIndex * 22}px`;
+    if (!start || spanMs <= 0) return { left: "0%", width: "100%", top };
     const s = new Date(itemStart).getTime();
     const e = new Date(itemEnd).getTime();
     const left = Math.max(0, Math.min(100, ((s - start.getTime()) / spanMs) * 100));
     const width = Math.max(1, Math.min(100 - left, ((e - s) / spanMs) * 100));
-    return { left: `${left}%`, width: `${width}%` };
+    return { left: `${left}%`, width: `${width}%`, top };
   };
 
   return (
@@ -75,14 +76,14 @@ export function WeeklyTimelineSummary({
                   )}
                 </td>
                 <td className="rn-td-track-cell">
-                  <div className="rn-track-lane">
+                  <div className="rn-track-lane" style={{ minHeight: `${Math.max(28, items.length * 22 + 10)}px` }}>
                     {items.length === 0 && <span className="rn-track-empty">No scheduled work</span>}
-                    {items.map((item) => (
+                    {items.map((item, index) => (
                       <button
                         type="button"
                         key={item.job_id}
                         className={item.is_integrated_block ? "rn-bar-integrated" : item.locked ? "rn-bar-selected-work" : "rn-bar-trains"}
-                        style={barStyle(item.start, item.end)}
+                        style={barStyle(item.start, item.end, index)}
                         onClick={() => onSelectJobId(item.job_id)}
                         title={`${item.job_id}: ${item.status}`}
                         aria-label={`Select ${item.job_id} (${item.status})`}

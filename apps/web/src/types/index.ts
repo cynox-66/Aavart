@@ -12,6 +12,7 @@ export type AppView =
 export type DepartmentType = "TRACK" | "SIGNAL" | "ELECTRICAL" | "CIVIL";
 
 export type PlanningHorizon = "WEEKLY" | "MONTHLY";
+export type SourceId = "tms" | "smms" | "tdms" | "civil";
 
 export type RunState =
   | "QUEUED"
@@ -33,14 +34,41 @@ export type OptimizationStatus =
   | "FAILED";
 
 export interface DepartmentDataSource {
-  id: "tms" | "smms" | "tdms" | "civil";
+  id: SourceId;
   name: string;
   department: DepartmentType;
   fileName?: string;
   taskCount: number;
+  rowCount?: number;
+  warningCount?: number;
+  warnings?: string[];
+  payload?: DatasetPayloadShape;
+  rawText?: string;
+  contentType?: "application/json" | "text/csv";
   status: "ready" | "loaded" | "skipped";
   updatedAt?: string;
   sourceType: "CSV" | "JSON" | "SYSTEM_FEED";
+}
+
+export interface DatasetPayloadShape {
+  schema_version: "1.0";
+  sections: Array<Record<string, unknown>>;
+  assets: Array<Record<string, unknown>>;
+  resources: Array<Record<string, unknown>>;
+  windows: Array<Record<string, unknown>>;
+  jobs: Array<Record<string, unknown> & { job_id?: string; department?: DepartmentType; allowed_windows?: string[] }>;
+  train_paths?: Array<Record<string, unknown>>;
+  conflict_groups?: Array<Record<string, unknown> & { member_ids?: string[] }>;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SourceSummaryView {
+  source_id: string;
+  department: string;
+  status: string;
+  file_name: string | null;
+  job_count: number;
+  warning_count: number;
 }
 
 export interface ValidationIssueItem {
@@ -59,6 +87,7 @@ export interface ValidationIssueItem {
 export interface ValidationState {
   valid: boolean;
   snapshotCandidateId: string | null;
+  sourceHash: string | null;
   issues: ValidationIssueItem[];
   counts: {
     jobs: number;
@@ -67,6 +96,7 @@ export interface ValidationState {
     sections: number;
     resources: number;
   };
+  sourceSummaries: SourceSummaryView[];
 }
 
 export interface SectionInfo {
@@ -168,6 +198,15 @@ export interface PlanRunView {
     ruleset_version: string;
   } | null;
   export_ready: boolean;
+  intent_id?: string | null;
+  intent?: Record<string, unknown> | null;
+  rejected_intent_edits?: Array<Record<string, unknown>>;
+}
+
+export interface PendingMoveIntent {
+  job_id: string;
+  target_window_id: string;
+  reason: string;
 }
 
 export interface RapidBlockFormValues {

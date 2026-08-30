@@ -84,8 +84,8 @@ export function CheckDataStep({
               <div className="ready-confirmation-banner">
                 <span className="green-dot" />
                 <span>
-                  Ready to construct immutable snapshot and launch <strong>Google OR-Tools CP-SAT</strong>{" "}
-                  optimization worker.
+                  Backend hash <strong>{validation.sourceHash ?? "unavailable"}</strong> is ready for{" "}
+                  <strong>Google OR-Tools CP-SAT</strong> planning.
                 </span>
               </div>
             </div>
@@ -179,6 +179,23 @@ export function CheckDataStep({
 
         {/* Sidebar Info */}
         <aside className="validation-sidebar">
+          <div className="sidebar-card">
+            <h4>Source Provenance</h4>
+            <ul className="protocol-checks-list">
+              {validation.sourceSummaries.map((source) => (
+                <li className={`check-item ${source.status === "loaded" ? "passed" : "pending"}`} key={source.source_id}>
+                  <span className="check-mark">{source.status === "loaded" ? "✓" : "•"}</span>
+                  {source.department}: {source.job_count} jobs / {source.warning_count} warnings
+                </li>
+              ))}
+              {validation.sourceSummaries.length === 0 && (
+                <li className="check-item pending">
+                  <span className="check-mark">•</span> No source metadata supplied
+                </li>
+              )}
+            </ul>
+          </div>
+
           <div className="sidebar-card">
             <h4>Validation Protocol</h4>
             <ul className="protocol-checks-list">

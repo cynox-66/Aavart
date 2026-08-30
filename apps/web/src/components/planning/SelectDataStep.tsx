@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { DepartmentDataSource, PlanningHorizon } from "@/types";
 
 interface SelectDataStepProps {
   sources: DepartmentDataSource[];
+  horizon: PlanningHorizon;
+  onHorizonChange: (horizon: PlanningHorizon) => void;
   onToggleSourceStatus: (id: string) => void;
-  onReplaceFile: (id: string, fileName: string) => void;
+  onReplaceFile: (id: string, file: File) => Promise<void>;
   onContinue: () => void;
   onCancel: () => void;
   isBusy?: boolean;
@@ -14,14 +15,14 @@ interface SelectDataStepProps {
 
 export function SelectDataStep({
   sources,
+  horizon,
+  onHorizonChange,
   onToggleSourceStatus,
   onReplaceFile,
   onContinue,
   onCancel,
   isBusy = false,
 }: SelectDataStepProps) {
-  const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
-
   const loadedCount = sources.filter((s) => s.status === "loaded").length;
   const totalTasks = sources
     .filter((s) => s.status === "loaded")
@@ -31,7 +32,7 @@ export function SelectDataStep({
 
   const handleFileInput = (id: string, files: FileList | null) => {
     if (files && files[0]) {
-      onReplaceFile(id, files[0].name);
+      void onReplaceFile(id, files[0]);
     }
   };
 
@@ -53,14 +54,14 @@ export function SelectDataStep({
             <button
               type="button"
               className={`toggle-btn ${horizon === "WEEKLY" ? "active" : ""}`}
-              onClick={() => setHorizon("WEEKLY")}
+              onClick={() => onHorizonChange("WEEKLY")}
             >
               Weekly (Standard)
             </button>
             <button
               type="button"
               className={`toggle-btn ${horizon === "MONTHLY" ? "active" : ""}`}
-              onClick={() => setHorizon("MONTHLY")}
+              onClick={() => onHorizonChange("MONTHLY")}
             >
               Monthly (Macro)
             </button>
@@ -106,6 +107,14 @@ export function SelectDataStep({
                         <span className="metric-pill">
                           <strong>{source.taskCount}</strong> Maintenance Tasks
                         </span>
+                        <span className="metric-pill">
+                          <strong>{source.rowCount ?? source.taskCount}</strong> Rows
+                        </span>
+                        {(source.warningCount ?? 0) > 0 && (
+                          <span className="metric-pill warning">
+                            <strong>{source.warningCount}</strong> Warnings
+                          </span>
+                        )}
                         <span className="update-stamp">Updated {source.updatedAt}</span>
                       </div>
                     )}

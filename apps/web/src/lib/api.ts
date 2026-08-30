@@ -13,8 +13,17 @@ export interface ValidationIssue {
 export interface ValidationResponse {
   valid: boolean;
   snapshot_candidate_id: string | null;
+  source_hash: string | null;
   errors: ValidationIssue[];
   counts: { jobs: number; windows: number; assets: number; sections: number; resources: number };
+  source_summaries: Array<{
+    source_id: string;
+    department: string;
+    status: string;
+    file_name: string | null;
+    job_count: number;
+    warning_count: number;
+  }>;
 }
 
 export interface ScheduleItem {
@@ -93,6 +102,9 @@ export interface RunDetail {
   export_ready: boolean;
   kpis: KpiSummary;
   ai_estimates: AiEstimate[];
+  intent_id: string | null;
+  intent: Record<string, unknown> | null;
+  rejected_intent_edits: Array<Record<string, unknown>>;
 }
 
 interface RunCreated {
@@ -200,15 +212,19 @@ export async function lockScheduleItem(runId: string, jobId: string): Promise<Ru
 
 export async function replanRun(
   runId: string,
-  affectedSectionIds: string[],
-  affectedWindowIds: string[],
+  intent: {
+    affected_section_ids?: string[];
+    affected_window_ids?: string[];
+    actor?: string;
+    reason?: string;
+    moves?: Array<{ job_id: string; target_window_id: string; reason: string }>;
+    exclusions?: string[];
+    locked_job_ids?: string[];
+  },
 ): Promise<RunDetail> {
   const created = await requestJson<RunCreated>(`/planning-runs/${runId}/replan`, {
     method: "POST",
-    body: JSON.stringify({
-      affected_section_ids: affectedSectionIds,
-      affected_window_ids: affectedWindowIds,
-    }),
+    body: JSON.stringify(intent),
   });
   return getPlanningRun(created.run_id);
 }

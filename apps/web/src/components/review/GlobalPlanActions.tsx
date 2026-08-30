@@ -6,6 +6,7 @@ import { OptimizationStatus } from "@/types";
 interface GlobalPlanActionsProps {
   optimizationStatus: OptimizationStatus;
   lockedJobCount: number;
+  pendingIntentCount?: number;
   isApproved: boolean;
   /** state is FEASIBLE/OPTIMAL, validator passed, not already approved, not dirty */
   canApprove: boolean;
@@ -21,6 +22,7 @@ interface GlobalPlanActionsProps {
 export function GlobalPlanActions({
   optimizationStatus,
   lockedJobCount,
+  pendingIntentCount = 0,
   isApproved,
   canApprove,
   approveBlockedReason,
@@ -151,7 +153,9 @@ export function GlobalPlanActions({
             <div className="rn-unsaved-notice">
               <strong>⚠️ Unsaved Constraints</strong>
               <p>
-                You have locked or changed {lockedJobCount} job{lockedJobCount === 1 ? "" : "s"}. The
+                {pendingIntentCount > 0
+                  ? `${pendingIntentCount} move/exclusion intent${pendingIntentCount === 1 ? "" : "s"} queued.`
+                  : `You have locked or changed ${lockedJobCount} job${lockedJobCount === 1 ? "" : "s"}.`} The
                 plan must be recalculated before approval.
               </p>
             </div>

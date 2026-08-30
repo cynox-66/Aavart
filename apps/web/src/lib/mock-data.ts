@@ -1,5 +1,6 @@
 import baselineDatasetFixture from "../../../../fixtures/baseline_valid/dataset.json";
 import {
+  DatasetPayloadShape,
   DepartmentDataSource,
   DepartmentType,
   JobDetailView,
@@ -13,6 +14,7 @@ import {
 // /datasets/validate) so the numbers shown here match what gets validated.
 const fixtureJobs = (baselineDatasetFixture as { jobs?: Array<{ department: DepartmentType }> }).jobs ?? [];
 const countByDept = (dept: DepartmentType) => fixtureJobs.filter((j) => j.department === dept).length;
+const baselineDatasetPayload = baselineDatasetFixture as DatasetPayloadShape;
 
 export const initialDepartmentSources: DepartmentDataSource[] = [
   {
@@ -21,6 +23,11 @@ export const initialDepartmentSources: DepartmentDataSource[] = [
     department: "TRACK",
     fileName: "baseline_valid/dataset.json",
     taskCount: countByDept("TRACK"),
+    rowCount: countByDept("TRACK"),
+    warningCount: 0,
+    warnings: [],
+    payload: baselineDatasetPayload,
+    contentType: "application/json",
     status: "loaded",
     updatedAt: "Baseline demo dataset",
     sourceType: "JSON",
@@ -31,6 +38,11 @@ export const initialDepartmentSources: DepartmentDataSource[] = [
     department: "SIGNAL",
     fileName: "baseline_valid/dataset.json",
     taskCount: countByDept("SIGNAL"),
+    rowCount: countByDept("SIGNAL"),
+    warningCount: 0,
+    warnings: [],
+    payload: baselineDatasetPayload,
+    contentType: "application/json",
     status: "loaded",
     updatedAt: "Baseline demo dataset",
     sourceType: "JSON",
@@ -41,6 +53,11 @@ export const initialDepartmentSources: DepartmentDataSource[] = [
     department: "ELECTRICAL",
     fileName: "baseline_valid/dataset.json",
     taskCount: countByDept("ELECTRICAL"),
+    rowCount: countByDept("ELECTRICAL"),
+    warningCount: 0,
+    warnings: [],
+    payload: baselineDatasetPayload,
+    contentType: "application/json",
     status: "loaded",
     updatedAt: "Baseline demo dataset",
     sourceType: "JSON",
@@ -51,6 +68,11 @@ export const initialDepartmentSources: DepartmentDataSource[] = [
     department: "CIVIL",
     fileName: "baseline_valid/dataset.json",
     taskCount: countByDept("CIVIL"),
+    rowCount: countByDept("CIVIL"),
+    warningCount: 0,
+    warnings: [],
+    payload: baselineDatasetPayload,
+    contentType: "application/json",
     status: "loaded",
     updatedAt: "Baseline demo dataset",
     sourceType: "JSON",
@@ -402,4 +424,3 @@ export const mockPreviousPlans: Array<{
     isApproved: true,
   },
 ];
-
