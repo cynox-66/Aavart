@@ -216,7 +216,7 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                   </button>
                 </th>
                 <th>Solver State</th>
-                <th>Authorized Reviewer</th>
+                <th>Approving Reviewer</th>
                 <th>
                   <button type="button" className="th-sort-btn" onClick={() => toggleSort("tasksCount")}>
                     Task Count{sortIndicator("tasksCount")}

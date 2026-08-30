@@ -9,21 +9,22 @@ import { LiveTrainLookup } from "@/components/rapid-block/LiveTrainLookup";
 import { ConfirmModal } from "@/components/layout/ConfirmModal";
 import { approveRunAdapter, submitRapidBlockAdapter } from "@/lib/adapters/planning-adapter";
 import { CURRENT_REVIEWER, errorMessage } from "@/lib/utils";
+import { ApiError } from "@/lib/api";
 
 interface RapidBlockViewProps {
   plan: PlanRunView;
   onExitToHome: () => void;
   onShowToast: (type: "success" | "warning" | "error" | "info", title: string, message?: string) => void;
   /** Adopts the approved emergency child run as the new active plan. */
-  onDispatchApproved: (newPlan: PlanRunView) => void;
+  onRecommendationApproved: (newPlan: PlanRunView) => void;
 }
 
-export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchApproved }: RapidBlockViewProps) {
+export function RapidBlockView({ plan, onExitToHome, onShowToast, onRecommendationApproved }: RapidBlockViewProps) {
   const [isBusy, setIsBusy] = useState(false);
   const [impact, setImpact] = useState<RapidBlockImpactView | null>(null);
   const [selectedSection, setSelectedSection] = useState(plan.sections[0]?.section_id ?? "");
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [dispatchedPlan, setDispatchedPlan] = useState<PlanRunView | null>(null);
+  const [approvedPlan, setApprovedPlan] = useState<PlanRunView | null>(null);
 
   const handleInjectAndSolve = async (form: RapidBlockFormValues) => {
     setIsBusy(true);
@@ -37,25 +38,34 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
         onShowToast("warning", "No Feasible Schedule Found", result.reasonCodes.join(", ") || "The optimizer could not fit this job.");
       }
     } catch (err) {
-      onShowToast("error", "RapidBlock Request Rejected", errorMessage(err) || "Could not inject emergency block.");
+      // Surface the backend's reason code alongside its message. "Rejected" on
+      // its own tells the operator nothing they can act on, and the code is the
+      // stable identifier to quote when escalating.
+      const code = err instanceof ApiError ? err.code : null;
+      const detail = errorMessage(err) || "Could not inject emergency block.";
+      onShowToast(
+        "error",
+        "RapidBlock Request Rejected",
+        code && code !== "REQUEST_FAILED" ? `${code}: ${detail}` : detail,
+      );
     } finally {
       setIsBusy(false);
     }
   };
 
-  const handleApproveDispatch = async () => {
+  const handleApproveRecommendation = async () => {
     if (!impact?.childRunId) return;
     setIsBusy(true);
     try {
       const approved = await approveRunAdapter(
         impact.childRunId,
         CURRENT_REVIEWER,
-        `Emergency dispatch: ${impact.incidentLocation.incidentType}`,
+        `Emergency recommendation: ${impact.incidentLocation.incidentType}`,
       );
-      setDispatchedPlan(approved);
+      setApprovedPlan(approved);
       setIsSuccessModalOpen(true);
     } catch (err) {
-      onShowToast("error", "Dispatch Failed", errorMessage(err) || "Emergency approval failed. Please try again.");
+      onShowToast("error", "Approval Failed", errorMessage(err) || "Emergency approval failed. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -113,7 +123,7 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
           <CascadeImpactPanel
             impact={impact}
             isBusy={isBusy}
-            onApproveDispatch={handleApproveDispatch}
+            onApproveRecommendation={handleApproveRecommendation}
           />
         </div>
       </div>
@@ -121,14 +131,14 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
       {/* Success Modal */}
       <ConfirmModal
         isOpen={isSuccessModalOpen}
-        title="Emergency Dispatch Successful"
-        description={`The revised schedule (${dispatchedPlan?.snapshot_id ?? ""}) has been created and approved.`}
+        title="Emergency Recommendation Approved"
+        description={`The revised recommendation (${approvedPlan?.snapshot_id ?? ""}) has been created and approved. Export it for operational review — it does not sanction a block on its own.`}
         confirmLabel="Return to Home Dashboard"
         cancelLabel="Stay in Emergency View"
         variant="default"
         onConfirm={() => {
           setIsSuccessModalOpen(false);
-          if (dispatchedPlan) onDispatchApproved(dispatchedPlan);
+          if (approvedPlan) onRecommendationApproved(approvedPlan);
           onExitToHome();
         }}
         onCancel={() => setIsSuccessModalOpen(false)}

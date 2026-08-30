@@ -8,13 +8,13 @@ import { mapReasonCodeToLabel } from "@/lib/utils";
 interface CascadeImpactPanelProps {
   impact: RapidBlockImpactView | null;
   isBusy: boolean;
-  onApproveDispatch: () => Promise<void>;
+  onApproveRecommendation: () => Promise<void>;
 }
 
 export function CascadeImpactPanel({
   impact,
   isBusy,
-  onApproveDispatch,
+  onApproveRecommendation,
 }: CascadeImpactPanelProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
@@ -111,9 +111,9 @@ export function CascadeImpactPanel({
         </p>
       )}
 
-      {/* What happens next + dispatch */}
-      <div className="emergency-dispatch-action-bar">
-        <div className="dispatch-notice">
+      {/* What happens next + approval */}
+      <div className="emergency-approval-action-bar">
+        <div className="approval-notice">
           <span className="notice-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" strokeWidth="2.2">
               <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -124,46 +124,49 @@ export function CascadeImpactPanel({
           <div>
             <strong>What happens next?</strong>
             <p>
-              Approving locks the emergency block and makes candidate run{" "}
-              <code>{impact.childRunId}</code> the active plan. Affected tasks are rescheduled
-              automatically.
+              Approving records candidate run <code>{impact.childRunId}</code> as the
+              recommended revision and reschedules the affected tasks within it. It does not
+              grant a block, issue railway authority, or move any train — the recommendation
+              still has to be actioned through the normal operational channel.
             </p>
           </div>
         </div>
 
-        <div className="dispatch-cta-group">
+        <div className="approval-cta-group">
           <button
             type="button"
-            className="btn-approve-emergency-dispatch"
+            className="btn-approve-emergency-recommendation"
             onClick={() => setIsConfirmModalOpen(true)}
             disabled={isBusy}
           >
             {isBusy ? (
-              <><span className="spinner-inline" aria-hidden="true" /> Dispatching…</>
+              <><span className="spinner-inline" aria-hidden="true" /> Approving…</>
             ) : (
               <>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                 </svg>
-                Approve Emergency Dispatch
+                Approve Emergency Recommendation
               </>
             )}
           </button>
-          <span className="dispatch-cta-hint">Requires no further review — dispatches immediately.</span>
+          <span className="approval-cta-hint">
+            Decision support only — the block still needs operational sanction.
+          </span>
         </div>
       </div>
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
-        title="Authorize emergency block dispatch?"
-        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). This action is real and cannot be undone from this screen.`}
-        confirmLabel="Confirm & Authorize Dispatch"
+        title="Approve emergency block recommendation?"
+        description={`This approves candidate run ${impact.childRunId} as a recommendation and reschedules ${rescheduledCount} maintenance task(s) within it. It confers no railway authority. This action cannot be undone from this screen.`}
+        confirmLabel="Confirm Recommendation"
         cancelLabel="Abort"
         variant="emergency"
         isBusy={isBusy}
         onConfirm={async () => {
           setIsConfirmModalOpen(false);
-          await onApproveDispatch();
+          await onApproveRecommendation();
         }}
         onCancel={() => setIsConfirmModalOpen(false)}
       />

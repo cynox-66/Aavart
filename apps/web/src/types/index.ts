@@ -315,7 +315,7 @@ export interface RapidBlockImpactView {
   // True only if this result could not be computed by the real backend
   // (e.g. no template job/resources available to build a valid request) -
   // drives the "Simulated preview" badge so it's never confused with a real
-  // dispatch result.
+  // backend-computed recommendation.
   isSimulated: boolean;
 }
 

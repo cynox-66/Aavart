@@ -40,7 +40,7 @@ export function ApprovePlanStep({
       {/* 1. Step Header */}
       <div className="planning-step-header">
         <div>
-          <span className="step-kicker">STEP 05 / FINAL AUTHORIZATION</span>
+          <span className="step-kicker">STEP 05 / RECOMMENDATION SIGN-OFF</span>
           <h2>Review &amp; Approve Plan</h2>
           <p className="step-desc">
             Confirm the optimized schedule for <strong>{plan.snapshot_id}</strong> meets
