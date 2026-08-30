@@ -29,6 +29,7 @@ from railniyojan.api.routes import planning_runs
 from railniyojan.optimizer.contracts import OptimizerInput, OptimizerOutput
 
 SOLVE_SECONDS = 1.5
+TERMINAL_STATES = {"OPTIMAL", "FEASIBLE", "INFEASIBLE", "TIMEOUT", "INVALID", "FAILED"}
 
 
 @pytest.fixture
@@ -141,13 +142,62 @@ async def test_a_run_created_during_another_solve_is_still_readable(
         listed = await client.get("/planning-runs", timeout=5)
         assert listed.status_code == 200
         # The in-flight run is not published mid-solve - it is stored once, at
-        # the end. There is no QUEUED or RUNNING record to observe, which is the
-        # lifecycle Phase 5 either deletes or makes real.
+        # the end - so every listed run is in a terminal state. This is why
+        # PlanningRunState no longer carries QUEUED or RUNNING: there is no
+        # moment at which either could be observed.
         assert all(
-            summary["state"] not in {"QUEUED", "RUNNING"} for summary in listed.json()
+            summary["state"] in TERMINAL_STATES for summary in listed.json()
         )
 
         created = await run
         detail = await client.get(f"/planning-runs/{created.json()['run_id']}", timeout=5)
         assert detail.status_code == 200
         assert detail.json()["state"] in {"OPTIMAL", "FEASIBLE"}
+
+
+def test_the_api_does_not_advertise_an_execution_model_it_does_not_have() -> None:
+    """Guards Phase 5's decision: claim synchronous, or build the queue.
+
+    Each of these was a live claim of asynchronous execution with nothing behind
+    it. They come back together with a real worker - see docs/architecture.md,
+    "Execution model" - not one at a time.
+    """
+    from railniyojan.contracts.api import PlanningRunCreatedResponse
+    from railniyojan.contracts.enums import PlanningRunState
+
+    # No lifecycle state that nothing can assign.
+    assert set(PlanningRunState) == {
+        PlanningRunState.FEASIBLE,
+        PlanningRunState.OPTIMAL,
+        PlanningRunState.INFEASIBLE,
+        PlanningRunState.TIMEOUT,
+        PlanningRunState.INVALID,
+        PlanningRunState.FAILED,
+    }
+
+    # No status endpoint for a run that is already finished when it is returned.
+    fields = PlanningRunCreatedResponse.model_fields
+    assert "detail_url" in fields
+    assert "status_url" not in fields
+
+    # No worker module: the optimizer is a library the API calls in-process.
+    with pytest.raises(ModuleNotFoundError):
+        __import__("railniyojan.optimizer.worker")
+
+
+def test_a_created_run_is_already_finished_when_the_response_arrives(snapshot_id: str) -> None:
+    """The response is the result, not a receipt for work that is still queued."""
+    client = TestClient(app)
+    created = client.post(
+        "/planning-runs",
+        json={"snapshot_id": snapshot_id, "ruleset_version": "Demo Ruleset v1"},
+    )
+
+    assert created.status_code == 201
+    body = created.json()
+    assert body["state"] in TERMINAL_STATES
+    # detail_url addresses a complete run, so one GET is enough - no polling.
+    detail = client.get(body["detail_url"])
+    assert detail.status_code == 200
+    assert detail.json()["state"] == body["state"]
+    assert detail.json()["schedule_items"]

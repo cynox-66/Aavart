@@ -44,9 +44,12 @@ export interface CorridorPreset {
   stations?: StationInfo[];
 }
 
+/**
+ * Terminal states only. Planning is synchronous - POST /planning-runs solves
+ * before it responds - so a run is never observable in flight. QUEUED and
+ * RUNNING were in this union but the backend assigned them nowhere.
+ */
 export type RunState =
-  | "QUEUED"
-  | "RUNNING"
   | "FEASIBLE"
   | "OPTIMAL"
   | "INFEASIBLE"

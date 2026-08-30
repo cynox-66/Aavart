@@ -26,7 +26,7 @@ API layer
   -> audit service
 ```
 
-The API submits work to one optimizer worker. The API does not construct CP-SAT constraints directly.
+The API calls the optimizer in-process and solves before responding; there is no worker service. It does not construct CP-SAT constraints directly. See `docs/architecture.md`, "Execution model", for what synchronous execution costs and the queued production path.
 
 ## Required operations
 

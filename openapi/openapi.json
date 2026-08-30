@@ -607,6 +607,10 @@
             "title": "Created At",
             "type": "string"
           },
+          "detail_url": {
+            "title": "Detail Url",
+            "type": "string"
+          },
           "ruleset_version": {
             "title": "Ruleset Version",
             "type": "string"
@@ -621,10 +625,6 @@
           },
           "state": {
             "$ref": "#/components/schemas/PlanningRunState"
-          },
-          "status_url": {
-            "title": "Status Url",
-            "type": "string"
           }
         },
         "required": [
@@ -633,7 +633,7 @@
           "snapshot_id",
           "ruleset_version",
           "created_at",
-          "status_url"
+          "detail_url"
         ],
         "title": "PlanningRunCreatedResponse",
         "type": "object"
@@ -802,9 +802,8 @@
         "type": "object"
       },
       "PlanningRunState": {
+        "description": "Terminal states only.\n\nPlanning is synchronous: POST /planning-runs solves before it responds, so a\nrun is never observable in flight. QUEUED and RUNNING existed here but were\nassigned nowhere, which advertised an execution model the system did not\nhave. Reintroduce them together with a real queue, not before - see\ndocs/architecture.md, \"Execution model\".",
         "enum": [
-          "QUEUED",
-          "RUNNING",
           "FEASIBLE",
           "OPTIMAL",
           "INFEASIBLE",
@@ -978,6 +977,10 @@
             ],
             "title": "Derived Snapshot Id"
           },
+          "detail_url": {
+            "title": "Detail Url",
+            "type": "string"
+          },
           "justification": {
             "title": "Justification",
             "type": "string"
@@ -1008,10 +1011,6 @@
           "state": {
             "$ref": "#/components/schemas/RapidBlockState"
           },
-          "status_url": {
-            "title": "Status Url",
-            "type": "string"
-          },
           "urgent_job": {
             "$ref": "#/components/schemas/Job"
           },
@@ -1032,7 +1031,7 @@
           "base_run_id",
           "base_snapshot_id",
           "reason_codes",
-          "status_url",
+          "detail_url",
           "actor",
           "actor_role",
           "justification",
@@ -1120,6 +1119,10 @@
             ],
             "title": "Derived Snapshot Id"
           },
+          "detail_url": {
+            "title": "Detail Url",
+            "type": "string"
+          },
           "reason_codes": {
             "items": {
               "type": "string"
@@ -1133,10 +1136,6 @@
           },
           "state": {
             "$ref": "#/components/schemas/RapidBlockState"
-          },
-          "status_url": {
-            "title": "Status Url",
-            "type": "string"
           }
         },
         "required": [
@@ -1145,7 +1144,7 @@
           "base_run_id",
           "base_snapshot_id",
           "reason_codes",
-          "status_url"
+          "detail_url"
         ],
         "title": "RapidBlockResponse",
         "type": "object"

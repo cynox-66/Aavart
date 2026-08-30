@@ -397,7 +397,7 @@ def test_rapidblock_authorised_request_creates_candidate_with_lineage(
 
     response = client.post("/rapidblock-requests", json=_rapidblock_payload(run_id))
     body = response.json()
-    detail = client.get(body["status_url"]).json()
+    detail = client.get(body["detail_url"]).json()
     base_after = client.get(f"/planning-runs/{run_id}").json()
     child = client.get(f"/planning-runs/{body['child_run_id']}").json()
     blocked_export = client.get(f"/planning-runs/{body['child_run_id']}/export")

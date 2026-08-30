@@ -56,7 +56,7 @@ class PlanningRunCreatedResponse(ApiModel):
     snapshot_id: str
     ruleset_version: str
     created_at: datetime
-    status_url: str
+    detail_url: str
 
 
 class UnscheduledJob(ApiModel):
@@ -239,7 +239,7 @@ class RapidBlockResponse(ApiModel):
     derived_snapshot_id: str | None = None
     child_run_id: str | None = None
     reason_codes: list[str]
-    status_url: str
+    detail_url: str
 
 
 class RapidBlockDetail(RapidBlockResponse):

@@ -93,7 +93,7 @@ export interface AiEstimate {
 
 export interface RunDetail {
   run_id: string;
-  state: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
+  state: "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
   snapshot_id: string;
   snapshot_status: string;
   ruleset_version: string;
@@ -167,7 +167,7 @@ export interface RapidBlockResponse {
   derived_snapshot_id: string | null;
   child_run_id: string | null;
   reason_codes: string[];
-  status_url: string;
+  detail_url: string;
 }
 
 export interface RapidBlockDetail extends RapidBlockResponse {

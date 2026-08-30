@@ -48,7 +48,7 @@ def _response(record: RapidBlockRecord) -> RapidBlockResponse:
         derived_snapshot_id=record.derived_snapshot_id,
         child_run_id=record.child_run_id,
         reason_codes=record.reason_codes,
-        status_url=f"/rapidblock-requests/{record.request_id}",
+        detail_url=f"/rapidblock-requests/{record.request_id}",
     )
 
 

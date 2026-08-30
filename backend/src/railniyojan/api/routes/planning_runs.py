@@ -72,7 +72,7 @@ def _created(run: RunRecord) -> PlanningRunCreatedResponse:
         snapshot_id=run.snapshot_id,
         ruleset_version=run.ruleset_version,
         created_at=run.created_at,
-        status_url=f"/planning-runs/{run.run_id}",
+        detail_url=f"/planning-runs/{run.run_id}",
     )
 
 

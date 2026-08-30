@@ -13,8 +13,9 @@ Docker Compose should run:
 
 - `web` for Next.js;
 - `api` for FastAPI;
-- `db` for PostgreSQL/PostGIS;
-- `optimizer` for the CP-SAT worker.
+- `db` for PostgreSQL/PostGIS.
+
+There is no separate optimizer service: the API solves in-process.
 
 ## Configuration
 
@@ -55,7 +56,7 @@ The web container packages the verified Next.js standalone output. Run `pnpm bui
 
 ## Troubleshooting rules
 
-- Check API, worker, and database logs separately.
+- Check API and database logs separately; the solver logs inside the API container.
 - Confirm the snapshot ID before debugging a schedule.
 - Reproduce solver issues with the same fixture, ruleset, and seed.
 - Never delete database volumes to fix application behavior without explicit approval.

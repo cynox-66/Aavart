@@ -31,19 +31,6 @@ services:
       db:
         condition: service_healthy
 
-  optimizer:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    command: ["python", "-m", "railniyojan.optimizer.worker"]
-    env_file: .env
-    volumes:
-      - ./backend/src:/app/backend/src
-      - ./fixtures:/app/fixtures:ro
-    depends_on:
-      db:
-        condition: service_healthy
-
   web:
     build:
       context: .

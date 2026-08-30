@@ -75,7 +75,9 @@ Allowed RapidBlock states: `SUBMITTED`, `VALIDATING`, `REJECTED`, `PLANNING`, `C
 
 ## Run states
 
-Allowed planner states: `QUEUED`, `RUNNING`, `FEASIBLE`, `OPTIMAL`, `INFEASIBLE`, `TIMEOUT`, `INVALID`, `FAILED`.
+Allowed planner states: `FEASIBLE`, `OPTIMAL`, `INFEASIBLE`, `TIMEOUT`, `INVALID`, `FAILED`.
+
+All are terminal. Planning is synchronous, so a run is never observable in flight; `QUEUED` and `RUNNING` return only with a real queue. See `docs/architecture.md`, "Execution model".
 
 ## Rules
 

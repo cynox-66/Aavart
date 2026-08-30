@@ -474,6 +474,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Detail Url */
+            detail_url: string;
             /** Ruleset Version */
             ruleset_version: string;
             /** Run Id */
@@ -481,8 +483,6 @@ export interface components {
             /** Snapshot Id */
             snapshot_id: string;
             state: components["schemas"]["PlanningRunState"];
-            /** Status Url */
-            status_url: string;
         };
         /** PlanningRunDetail */
         PlanningRunDetail: {
@@ -534,9 +534,16 @@ export interface components {
         };
         /**
          * PlanningRunState
+         * @description Terminal states only.
+         *
+         *     Planning is synchronous: POST /planning-runs solves before it responds, so a
+         *     run is never observable in flight. QUEUED and RUNNING existed here but were
+         *     assigned nowhere, which advertised an execution model the system did not
+         *     have. Reintroduce them together with a real queue, not before - see
+         *     docs/architecture.md, "Execution model".
          * @enum {string}
          */
-        PlanningRunState: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
+        PlanningRunState: "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
         /**
          * PlanningRunSummary
          * @description Lightweight archive row for GET /planning-runs.
@@ -591,6 +598,8 @@ export interface components {
             child_run_id?: string | null;
             /** Derived Snapshot Id */
             derived_snapshot_id?: string | null;
+            /** Detail Url */
+            detail_url: string;
             /** Justification */
             justification: string;
             /** Preserved Locked Jobs */
@@ -605,8 +614,6 @@ export interface components {
              */
             source_reported_at: string;
             state: components["schemas"]["RapidBlockState"];
-            /** Status Url */
-            status_url: string;
             urgent_job: components["schemas"]["Job"];
             validator?: components["schemas"]["ValidatorSummary"] | null;
         };
@@ -640,13 +647,13 @@ export interface components {
             child_run_id?: string | null;
             /** Derived Snapshot Id */
             derived_snapshot_id?: string | null;
+            /** Detail Url */
+            detail_url: string;
             /** Reason Codes */
             reason_codes: string[];
             /** Request Id */
             request_id: string;
             state: components["schemas"]["RapidBlockState"];
-            /** Status Url */
-            status_url: string;
         };
         /**
          * RapidBlockState
