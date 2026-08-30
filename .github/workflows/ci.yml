@@ -33,5 +33,18 @@ jobs:
       - run: pnpm typecheck:web
       - run: pnpm test:web
       - run: pnpm build:web
+      # The e2e suite drives the real API, and playwright.config.ts starts it.
+      # Without the backend toolchain here that server cannot boot and every
+      # spec past the landing page fails.
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --project backend --dev
       - run: pnpm --filter @railniyojan/web exec playwright install --with-deps chromium
       - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/test-results
+          retention-days: 7

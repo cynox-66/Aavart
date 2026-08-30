@@ -4,7 +4,8 @@ import os from "node:os";
 import path from "node:path";
 
 const baselinePath = path.resolve(process.cwd(), "../../fixtures/baseline_valid/dataset.json");
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl =
+  process.env.NEXT_PUBLIC_API_URL ?? `http://127.0.0.1:${process.env.API_PORT ?? "8000"}`;
 
 function uniqueFixturePath(): string {
   const payload = JSON.parse(fs.readFileSync(baselinePath, "utf8"));

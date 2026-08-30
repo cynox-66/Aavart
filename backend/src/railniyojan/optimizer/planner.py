@@ -30,7 +30,12 @@ def _overlaps(start_a: datetime, end_a: datetime, start_b: datetime, end_b: date
 
 
 class DeterministicPlanner:
-    """CP-SAT planner with fixed seed, one worker, and a bounded demo horizon."""
+    """CP-SAT planner with a fixed seed, one worker, and a caller-supplied time budget.
+
+    Seed and budget both arrive on the input rather than being hardcoded here, so
+    `solver_time_budget_seconds` and `deterministic_seed` in settings are the one
+    place either is set.
+    """
 
     def solve(self, planner_input: OptimizerInput) -> OptimizerOutput:
         dataset = planner_input.dataset
@@ -134,7 +139,7 @@ class DeterministicPlanner:
         solver = cp_model.CpSolver()
         solver.parameters.random_seed = planner_input.deterministic_seed
         solver.parameters.num_search_workers = 1
-        solver.parameters.max_time_in_seconds = 5.0
+        solver.parameters.max_time_in_seconds = planner_input.time_budget_seconds
         status = solver.solve(model)
 
         if status not in {cp_model.OPTIMAL, cp_model.FEASIBLE}:

@@ -5,8 +5,7 @@ import { ValidationState } from "@/types";
 
 interface CheckDataStepProps {
   validation: ValidationState;
-  onResolveIssue: (issueId: string) => void;
-  onAutoFixAll: () => void;
+  onAcknowledgeIssue: (issueId: string) => void;
   onContinue: () => void;
   onBack: () => void;
   isBusy?: boolean;
@@ -14,8 +13,7 @@ interface CheckDataStepProps {
 
 export function CheckDataStep({
   validation,
-  onResolveIssue,
-  onAutoFixAll,
+  onAcknowledgeIssue,
   onContinue,
   onBack,
   isBusy = false,
@@ -24,8 +22,11 @@ export function CheckDataStep({
     validation.issues.find((i) => !i.resolved)?.id ?? null,
   );
 
-  const unresolvedIssues = validation.issues.filter((i) => !i.resolved);
-  const isValid = validation.valid || unresolvedIssues.length === 0;
+  // The backend registers a snapshot candidate only for a dataset that validated
+  // clean, and Step 3 refuses to solve without one. Gate on that single fact so
+  // this button and the solver can never disagree - acknowledging an issue in the
+  // browser changes nothing the backend will accept.
+  const hasSnapshot = validation.snapshotCandidateId !== null;
 
   return (
     <div className="check-data-layout">
@@ -48,7 +49,7 @@ export function CheckDataStep({
       <div className="check-data-grid">
         {/* Main Validation State Container */}
         <div className="validation-main-column">
-          {isValid ? (
+          {hasSnapshot ? (
             /* ALL GOOD STATE */
             <div className="validation-all-good-card">
               <div className="all-good-header">
@@ -95,13 +96,18 @@ export function CheckDataStep({
               <div className="attention-header">
                 <div className="warning-icon-badge">⚠️</div>
                 <div className="attention-title-group">
-                  <h3>Needs Attention ({unresolvedIssues.length} issues found)</h3>
+                  <h3>
+                    Rejected by validation ({validation.issues.length}{" "}
+                    {validation.issues.length === 1 ? "issue" : "issues"})
+                  </h3>
                   <p className="attention-sub">
-                    Resolve the following item-level inconsistencies to enable deterministic planning.
+                    No snapshot was registered, so the solver cannot run on this dataset. These
+                    records must be corrected at source and the department feed re-uploaded —
+                    nothing on this screen can change what the backend accepts.
                   </p>
                 </div>
-                <button type="button" className="btn-auto-fix-all" onClick={onAutoFixAll}>
-                  ⚡ Auto-Fix All Recommended
+                <button type="button" className="btn-attention-primary" onClick={onBack} disabled={isBusy}>
+                  ← Back to Select Data
                 </button>
               </div>
 
@@ -150,19 +156,20 @@ export function CheckDataStep({
                           <div className="issue-actions-row">
                             {issue.resolved ? (
                               <span className="resolved-status-text">
-                                ✓ Issue resolved in candidate snapshot
+                                ✓ Acknowledged — still must be fixed at source
                               </span>
                             ) : (
                               <>
                                 <button
                                   type="button"
                                   className="btn-fix-item"
-                                  onClick={() => onResolveIssue(issue.id)}
+                                  onClick={() => onAcknowledgeIssue(issue.id)}
                                 >
-                                  ✓ Mark as Resolved
+                                  ✓ Acknowledge
                                 </button>
                                 <span className="issue-resolve-note">
-                                  Marked locally — the solver re-validates this at plan creation.
+                                  Marks this issue as read. It does not change the dataset or
+                                  unblock the solver.
                                 </span>
                               </>
                             )}
@@ -205,11 +212,11 @@ export function CheckDataStep({
               <li className="check-item passed">
                 <span className="check-mark">✓</span> Asset & Section References Valid
               </li>
-              <li className={`check-item ${isValid ? "passed" : "pending"}`}>
-                <span className="check-mark">{isValid ? "✓" : "•"}</span> Priority & Duration Bounds Checked
+              <li className={`check-item ${hasSnapshot ? "passed" : "pending"}`}>
+                <span className="check-mark">{hasSnapshot ? "✓" : "•"}</span> Priority & Duration Bounds Checked
               </li>
-              <li className={`check-item ${isValid ? "passed" : "pending"}`}>
-                <span className="check-mark">{isValid ? "✓" : "•"}</span> Timetable Supply Gap Coherence
+              <li className={`check-item ${hasSnapshot ? "passed" : "pending"}`}>
+                <span className="check-mark">{hasSnapshot ? "✓" : "•"}</span> Timetable Supply Gap Coherence
               </li>
             </ul>
           </div>
@@ -231,16 +238,16 @@ export function CheckDataStep({
         </button>
 
         <div className="step-next-group">
-          {!isValid && (
+          {!hasSnapshot && (
             <span className="validation-hint error">
-              Resolve {unresolvedIssues.length} remaining issue(s) before launching solver
+              No validated snapshot — correct the data at source and re-upload
             </span>
           )}
           <button
             type="button"
             className="btn-step-continue"
             onClick={onContinue}
-            disabled={!isValid || isBusy}
+            disabled={!hasSnapshot || isBusy}
           >
             {isBusy ? "Launching Solver..." : "3. Create Plan (CP-SAT Solver) →"}
           </button>

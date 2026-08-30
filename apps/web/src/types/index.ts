@@ -11,7 +11,6 @@ export type AppView =
 
 export type DepartmentType = "TRACK" | "SIGNAL" | "ELECTRICAL" | "CIVIL";
 
-export type PlanningHorizon = "WEEKLY" | "MONTHLY";
 export type SourceId = "tms" | "smms" | "tdms" | "civil";
 
 export interface StationInfo {

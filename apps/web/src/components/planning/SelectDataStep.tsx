@@ -1,12 +1,10 @@
 "use client";
 
-import { CorridorPresetId, DepartmentDataSource, PlanningHorizon } from "@/types";
+import { CorridorPresetId, DepartmentDataSource } from "@/types";
 import { CORRIDOR_PRESETS, getPreset } from "@/lib/corridor-presets";
 
 interface SelectDataStepProps {
   sources: DepartmentDataSource[];
-  horizon: PlanningHorizon;
-  onHorizonChange: (horizon: PlanningHorizon) => void;
   onToggleSourceStatus: (id: string) => void;
   onReplaceFile: (id: string, file: File) => Promise<void>;
   onContinue: () => void;
@@ -22,8 +20,6 @@ interface SelectDataStepProps {
 
 export function SelectDataStep({
   sources,
-  horizon,
-  onHorizonChange,
   onToggleSourceStatus,
   onReplaceFile,
   onContinue,
@@ -68,26 +64,6 @@ export function SelectDataStep({
             Load or upload maintenance demands across railway engineering departments. The solver will
             integrate overlapping demands into single track possessions.
           </p>
-        </div>
-
-        <div className="horizon-switch-box">
-          <label className="switch-label">Planning Horizon:</label>
-          <div className="horizon-toggle-group">
-            <button
-              type="button"
-              className={`toggle-btn ${horizon === "WEEKLY" ? "active" : ""}`}
-              onClick={() => onHorizonChange("WEEKLY")}
-            >
-              Weekly (Standard)
-            </button>
-            <button
-              type="button"
-              className={`toggle-btn ${horizon === "MONTHLY" ? "active" : ""}`}
-              onClick={() => onHorizonChange("MONTHLY")}
-            >
-              Monthly (Macro)
-            </button>
-          </div>
         </div>
       </div>
 

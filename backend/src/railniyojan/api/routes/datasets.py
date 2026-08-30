@@ -21,7 +21,13 @@ ENTITY_KEYS = {
 }
 
 LIST_FIELDS = {"required_resources", "allowed_windows", "member_ids"}
-INT_FIELDS = {"capacity", "priority", "duration_minutes", "duration_min_minutes", "duration_max_minutes"}
+INT_FIELDS = {
+    "capacity",
+    "priority",
+    "duration_minutes",
+    "duration_min_minutes",
+    "duration_max_minutes",
+}
 
 
 def _csv_value(field: str, value: str) -> Any:

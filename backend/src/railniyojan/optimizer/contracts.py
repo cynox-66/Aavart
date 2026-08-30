@@ -13,6 +13,7 @@ class OptimizerInput(BaseModel):
     snapshot_id: str
     ruleset_version: str
     deterministic_seed: int
+    time_budget_seconds: float = Field(gt=0)
     dataset: DatasetPayload
     fixed_items: list[ScheduleItem] = Field(default_factory=list)
 

@@ -2,7 +2,6 @@ import {
   DatasetPayloadShape,
   DepartmentDataSource,
   DepartmentType,
-  PlanningHorizon,
 } from "@/types";
 
 const ENTITY_KEYS: Record<string, keyof DatasetPayloadShape> = {
@@ -150,9 +149,17 @@ export async function sourceFromFile(
   };
 }
 
+/**
+ * Planning is weekly. A "Monthly (Macro)" toggle used to widen this filter to 30
+ * days, but the backend has no notion of a horizon at all - it would have solved
+ * a month of demand as one week. Monthly planning is a real feature (a backend
+ * parameter, different window generation, a second output view) and is not one
+ * this function can fake, so the horizon is a constant until that is built.
+ */
+export const PLANNING_HORIZON_DAYS = 7;
+
 export function mergeDepartmentSources(
   sources: DepartmentDataSource[],
-  horizon: PlanningHorizon,
 ): DatasetPayloadShape {
   const loaded = sources.filter((source) => source.status === "loaded");
   if (loaded.length === 0) throw new Error("Select at least one department dataset");
@@ -186,7 +193,7 @@ export function mergeDepartmentSources(
     .map((window) => Date.parse(String(window.start)))
     .filter((value) => Number.isFinite(value));
   const horizonStartMs = starts.length ? Math.min(...starts) : Date.now();
-  const horizonDays = horizon === "MONTHLY" ? 30 : 7;
+  const horizonDays = PLANNING_HORIZON_DAYS;
   const horizonEndMs = horizonStartMs + horizonDays * 24 * 60 * 60 * 1000;
   const keptWindowIds = new Set(
     merged.windows
@@ -222,7 +229,7 @@ export function mergeDepartmentSources(
       job_count: source.status === "loaded" ? source.taskCount : 0,
       warning_count: source.warningCount ?? 0,
     })),
-    horizon,
+    horizon: "WEEKLY",
     horizon_start: new Date(horizonStartMs).toISOString(),
     horizon_end: new Date(horizonEndMs).toISOString(),
     horizon_days: horizonDays,

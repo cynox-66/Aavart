@@ -3136,27 +3136,8 @@ button:disabled {
   max-width: 600px;
 }
 
-.horizon-toggle-group {
-  display: flex;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 2px;
-}
 
-.toggle-btn {
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
 
-.toggle-btn.active {
-  background: #FFFFFF;
-  color: var(--brand-blue);
-  box-shadow: var(--shadow-sm);
-}
 
 .select-data-grid, .check-data-grid {
   display: grid;
@@ -4570,7 +4551,7 @@ button:disabled { cursor: not-allowed; }
 .attention-title-group h3 { font-size: 1rem; font-weight: 700; color: var(--text-main); }
 .attention-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; line-height: 1.45; }
 
-.btn-auto-fix-all {
+.btn-attention-primary {
   flex-shrink: 0;
   padding: 0.5rem 0.9rem;
   background: var(--brand-blue);
@@ -4583,8 +4564,8 @@ button:disabled { cursor: not-allowed; }
   transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
 
-.btn-auto-fix-all:hover:not(:disabled) { background: var(--brand-blue-hover); transform: translateY(-1px); }
-.btn-auto-fix-all:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-attention-primary:hover:not(:disabled) { background: var(--brand-blue-hover); transform: translateY(-1px); }
+.btn-attention-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .issues-accordion { display: flex; flex-direction: column; gap: 0.55rem; }
 
@@ -4987,19 +4968,7 @@ button:disabled { cursor: not-allowed; }
 .file-icon { margin-right: 0.15rem; }
 .skipped-note { color: var(--text-dim); font-style: italic; }
 
-.horizon-switch-box { 
-  display: flex; 
-  flex-direction: row; 
-  gap: 0.75rem; 
-  align-items: center; 
-}
 
-.switch-label { 
-  font-size: 0.72rem; 
-  color: var(--text-muted); 
-  font-weight: 600; 
-  margin: 0;
-}
 
 .guide-icon { flex-shrink: 0; }
 .guide-text strong { display: block; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.15rem; }

@@ -68,9 +68,16 @@ def test_skipped_department_changes_hash_and_job_count(baseline_payload: dict[st
     assert full["source_hash"] != skipped["source_hash"]
 
 
-def test_monthly_horizon_filtered_payload_validates(
+def test_horizon_filtered_payload_validates_and_horizon_metadata_is_opaque(
     baseline_payload: dict[str, Any],
 ) -> None:
+    """The web app trims the payload to a fixed weekly horizon before posting it.
+
+    The backend has no horizon concept of its own - `metadata.horizon` is carried
+    but never read - so a trimmed payload must validate on its trimmed contents
+    alone. This is why the removed 'Monthly (Macro)' toggle changed nothing that
+    mattered: it widened a client-side filter the solver could not act on.
+    """
     payload = json.loads(json.dumps(baseline_payload))
     payload["windows"].append(
         {
@@ -88,14 +95,25 @@ def test_monthly_horizon_filtered_payload_validates(
             "allowed_windows": ["WIN-FUTURE"],
         }
     )
-    payload["windows"] = [window for window in payload["windows"] if window["window_id"] != "WIN-FUTURE"]
+    payload["windows"] = [
+        window for window in payload["windows"] if window["window_id"] != "WIN-FUTURE"
+    ]
     payload["jobs"] = [job for job in payload["jobs"] if job["job_id"] != "JOB-FUTURE"]
-    payload["metadata"] = {**payload["metadata"], "horizon": "MONTHLY", "horizon_days": 30}
+    payload["metadata"] = {**payload["metadata"], "horizon": "WEEKLY", "horizon_days": 7}
     validation = client.post("/datasets/validate", json=payload)
 
     assert validation.status_code == 200
     assert validation.json()["valid"] is True
     assert validation.json()["counts"]["jobs"] == 4
+
+    # Same payload, a different horizon label: the backend must answer identically,
+    # because it never reads the field.
+    relabelled = json.loads(json.dumps(payload))
+    relabelled["metadata"] = {**relabelled["metadata"], "horizon": "MONTHLY", "horizon_days": 30}
+    other = client.post("/datasets/validate", json=relabelled)
+
+    assert other.status_code == 200
+    assert other.json()["counts"] == validation.json()["counts"]
 
 
 def _create_run(baseline_payload: dict[str, Any]) -> tuple[str, str]:
