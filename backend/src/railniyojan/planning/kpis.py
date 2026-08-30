@@ -26,6 +26,10 @@ one possession at a time? Four rules keep that honest.
 Note on the objective: planner.py maximises priority-weighted job count and has
 no closure term. Closure reduction is therefore a measured outcome of that
 objective, not the quantity being optimised - present it that way.
+
+docs/solver_capacity.md carries the measured coverage for the demo corridors and
+explains what the planner cannot fit, which is the other half of any honest
+reading of these numbers.
 """
 
 from __future__ import annotations

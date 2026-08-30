@@ -244,14 +244,19 @@ def test_sections_are_measured_independently() -> None:
 
 
 @pytest.mark.parametrize("fixture_name", ["corridor_1", "corridor_2"])
-def test_real_corridors_report_coverage_well_below_full(
+def test_real_corridors_report_coverage_consistently(
     fixture_name: str, repository_root: Any
 ) -> None:
     """A guard against quietly regaining the inflated headline.
 
-    These corridors schedule under half their jobs. If coverage ever reads 100%
-    while the reduction stays high, something has started ignoring rejected work
-    again.
+    Deliberately asserts invariants, not a coverage range. An earlier version
+    pinned coverage below 60% - true when every job was locked to a single
+    window, and wrong the moment the fixture let jobs use any window in their own
+    section. Pinning the symptom would have made a genuine improvement look like
+    a regression.
+
+    What must always hold: the two sides account for every job, rejection cannot
+    pay, and the reduction is measured over the scheduled set alone.
     """
     import json
 
@@ -268,13 +273,73 @@ def test_real_corridors_report_coverage_well_below_full(
             snapshot_id="SNAP-TEST",
             ruleset_version="Demo Ruleset v1",
             deterministic_seed=26027,
-            time_budget_seconds=10,
+            # The corridor plans are found in well under 0.5 s; the rest of the
+            # configured budget goes on *proving* optimality, which takes ~43 s
+            # and yields the identical schedule. Two seconds keeps CI honest and
+            # fast - see docs/solver_capacity.md.
+            time_budget_seconds=2,
             dataset=planned,
         )
     )
     kpis = calculate_kpis(planned, output.schedule_items)
 
-    assert kpis.scheduled_jobs < kpis.total_jobs
-    assert kpis.job_coverage_percent < 60
-    assert 0 < kpis.downtime_reduction_percent < 60
+    # Coverage accounts for every job and every minute, with nothing unexplained.
+    assert kpis.scheduled_jobs == len(output.schedule_items)
+    assert kpis.total_jobs == len(planned.jobs)
+    assert kpis.scheduled_jobs <= kpis.total_jobs
+    assert kpis.scheduled_maintenance_minutes + kpis.rejected_maintenance_minutes == sum(
+        job.duration_minutes for job in planned.jobs
+    )
+
+    # Rejection still cannot pay, on the real corridor and not just a toy fixture.
     assert calculate_kpis(planned, []).downtime_reduction_percent == 0.0
+
+    # The reduction is real, bounded, and comes from co-location rather than from
+    # dropping work: more job-minutes are scheduled than the closure they consume.
+    assert 0 < kpis.downtime_reduction_percent < 100
+    assert kpis.optimized_closure_minutes < kpis.scheduled_maintenance_minutes
+
+    # Section closure and asset downtime are genuinely different measurements.
+    assert kpis.optimized_asset_downtime_minutes != kpis.optimized_closure_minutes
+
+
+@pytest.mark.parametrize("fixture_name", ["corridor_1", "corridor_2"])
+def test_the_planner_drops_low_priority_work_first(
+    fixture_name: str, repository_root: Any
+) -> None:
+    """Whatever cannot fit must be the least important work, not an arbitrary slice."""
+    import json
+
+    from railniyojan.optimizer.contracts import OptimizerInput
+    from railniyojan.optimizer.planner import DeterministicPlanner
+    from railniyojan.planning.ai import LocalHeuristicEstimator
+
+    path = repository_root / "fixtures" / "generated" / fixture_name / "dataset.json"
+    dataset = DatasetPayload(**json.loads(path.read_text()))
+    planned, _ = LocalHeuristicEstimator().estimate(dataset)
+    output = DeterministicPlanner().solve(
+        OptimizerInput(
+            run_id="RUN-TEST",
+            snapshot_id="SNAP-TEST",
+            ruleset_version="Demo Ruleset v1",
+            deterministic_seed=26027,
+            # The corridor plans are found in well under 0.5 s; the rest of the
+            # configured budget goes on *proving* optimality, which takes ~43 s
+            # and yields the identical schedule. Two seconds keeps CI honest and
+            # fast - see docs/solver_capacity.md.
+            time_budget_seconds=2,
+            dataset=planned,
+        )
+    )
+    scheduled_ids = {item.job_id for item in output.schedule_items}
+    scheduled = [job for job in planned.jobs if job.job_id in scheduled_ids]
+    rejected = [job for job in planned.jobs if job.job_id not in scheduled_ids]
+
+    assert rejected, "fixture should still exercise the rejection path"
+    mean_scheduled = sum(job.priority for job in scheduled) / len(scheduled)
+    mean_rejected = sum(job.priority for job in rejected) / len(rejected)
+    assert mean_rejected < mean_scheduled
+
+    # Every rejected job carries a reason the UI can show.
+    for job in rejected:
+        assert output.unscheduled_reason_codes[job.job_id]

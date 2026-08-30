@@ -173,6 +173,14 @@ Step 6 is the reason this is not in the demo build. Its payoff is concurrent
 throughput that a single-operator demo does not exercise, and it introduces a
 failure mode the synchronous design does not have.
 
+## Coverage and capacity
+
+The planner does not schedule every submitted job, and the reason is documented
+rather than hidden: see `docs/solver_capacity.md`. It carries the measured
+coverage for both demo corridors, what blocks the remainder, why the headline
+reduction is what it is, and why Plan Quality reads `FEASIBLE` rather than
+`OPTIMAL`.
+
 ## Safety boundaries
 
 - Optimization cannot override safety or compatibility constraints.

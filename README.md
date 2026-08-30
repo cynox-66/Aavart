@@ -15,6 +15,7 @@ Start with these files:
 - `docs/project-context/02_acceptance_checks.md`
 - `docs/project-context/06_progress_tracker.md`
 - `docs/local_development.md`
+- `docs/solver_capacity.md` - measured coverage, what the planner cannot fit, and why
 
 Those files explain the scope, the rules, the current demo target, and how the repo is expected to evolve.
 
