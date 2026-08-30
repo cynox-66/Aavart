@@ -125,9 +125,7 @@ export function CreatePlanStep({
                     <div className="rn-pipeline-icon">
                       {isStepDone ? (
                         <div className="rn-icon-circle done">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="3.5">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <i className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "#16A34A", display: "flex" }}></i>
                         </div>
                       ) : isStepActive ? (
                         <div className="rn-icon-circle active">

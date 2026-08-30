@@ -54,10 +54,7 @@ export function ApprovePlanStep({
       <div className="rn-kpi-cards-row">
         <div className="rn-kpi-card">
           <div className="rn-kpi-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              <polyline points="9 12 11 14 15 10" />
-            </svg>
+            <i className="fi fi-ss-check-circle" style={{ fontSize: "22px", color: "#16A34A", display: "flex" }}></i>
           </div>
           <div className="rn-kpi-content">
             <span className="rn-kpi-card-label">Plan Quality</span>
@@ -68,13 +65,7 @@ export function ApprovePlanStep({
 
         <div className="rn-kpi-card">
           <div className="rn-kpi-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
-              <line x1="6" y1="3" x2="6" y2="21" />
-              <line x1="18" y1="3" x2="18" y2="21" />
-              <line x1="6" y1="7" x2="18" y2="7" />
-              <line x1="6" y1="12" x2="18" y2="12" />
-              <line x1="6" y1="17" x2="18" y2="17" />
-            </svg>
+            <i className="fi fi-bs-train-track" style={{ fontSize: "22px", color: "#F59E0B", display: "flex" }}></i>
           </div>
           <div className="rn-kpi-content">
             <span className="rn-kpi-card-label">Jobs Locked</span>
@@ -85,7 +76,7 @@ export function ApprovePlanStep({
 
         <div className="rn-kpi-card">
           <div className="rn-kpi-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
@@ -101,7 +92,7 @@ export function ApprovePlanStep({
 
         <div className="rn-kpi-card">
           <div className="rn-kpi-icon-box">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2.5">
               <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
               <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
             </svg>
@@ -281,9 +272,7 @@ export function ApprovePlanStep({
                 onClick={handleApproveClick}
                 disabled={isBusy}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <i className="fi fi-ss-check-circle" style={{ fontSize: "18px", color: "currentColor", display: "flex" }}></i>
                 <span>{isBusy ? "Approving..." : "Approve Plan"}</span>
               </button>
 
@@ -306,9 +295,13 @@ function ReadinessRow({ ok, title, detail }: { ok: boolean; title: string; detai
   return (
     <div className="rn-check-row">
       <div className="rn-check-circle">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={ok ? "#16A34A" : "#DC2626"} strokeWidth="3.5">
-          {ok ? <polyline points="20 6 9 17 4 12" /> : <line x1="18" y1="6" x2="6" y2="18" />}
-        </svg>
+        {ok ? (
+          <i className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "#16A34A", display: "flex" }}></i>
+        ) : (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="3.5">
+            <line x1="18" y1="6" x2="6" y2="18" />
+          </svg>
+        )}
       </div>
       <div className="rn-check-text">
         <strong>{title}</strong>

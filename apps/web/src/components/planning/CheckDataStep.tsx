@@ -48,7 +48,7 @@ export function CheckDataStep({
             /* ALL GOOD STATE */
             <div className="validation-all-good-card">
               <div className="all-good-header">
-                <div className="success-icon-badge">✓</div>
+                <i className="fi fi-ss-check-circle" style={{ fontSize: "44px", color: "var(--status-green-dark)", display: "flex" }}></i>
                 <div>
                   <h3>Dataset Validated & Ready</h3>
                   <p className="all-good-sub">
@@ -162,7 +162,7 @@ export function CheckDataStep({
             <ul className="protocol-checks-list">
               {validation.sourceSummaries.map((source) => (
                 <li className={`check-item ${source.status === "loaded" ? "passed" : "pending"}`} key={source.source_id}>
-                  <span className="check-mark">{source.status === "loaded" ? "✓" : "•"}</span>
+                  <span className="check-mark">{source.status === "loaded" ? <i className="fi fi-ss-check-circle"></i> : "•"}</span>
                   {source.department}: {source.job_count} jobs / {source.warning_count} warnings
                 </li>
               ))}
@@ -178,16 +178,16 @@ export function CheckDataStep({
             <h4>Validation Protocol</h4>
             <ul className="protocol-checks-list">
               <li className="check-item passed">
-                <span className="check-mark">✓</span> Schema Version 1.0 Strict
+                <span className="check-mark"><i className="fi fi-ss-check-circle"></i></span> Schema Version 1.0 Strict
               </li>
               <li className="check-item passed">
-                <span className="check-mark">✓</span> Asset & Section References Valid
+                <span className="check-mark"><i className="fi fi-ss-check-circle"></i></span> Asset & Section References Valid
               </li>
               <li className={`check-item ${isValid ? "passed" : "pending"}`}>
-                <span className="check-mark">{isValid ? "✓" : "•"}</span> Priority & Duration Bounds Checked
+                <span className="check-mark">{isValid ? <i className="fi fi-ss-check-circle"></i> : "•"}</span> Priority & Duration Bounds Checked
               </li>
               <li className={`check-item ${isValid ? "passed" : "pending"}`}>
-                <span className="check-mark">{isValid ? "✓" : "•"}</span> Timetable Supply Gap Coherence
+                <span className="check-mark">{isValid ? <i className="fi fi-ss-check-circle"></i> : "•"}</span> Timetable Supply Gap Coherence
               </li>
             </ul>
           </div>

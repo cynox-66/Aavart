@@ -186,13 +186,13 @@ export function JobInspector({
             const iconColor = tone === "good" ? "#16A34A" : tone === "bad" ? "#DC2626" : tone === "warn" ? "#F59E0B" : "#64748B";
             return (
               <div className="rn-why-item" key={code}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="3">
-                  {tone === "bad" ? (
+                {tone === "bad" ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={iconColor} strokeWidth="3">
                     <line x1="18" y1="6" x2="6" y2="18" />
-                  ) : (
-                    <polyline points="20 6 9 17 4 12" />
-                  )}
-                </svg>
+                  </svg>
+                ) : (
+                  <i className="fi fi-ss-check-circle" style={{ fontSize: "14px", color: iconColor, display: "flex" }}></i>
+                )}
                 <span>{label}</span>
               </div>
             );

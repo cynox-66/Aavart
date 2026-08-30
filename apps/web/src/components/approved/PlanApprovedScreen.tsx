@@ -49,11 +49,7 @@ export function PlanApprovedScreen({
           <div className="rn-confetti-dot c7" />
           <div className="rn-confetti-dot c8" />
 
-          <div className="rn-big-check-circle">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="3">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
+          <i className="fi fi-ss-check-circle" style={{ fontSize: "64px", color: "#16A34A", display: "flex" }}></i>
         </div>
 
         <div className="rn-celebration-text center">
@@ -68,7 +64,7 @@ export function PlanApprovedScreen({
       <div className="rn-stat-summary-bar">
         <div className="rn-stat-box">
           <div className="rn-stat-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="1.8">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" strokeWidth="2.5">
               <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
               <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
             </svg>
@@ -81,13 +77,7 @@ export function PlanApprovedScreen({
 
         <div className="rn-stat-box">
           <div className="rn-stat-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="1.8">
-              <line x1="6" y1="3" x2="6" y2="21" />
-              <line x1="18" y1="3" x2="18" y2="21" />
-              <line x1="6" y1="7" x2="18" y2="7" />
-              <line x1="6" y1="12" x2="18" y2="12" />
-              <line x1="6" y1="17" x2="18" y2="17" />
-            </svg>
+            <i className="fi fi-bs-train-track" style={{ fontSize: "24px", color: "#F59E0B", display: "flex" }}></i>
           </div>
           <div className="rn-stat-data">
             <div className="rn-stat-number">{integratedBlockCount}</div>
@@ -97,7 +87,7 @@ export function PlanApprovedScreen({
 
         <div className="rn-stat-box">
           <div className="rn-stat-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="1.8">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
@@ -112,10 +102,7 @@ export function PlanApprovedScreen({
 
         <div className="rn-stat-box">
           <div className="rn-stat-icon-wrap">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="1.8">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              <polyline points="9 12 11 14 15 10" />
-            </svg>
+            <i className="fi fi-ss-check-circle" style={{ fontSize: "24px", color: "#16A34A", display: "flex" }}></i>
           </div>
           <div className="rn-stat-data">
             <div className="rn-stat-number green">{formatPercent(plan.kpis.maintenance_coverage_percent)}</div>
@@ -255,7 +242,7 @@ export function PlanApprovedScreen({
         isOpen={isShareModalOpen}
         title="Share Approved Plan with Teams"
         description={`Share weekly schedule ${plan.run_id} with Western Railway departmental desks:`}
-        confirmLabel={copied ? "✓ Copied Link!" : "Copy Share Link"}
+        confirmLabel={copied ? <><i className="fi fi-ss-check-circle"></i> Copied Link!</> : "Copy Share Link"}
         cancelLabel="Done"
         onConfirm={handleCopyLink}
         onCancel={() => setIsShareModalOpen(false)}

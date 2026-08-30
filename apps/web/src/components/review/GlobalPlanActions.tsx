@@ -97,7 +97,7 @@ export function GlobalPlanActions({
                 <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
                 <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
               </svg>
-              <span>{copied ? "✓ Link copied" : "Share with Teams"}</span>
+              <span>{copied ? <><i className="fi fi-ss-check-circle"></i> Link copied</> : "Share with Teams"}</span>
             </button>
           </div>
 
@@ -126,9 +126,7 @@ export function GlobalPlanActions({
 
         {optimizationStatus === "UP_TO_DATE" && (
           <div className="rn-locked-notice">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.2">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+            <i className="fi fi-ss-check-circle" style={{ fontSize: "16px", color: "#16A34A", display: "flex" }}></i>
             <div className="rn-locked-text">
               <strong>Plan is up to date</strong>
               <p>No re-optimization needed.</p>
@@ -138,9 +136,7 @@ export function GlobalPlanActions({
 
         {optimizationStatus === "UPDATED" && (
           <div className="rn-locked-notice">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2.2">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+            <i className="fi fi-ss-check-circle" style={{ fontSize: "16px", color: "#16A34A", display: "flex" }}></i>
             <div className="rn-locked-text">
               <strong>Re-optimization complete</strong>
               <p>The plan has been recalculated with your locked jobs preserved.</p>
@@ -166,11 +162,7 @@ export function GlobalPlanActions({
               disabled={isBusy}
             >
               <div className="rn-reopt-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="23 4 23 10 17 10" />
-                  <polyline points="1 20 1 14 7 14" />
-                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-                </svg>
+                <i className="fi fi-br-rotate-right" style={{ fontSize: "18px", color: "inherit", display: "flex" }}></i>
                 <div className="rn-reopt-text">
                   <strong>Re-Optimize Plan</strong>
                   <small>Recalculate entire plan</small>

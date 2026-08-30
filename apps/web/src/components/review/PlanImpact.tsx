@@ -40,7 +40,7 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
         {/* Metric 1: Closure Time - real KPI from the solver */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" />
               <polyline points="12 6 12 12 16 14" />
             </svg>
@@ -58,13 +58,7 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             old "downtime saved" headline. */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
-              <line x1="6" y1="3" x2="6" y2="21" />
-              <line x1="18" y1="3" x2="18" y2="21" />
-              <line x1="6" y1="7" x2="18" y2="7" />
-              <line x1="6" y1="12" x2="18" y2="12" />
-              <line x1="6" y1="17" x2="18" y2="17" />
-            </svg>
+            <i className="fi fi-bs-train-track" style={{ fontSize: "22px", color: "#F59E0B", display: "flex" }}></i>
           </div>
           <div className="rn-impact-info">
             <span className="rn-impact-label">Maintenance Coverage</span>
@@ -78,10 +72,7 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
         {/* Metric 3: Plan Quality - real solver state */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              <polyline points="9 12 11 14 15 10" />
-            </svg>
+            <i className="fi fi-ss-check-circle" style={{ fontSize: "22px", color: "#16A34A", display: "flex" }}></i>
           </div>
           <div className="rn-impact-info">
             <span className="rn-impact-label">Plan Quality</span>

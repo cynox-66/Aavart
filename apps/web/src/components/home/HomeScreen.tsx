@@ -16,15 +16,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
         <div className="rn-home-left">
           <div className="rn-welcome-header">
             <div className="rn-welcome-icon-box">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="1.8">
-                <rect x="4" y="3" width="16" height="15" rx="3" />
-                <path d="M4 11h16" />
-                <circle cx="8" cy="7" r="1.5" fill="#0047BA" />
-                <circle cx="16" cy="7" r="1.5" fill="#0047BA" />
-                <path d="M6 18l-2 4" />
-                <path d="M18 18l2 4" />
-                <path d="M4 22h16" />
-              </svg>
+              <i className="fi fi-br-train" style={{ color: "#0047BA", fontSize: "36px", display: "flex" }}></i>
             </div>
             <div className="rn-welcome-titles">
               <span className="rn-welcome-pre">Welcome to</span>
@@ -206,9 +198,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               onClick={() => onNavigate("previous-plans")}
             >
               <div className="rn-action-icon-box secondary">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-                </svg>
+                <i className="fi fi-br-time-past" style={{ color: "#0047BA", fontSize: "26px", display: "flex" }}></i>
               </div>
 
               <div className="rn-action-details">
@@ -233,7 +223,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               title={hasActivePlan ? undefined : "Create a plan first — Rapid Block injects an emergency job into an active run."}
             >
               <div className="rn-action-icon-box">
-                <span style={{ fontSize: "24px" }}>🚨</span>
+                <i className="fi fi-br-problem-solving" style={{ color: "#EF4444", fontSize: "26px", display: "flex" }}></i>
               </div>
 
               <div className="rn-action-details">
