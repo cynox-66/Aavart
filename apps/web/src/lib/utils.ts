@@ -1,5 +1,14 @@
 import { DepartmentType, RunState } from "@/types";
 
+// Single simulated planner identity used throughout the demo UI - not a real
+// authenticated user, but kept in one place rather than duplicated literals.
+export const CURRENT_REVIEWER = "AR (Divisional Manager, WR - Vadodara)";
+
+// Rapid Block's actor must be in the backend's PLANNER_ALLOWLIST env var
+// (defaults to "planner-01" in .env) or the request is REJECTED with
+// UNAUTHORISED_ACTOR. There's no auth system, so this is a fixed demo actor.
+export const RAPID_BLOCK_ACTOR = "planner-01";
+
 export function formatStamp(value?: string | null): string {
   if (!value) return "-";
   try {
@@ -35,6 +44,28 @@ export function formatDuration(minutes: number): string {
   const hrs = Math.floor(minutes / 60);
   const rem = minutes % 60;
   return rem === 0 ? `${hrs}h` : `${hrs}h ${rem}m`;
+}
+
+export function formatDateRange(start?: Date | null, end?: Date | null): string {
+  if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return "No scheduled dates yet";
+  }
+  const opts: Intl.DateTimeFormatOptions = { day: "2-digit", month: "short" };
+  const startStr = start.toLocaleDateString("en-IN", opts);
+  const endStr = end.toLocaleDateString("en-IN", { ...opts, year: "numeric" });
+  return `${startStr} – ${endStr}`;
+}
+
+/** Earliest/latest schedule_item start/end across a plan, or null if none are scheduled. */
+export function getScheduleDateRange(scheduleItems: Array<{ start: string; end: string }>): {
+  start: Date | null;
+  end: Date | null;
+} {
+  if (scheduleItems.length === 0) return { start: null, end: null };
+  const starts = scheduleItems.map((s) => new Date(s.start).getTime()).filter((t) => !Number.isNaN(t));
+  const ends = scheduleItems.map((s) => new Date(s.end).getTime()).filter((t) => !Number.isNaN(t));
+  if (starts.length === 0 || ends.length === 0) return { start: null, end: null };
+  return { start: new Date(Math.min(...starts)), end: new Date(Math.max(...ends)) };
 }
 
 export function formatPercent(value: number): string {
@@ -94,4 +125,11 @@ export function getRunStateTone(state?: RunState): "good" | "warn" | "bad" | "ne
   if (state === "TIMEOUT") return "warn";
   if (state === "INFEASIBLE" || state === "FAILED" || state === "INVALID") return "bad";
   return "neutral";
+}
+
+/** Safe message extraction from an unknown thrown value. */
+export function errorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  if (typeof err === "string") return err;
+  return "";
 }

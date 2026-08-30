@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ValidationIssueItem, ValidationState } from "@/types";
+import { ValidationState } from "@/types";
 
 interface CheckDataStepProps {
   validation: ValidationState;
@@ -41,7 +41,7 @@ export function CheckDataStep({
 
         <div className="snapshot-candidate-pill">
           <span className="mono-label">SNAPSHOT CANDIDATE</span>
-          <strong className="snapshot-id">{validation.snapshotCandidateId || "SNAP-014"}</strong>
+          <strong className="snapshot-id">{validation.snapshotCandidateId ?? "—"}</strong>
         </div>
       </div>
 
@@ -115,11 +115,11 @@ export function CheckDataStep({
                         isExpanded ? "expanded" : ""
                       }`}
                     >
-                      <div
+                      <button
+                        type="button"
                         className="issue-header-row"
                         onClick={() => setExpandedIssueId(isExpanded ? null : issue.id)}
-                        role="button"
-                        tabIndex={0}
+                        aria-expanded={isExpanded}
                       >
                         <div className="issue-title-area">
                           <span className={`issue-tag ${issue.severity}`}>
@@ -131,7 +131,7 @@ export function CheckDataStep({
                         </div>
 
                         <div className="issue-expand-icon">{isExpanded ? "▲" : "▼"}</div>
-                      </div>
+                      </button>
 
                       {isExpanded && (
                         <div className="issue-detail-content">
@@ -159,15 +159,11 @@ export function CheckDataStep({
                                   className="btn-fix-item"
                                   onClick={() => onResolveIssue(issue.id)}
                                 >
-                                  ✓ Apply Auto-Fix
+                                  ✓ Mark as Resolved
                                 </button>
-                                <button
-                                  type="button"
-                                  className="btn-manual-edit"
-                                  onClick={() => onResolveIssue(issue.id)}
-                                >
-                                  ✏️ Acknowledge & Override
-                                </button>
+                                <span className="issue-resolve-note">
+                                  Marked locally — the solver re-validates this at plan creation.
+                                </span>
                               </>
                             )}
                           </div>

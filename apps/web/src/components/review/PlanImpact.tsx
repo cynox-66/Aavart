@@ -3,20 +3,29 @@
 import { useState } from "react";
 import { KpiView } from "@/types";
 import { ConfirmModal } from "@/components/layout/ConfirmModal";
-import { formatDuration } from "@/lib/utils";
+import { formatDuration, formatPercent } from "@/lib/utils";
 
 interface PlanImpactProps {
   kpis: KpiView;
+  jobCounts: { total: number; scheduled: number; unscheduled: number };
+  validatorPassed: boolean;
 }
 
-export function PlanImpact({ kpis }: PlanImpactProps) {
+const QUALITY_LABEL: Record<KpiView["plan_quality"], { label: string; tone: "green" | "amber" | "red" }> = {
+  OPTIMAL: { label: "Optimal", tone: "green" },
+  FEASIBLE: { label: "Feasible", tone: "amber" },
+  DEGRADED: { label: "Degraded", tone: "red" },
+};
+
+export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps) {
   const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const quality = QUALITY_LABEL[kpis.plan_quality];
 
   return (
     <div className="rn-card rn-plan-impact-card">
       <div className="rn-card-header">
         <div className="rn-card-title-group">
-          <h2 className="rn-card-title">PLAN IMPACT (vs. Previous Plan)</h2>
+          <h2 className="rn-card-title">PLAN IMPACT (vs. Baseline)</h2>
           <button type="button" className="rn-info-icon-btn" title="Optimizer Impact Info">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5">
               <circle cx="12" cy="12" r="10" />
@@ -28,7 +37,7 @@ export function PlanImpact({ kpis }: PlanImpactProps) {
       </div>
 
       <div className="rn-impact-items-list">
-        {/* Metric 1: Closure Time */}
+        {/* Metric 1: Closure Time - real KPI from the solver */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
@@ -38,12 +47,14 @@ export function PlanImpact({ kpis }: PlanImpactProps) {
           </div>
           <div className="rn-impact-info">
             <span className="rn-impact-label">Closure Time</span>
-            <div className="rn-impact-value green">-36%</div>
-            <span className="rn-impact-sub">vs. Previous Plan</span>
+            <div className={`rn-impact-value ${kpis.closure_reduction_percent >= 0 ? "green" : "red"}`}>
+              {formatPercent(-kpis.closure_reduction_percent)}
+            </div>
+            <span className="rn-impact-sub">vs. baseline (unoptimized) plan</span>
           </div>
         </div>
 
-        {/* Metric 2: Total Possessions */}
+        {/* Metric 2: Asset downtime reduction - real KPI from the solver */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
@@ -55,13 +66,15 @@ export function PlanImpact({ kpis }: PlanImpactProps) {
             </svg>
           </div>
           <div className="rn-impact-info">
-            <span className="rn-impact-label">Total Possessions</span>
-            <div className="rn-impact-value green">-60%</div>
-            <span className="rn-impact-sub">vs. Previous Plan</span>
+            <span className="rn-impact-label">Asset Downtime</span>
+            <div className={`rn-impact-value ${kpis.downtime_reduction_percent >= 0 ? "green" : "red"}`}>
+              {formatPercent(-kpis.downtime_reduction_percent)}
+            </div>
+            <span className="rn-impact-sub">vs. baseline (unoptimized) plan</span>
           </div>
         </div>
 
-        {/* Metric 3: Plan Quality */}
+        {/* Metric 3: Plan Quality - real solver state */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16A34A" strokeWidth="2">
@@ -71,8 +84,10 @@ export function PlanImpact({ kpis }: PlanImpactProps) {
           </div>
           <div className="rn-impact-info">
             <span className="rn-impact-label">Plan Quality</span>
-            <div className="rn-impact-value green">Optimal</div>
-            <span className="rn-impact-sub">Best balance of safety, efficiency and least disruption</span>
+            <div className={`rn-impact-value ${quality.tone}`}>{quality.label}</div>
+            <span className="rn-impact-sub">
+              {jobCounts.scheduled} of {jobCounts.total} jobs scheduled · independent validator {validatorPassed ? "passed" : "flagged issues"}
+            </span>
           </div>
         </div>
       </div>
@@ -90,11 +105,11 @@ export function PlanImpact({ kpis }: PlanImpactProps) {
         </button>
       </div>
 
-      {/* Comparison Modal */}
+      {/* Comparison Modal - every figure is a real KPI/count from this run */}
       <ConfirmModal
         isOpen={isCompareOpen}
         title="Baseline vs. CP-SAT Optimized Comparison"
-        description="Detailed quantitative breakdown of maintenance execution efficiency under joint integrated planning."
+        description="Quantitative breakdown reported by the solver for this run."
         confirmLabel="Close"
         cancelLabel="Back"
         onConfirm={() => setIsCompareOpen(false)}
@@ -105,35 +120,35 @@ export function PlanImpact({ kpis }: PlanImpactProps) {
             <thead>
               <tr>
                 <th>Operational Metric</th>
-                <th>Previous Siloed Plan</th>
-                <th>RailNiyojan Integrated Plan</th>
-                <th>Net Efficiency Gain</th>
+                <th>Baseline</th>
+                <th>Optimized</th>
+                <th>Net Change</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>Total Section Closures</strong></td>
-                <td>390 mins ({formatDuration(390)})</td>
-                <td>250 mins ({formatDuration(250)})</td>
-                <td className="gain-cell"><strong>-36.0%</strong> disruption reduction</td>
-              </tr>
-              <tr>
-                <td><strong>Total Possessions Required</strong></td>
-                <td>2 separate blocks</td>
-                <td>1 unified block</td>
-                <td className="gain-cell"><strong>-60.0%</strong> possession count</td>
+                <td>{formatDuration(kpis.baseline_closure_minutes)}</td>
+                <td>{formatDuration(kpis.optimized_closure_minutes)}</td>
+                <td className="gain-cell"><strong>{formatPercent(-kpis.closure_reduction_percent)}</strong></td>
               </tr>
               <tr>
                 <td><strong>Maintenance Work Done</strong></td>
-                <td>26 Tasks Scheduled</td>
-                <td>26 Tasks Scheduled</td>
-                <td className="neutral-cell">100% Demand Fulfilled</td>
+                <td colSpan={2}>{jobCounts.scheduled} / {jobCounts.total} tasks scheduled</td>
+                <td className="neutral-cell">{jobCounts.unscheduled} unscheduled</td>
+              </tr>
+              <tr>
+                <td><strong>Scheduled vs. Rejected Minutes</strong></td>
+                <td>{formatDuration(kpis.scheduled_maintenance_minutes)} scheduled</td>
+                <td>{formatDuration(kpis.rejected_maintenance_minutes)} rejected</td>
+                <td className="neutral-cell">—</td>
               </tr>
               <tr>
                 <td><strong>Safety & Conflict Checks</strong></td>
-                <td>Manual verification</td>
-                <td>12 hard constraints satisfied</td>
-                <td className="gain-cell">0 Conflicts</td>
+                <td colSpan={2}>Independent validator</td>
+                <td className={validatorPassed ? "gain-cell" : "neutral-cell"}>
+                  {validatorPassed ? "Passed" : "Issues flagged"}
+                </td>
               </tr>
             </tbody>
           </table>

@@ -72,14 +72,17 @@ export interface ValidationState {
 export interface SectionInfo {
   section_id: string;
   name: string;
-  from_node: string;
-  to_node: string;
-  km_start: number;
-  km_end: number;
-  tracks_total: number;
-  tracks_available: number;
-  status: "CLEAR" | "CAUTION" | "RESTRICTED";
-  active_constraints: number;
+  // The backend does not currently expose topology/track/constraint data for
+  // sections - these are only ever populated when a real source is known.
+  // Render "-" / an "unknown" state when absent instead of inventing values.
+  from_node?: string | null;
+  to_node?: string | null;
+  km_start?: number | null;
+  km_end?: number | null;
+  tracks_total?: number | null;
+  tracks_available?: number | null;
+  status?: "CLEAR" | "CAUTION" | "RESTRICTED" | null;
+  active_constraints?: number | null;
   total_works: number;
 }
 
@@ -111,6 +114,11 @@ export interface JobDetailView {
   status: "SCHEDULED" | "LOCKED" | "REJECTED" | "UNSCHEDULED";
   locked: boolean;
   reason_codes: string[];
+  // Real resource/window ids this job's section is known to use - used as a
+  // real template when constructing a Rapid Block urgent_job for the same
+  // section (no dedicated "snapshot entities" endpoint exists).
+  required_resources?: string[];
+  allowed_windows?: string[];
   ai_estimate?: {
     source: "LOCAL_HEURISTIC" | "DETERMINISTIC_FALLBACK";
     priority: number;
@@ -171,7 +179,7 @@ export interface RapidBlockFormValues {
 
 export interface RapidBlockImpactView {
   requestId: string;
-  state: "SUBMITTED" | "VALIDATING" | "CANDIDATE_READY" | "NO_CANDIDATE" | "REJECTED";
+  state: "SUBMITTED" | "VALIDATING" | "PLANNING" | "CANDIDATE_READY" | "NO_CANDIDATE" | "REJECTED";
   baseRunId: string;
   childRunId: string | null;
   derivedSnapshotId: string | null;
@@ -196,6 +204,11 @@ export interface RapidBlockImpactView {
   preservedLockedJobs: string[];
   reasonCodes: string[];
   isCandidateReady: boolean;
+  // True only if this result could not be computed by the real backend
+  // (e.g. no template job/resources available to build a valid request) -
+  // drives the "Simulated preview" badge so it's never confused with a real
+  // dispatch result.
+  isSimulated: boolean;
 }
 
 export interface ToastMessage {

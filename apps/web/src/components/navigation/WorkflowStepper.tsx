@@ -42,6 +42,9 @@ export function WorkflowStepper({
         const isCompleted = step.number < activeStep;
         const isApprovedStep = step.number === 5 && isApproved;
 
+        // Steps 4/5 are only reachable while a plan for THIS wizard pass
+        // exists. `isPlanCreated` is reset when a new plan version starts, so
+        // this can no longer jump into a stale plan from a fresh session.
         const isClickable =
           step.number <= activeStep ||
           (isPlanCreated && (step.number === 4 || step.number === 5));
@@ -55,6 +58,12 @@ export function WorkflowStepper({
             } ${isApprovedStep ? "step-approved-theme" : ""}`}
             onClick={() => isClickable && onNavigate(step.view)}
             disabled={!isClickable}
+            aria-current={isCurrent ? "step" : undefined}
+            title={
+              isClickable
+                ? `Go to step ${step.number}: ${step.label}`
+                : `Step ${step.number} (${step.label}) is not available yet`
+            }
           >
             <div className="rn-step-badge">
               {isCompleted ? (

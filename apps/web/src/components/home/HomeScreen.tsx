@@ -8,7 +8,7 @@ interface HomeScreenProps {
   hasActivePlan?: boolean;
 }
 
-export function HomeScreen({ onNavigate }: HomeScreenProps) {
+export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: HomeScreenProps) {
   return (
     <div className="rn-home-container">
       <div className="rn-home-card">
@@ -168,11 +168,10 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
           {/* Action CTAs */}
           <div className="rn-home-action-cards">
             {/* Start New Plan - Primary Blue Card */}
-            <div
+            <button
+              type="button"
               className="rn-action-card rn-action-primary"
               onClick={() => onNavigate("wizard-step-1")}
-              role="button"
-              tabIndex={0}
             >
               <div className="rn-action-icon-box primary">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -185,7 +184,11 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
 
               <div className="rn-action-details">
                 <h3>Start New Plan</h3>
-                <p>Create a new planning session for your corridor and planning period.</p>
+                <p>
+                  {hasActivePlan && activePlanId
+                    ? `Replaces the active plan (${activePlanId}) with a new planning session.`
+                    : "Create a new planning session for your corridor and planning period."}
+                </p>
               </div>
 
               <div className="rn-action-arrow-btn primary">
@@ -194,14 +197,13 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
               </div>
-            </div>
+            </button>
 
             {/* View Previous Plans - White Card */}
-            <div
+            <button
+              type="button"
               className="rn-action-card rn-action-secondary"
               onClick={() => onNavigate("previous-plans")}
-              role="button"
-              tabIndex={0}
             >
               <div className="rn-action-icon-box secondary">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
@@ -220,7 +222,36 @@ export function HomeScreen({ onNavigate }: HomeScreenProps) {
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
               </div>
-            </div>
+            </button>
+
+            {/* Emergency Block Planning - Red Card, disabled until a plan exists */}
+            <button
+              type="button"
+              className={`rn-action-card rn-action-emergency ${!hasActivePlan ? "disabled" : ""}`}
+              onClick={() => onNavigate("rapid-block")}
+              disabled={!hasActivePlan}
+              title={hasActivePlan ? undefined : "Create a plan first — Rapid Block injects an emergency job into an active run."}
+            >
+              <div className="rn-action-icon-box">
+                <span style={{ fontSize: "24px" }}>🚨</span>
+              </div>
+
+              <div className="rn-action-details">
+                <h3>Emergency Block Planning</h3>
+                <p>
+                  {hasActivePlan && activePlanId
+                    ? `Inject an urgent incident into ${activePlanId} and re-optimize around it.`
+                    : "Create a plan first — this injects an urgent incident into an active run."}
+                </p>
+              </div>
+
+              <div className="rn-action-arrow-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+              </div>
+            </button>
           </div>
         </div>
       </div>

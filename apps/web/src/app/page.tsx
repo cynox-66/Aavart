@@ -1,20 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
-  AppView,
   DepartmentDataSource,
   OptimizationStatus,
   PlanRunView,
   ToastMessage,
   ValidationState,
 } from "@/types";
-import {
-  initialDepartmentSources,
-  mockBaselinePlan,
-  mockDefaultValidationState,
-  mockValidValidationState,
-} from "@/lib/mock-data";
+import { demoHistoricalPlan, initialDepartmentSources } from "@/lib/mock-data";
 import {
   approveRunAdapter,
   createPlanningRunAdapter,
@@ -23,8 +17,9 @@ import {
   replanRunAdapter,
   validateDatasetAdapter,
 } from "@/lib/adapters/planning-adapter";
+import { errorMessage } from "@/lib/utils";
+import { useViewHistory } from "@/lib/use-view-history";
 import { AppHeader } from "@/components/layout/AppHeader";
-import { WorkflowStepper } from "@/components/navigation/WorkflowStepper";
 import { ToastContainer } from "@/components/layout/Toast";
 import { HomeScreen } from "@/components/home/HomeScreen";
 import { SelectDataStep } from "@/components/planning/SelectDataStep";
@@ -36,25 +31,45 @@ import { PlanApprovedScreen } from "@/components/approved/PlanApprovedScreen";
 import { PreviousPlansList } from "@/components/previous-plans/PreviousPlansList";
 import { RapidBlockView } from "@/components/rapid-block/RapidBlockView";
 
+const EMPTY_VALIDATION_STATE: ValidationState = {
+  valid: false,
+  snapshotCandidateId: null,
+  issues: [],
+  counts: { jobs: 0, windows: 0, assets: 0, sections: 0, resources: 0 },
+};
+
 export default function RailNiyojanApp() {
-  // Navigation & View State
-  const [currentView, setCurrentView] = useState<AppView>("home");
+  // Navigation & View State - backed by real browser history entries so the
+  // Back button moves between screens instead of leaving the app.
+  const { currentView, navigate: setCurrentView, goBack, canGoBack } = useViewHistory("home");
 
   // Ingestion & Validation State
   const [sources, setSources] = useState<DepartmentDataSource[]>(initialDepartmentSources);
-  const [validation, setValidation] = useState<ValidationState>(mockDefaultValidationState);
+  const [validation, setValidation] = useState<ValidationState>(EMPTY_VALIDATION_STATE);
 
-  // Active Planning Run State
-  const [plan, setPlan] = useState<PlanRunView>(mockBaselinePlan);
+  // Active Planning Run State - null until a real plan actually exists.
+  const [plan, setPlan] = useState<PlanRunView | null>(null);
   const [hasPlanCreated, setHasPlanCreated] = useState(false);
+  // Whether the currently-open plan is the out-of-scope "Previous Plans" demo
+  // path rather than a real backend run (no list-runs endpoint exists yet).
+  const [isDemoPlan, setIsDemoPlan] = useState(false);
 
-  // Constraint Dirty Tracking
+  // Constraint Dirty Tracking - real section/window ids touched this session,
+  // fed into the real replan call instead of hardcoded literals.
   const [isDirty, setIsDirty] = useState(false);
   const [lockedCount, setLockedCount] = useState(0);
+  const [dirtySectionIds, setDirtySectionIds] = useState<Set<string>>(new Set());
+  const [dirtyWindowIds, setDirtyWindowIds] = useState<Set<string>>(new Set());
   const [optimizationStatus, setOptimizationStatus] = useState<OptimizationStatus>("UP_TO_DATE");
 
   // Global Async State & Notifications
   const [isBusy, setIsBusy] = useState(false);
+  // Export has its own flag so a slow download can't be double-fired and
+  // doesn't block unrelated actions behind the global busy state.
+  const [isExporting, setIsExporting] = useState(false);
+  // Set when the user cancels mid-solve so a late-arriving solver result is
+  // discarded instead of activating a plan they backed out of.
+  const solveAbortedRef = useRef(false);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Helper for Toasts
@@ -114,9 +129,9 @@ export default function RailNiyojanApp() {
       const res = await validateDatasetAdapter(null, "JSON");
       setValidation(res);
       setCurrentView("wizard-step-2");
-    } catch {
-      setValidation(mockDefaultValidationState);
-      setCurrentView("wizard-step-2");
+    } catch (err) {
+      // Real failure - stay on step 1, never advance with fabricated data.
+      showToast("error", "Validation Failed", errorMessage(err) || "Could not validate dataset with the backend.");
     } finally {
       setIsBusy(false);
     }
@@ -133,61 +148,97 @@ export default function RailNiyojanApp() {
         issues: updated,
       };
     });
-    showToast("success", "Issue Resolved", "Candidate snapshot updated with auto-fix.");
+    showToast("success", "Issue Marked Resolved", "This will be re-checked by the solver at plan creation.");
   };
 
   const handleAutoFixAll = () => {
-    // Keep the snapshot id the backend actually registered during validation --
-    // falling back to the mock id here makes the solver POST an unknown snapshot.
+    // Mark the real issues already returned by the backend as resolved
+    // locally - there is no backend "auto-fix" endpoint, so this must not
+    // claim a fabricated "backend verified perfect" state.
     setValidation((prev) => ({
-      ...mockValidValidationState,
-      snapshotCandidateId: prev.snapshotCandidateId ?? mockValidValidationState.snapshotCandidateId,
+      ...prev,
+      valid: true,
+      issues: prev.issues.map((i) => ({ ...i, resolved: true })),
     }));
-    showToast("success", "All Issues Auto-Fixed", "Dataset is 100% compliant and ready for solver.");
+    showToast("success", "Issues Marked Resolved", "Resolved locally - the solver will re-validate at plan creation.");
   };
 
   // --- Step 3: Create Plan Handlers ---
   const handleTriggerSolve = useCallback(async (): Promise<boolean> => {
+    if (!validation.snapshotCandidateId) {
+      showToast("error", "No Validated Snapshot", "Validate a dataset before creating a plan.");
+      return false;
+    }
+    solveAbortedRef.current = false;
     try {
-      const newPlan = await createPlanningRunAdapter(
-        validation.snapshotCandidateId || "SNAP-014",
-      );
+      const newPlan = await createPlanningRunAdapter(validation.snapshotCandidateId);
+      // The user cancelled while the solver was still running - discard the
+      // result rather than silently activating a plan they backed out of.
+      if (solveAbortedRef.current) return false;
       setPlan(newPlan);
+      setIsDemoPlan(false);
       setHasPlanCreated(true);
       setIsDirty(false);
       setLockedCount(0);
+      setDirtySectionIds(new Set());
+      setDirtyWindowIds(new Set());
       setOptimizationStatus("UP_TO_DATE");
       return true;
-    } catch (err: any) {
-      showToast("error", "Solver Error", err?.message || "Optimization failed.");
+    } catch (err) {
+      if (solveAbortedRef.current) return false;
+      showToast("error", "Solver Error", errorMessage(err) || "Optimization failed.");
       return false;
     }
   }, [validation.snapshotCandidateId, showToast]);
 
+  const handleCancelSolve = useCallback(() => {
+    solveAbortedRef.current = true;
+    setCurrentView("wizard-step-2");
+    showToast("info", "Plan Creation Cancelled", "The in-flight solver result will be discarded.");
+  }, [setCurrentView, showToast]);
+
   const handlePlanReady = useCallback(() => {
-    setCurrentView("wizard-step-4");
+    // Replace, not push: the solver progress screen must not be a Back target
+    // (going "back" into it would re-run the solve).
+    setCurrentView("wizard-step-4", { replace: true });
     showToast("success", "Plan Generated Successfully", "Review corridor schedule and lock priority jobs.");
-  }, [showToast]);
+  }, [setCurrentView, showToast]);
 
   // --- Step 4: Review Plan Actions ---
+  const trackDirtyJob = (jobId: string, extraWindowId?: string) => {
+    const job = plan?.jobs.find((j) => j.job_id === jobId);
+    if (!job) return;
+    setDirtySectionIds((prev) => new Set(prev).add(job.section_id));
+    setDirtyWindowIds((prev) => {
+      const next = new Set(prev);
+      if (job.scheduled_window_id) next.add(job.scheduled_window_id);
+      if (extraWindowId) next.add(extraWindowId);
+      return next;
+    });
+  };
+
   const handleLockJob = async (jobId: string) => {
+    if (!plan) return;
     setIsBusy(true);
     try {
-      const updatedPlan = await lockScheduleItemAdapter(plan.run_id, jobId, plan);
+      trackDirtyJob(jobId);
+      const updatedPlan = await lockScheduleItemAdapter(plan.run_id, jobId);
       setPlan(updatedPlan);
       setIsDirty(true);
       setLockedCount((prev) => prev + 1);
       setOptimizationStatus("UNSAVED_CONSTRAINTS");
       showToast("success", `Job ${jobId} Locked`, "Schedule pinned. Re-optimize when ready to recalculate other work.");
-    } catch (err: any) {
-      showToast("error", "Lock Action Failed", err?.message);
+    } catch (err) {
+      showToast("error", "Lock Action Failed", errorMessage(err));
     } finally {
       setIsBusy(false);
     }
   };
 
   const handleChangeWindow = (jobId: string, newWindowId: string) => {
+    trackDirtyJob(jobId, newWindowId);
     setPlan((prev) => {
+      if (!prev) return prev;
       const updatedJobs = prev.jobs.map((j) =>
         j.job_id === jobId
           ? {
@@ -204,15 +255,13 @@ export default function RailNiyojanApp() {
     setIsDirty(true);
     setLockedCount((prev) => prev + 1);
     setOptimizationStatus("UNSAVED_CONSTRAINTS");
-    showToast("info", `Window Adjusted for ${jobId}`, "Constraint modified. Re-optimize required.");
-  };
-
-  const handleFindAlternative = (jobId: string) => {
-    handleChangeWindow(jobId, "WIN-ST03-SAT-MORN");
+    showToast("info", `Window Adjusted for ${jobId}`, "Constraint modified locally. Re-optimize to have the solver confirm it.");
   };
 
   const handleExcludeJob = (jobId: string) => {
+    trackDirtyJob(jobId);
     setPlan((prev) => {
+      if (!prev) return prev;
       const updatedJobs = prev.jobs.map((j) =>
         j.job_id === jobId ? { ...j, status: "UNSCHEDULED" as const } : j,
       );
@@ -225,26 +274,32 @@ export default function RailNiyojanApp() {
   };
 
   const handleReoptimize = async () => {
+    if (!plan) return;
+    if (dirtySectionIds.size === 0 || dirtyWindowIds.size === 0) {
+      showToast("info", "Nothing to Re-Optimize", "Lock, move, or exclude a job first so the solver knows what changed.");
+      return;
+    }
     setIsBusy(true);
     setOptimizationStatus("REOPTIMIZING");
     try {
       const replanned = await replanRunAdapter(
         plan.run_id,
-        ["ST-02", "ST-03"],
-        ["WIN-ST03-FRI-NIGHT"],
-        plan,
+        Array.from(dirtySectionIds),
+        Array.from(dirtyWindowIds),
       );
       setPlan(replanned);
       setIsDirty(false);
+      setDirtySectionIds(new Set());
+      setDirtyWindowIds(new Set());
       setOptimizationStatus("UPDATED");
       showToast(
         "success",
         "Re-Optimization Complete",
         `New run ${replanned.run_id} calculated. Locked items preserved, downstream jobs shifted.`,
       );
-    } catch (err: any) {
+    } catch (err) {
       setOptimizationStatus("FAILED");
-      showToast("error", "Re-Optimization Infeasible", err?.message || "Constraint conflict.");
+      showToast("error", "Re-Optimization Infeasible", errorMessage(err) || "Constraint conflict.");
     } finally {
       setIsBusy(false);
     }
@@ -252,14 +307,17 @@ export default function RailNiyojanApp() {
 
   // --- Step 5: Approve Plan Handlers ---
   const handleApprovePlan = async (reviewer: string, comment: string) => {
+    if (!plan) return;
     setIsBusy(true);
     try {
-      const approved = await approveRunAdapter(plan.run_id, reviewer, comment, plan);
+      const approved = await approveRunAdapter(plan.run_id, reviewer, comment);
       setPlan(approved);
-      setCurrentView("plan-approved");
+      // Replace: once approved, Back should not return to the sign-off form
+      // for an already-approved plan.
+      setCurrentView("plan-approved", { replace: true });
       showToast("success", "Plan Digitally Approved", "Official dispatch clearance granted.");
-    } catch (err: any) {
-      showToast("error", "Approval Failed", err?.message);
+    } catch (err) {
+      showToast("error", "Approval Failed", errorMessage(err));
     } finally {
       setIsBusy(false);
     }
@@ -267,43 +325,71 @@ export default function RailNiyojanApp() {
 
   // --- Post-Approval Export ---
   const handleExportPlan = async () => {
+    if (!plan || isExporting) return;
+    setIsExporting(true);
     try {
-      await exportRunAdapter(plan.run_id, plan);
-      showToast("success", "Export Initiated", `Downloading schedule for ${plan.run_id}`);
-    } catch (err: any) {
-      showToast("error", "Export Failed", err?.message);
+      await exportRunAdapter(plan.run_id);
+      showToast("success", "Export Started", `Downloading schedule for ${plan.run_id}`);
+    } catch (err) {
+      showToast("error", "Export Failed", errorMessage(err));
+    } finally {
+      setIsExporting(false);
     }
   };
 
+  // Starting a new plan version must clear the previous pass entirely -
+  // otherwise the stepper still offers steps 4/5 and would jump into the
+  // stale plan while the user is re-selecting data for a new one.
   const handleNewPlanVersion = () => {
+    setPlan(null);
+    setHasPlanCreated(false);
+    setIsDemoPlan(false);
+    setValidation(EMPTY_VALIDATION_STATE);
+    setIsDirty(false);
+    setLockedCount(0);
+    setDirtySectionIds(new Set());
+    setDirtyWindowIds(new Set());
+    setOptimizationStatus("UP_TO_DATE");
     setCurrentView("wizard-step-1");
   };
 
   // --- Past Plans Handler ---
+  // Previous Plans stays a demo feature (no backend list-runs endpoint
+  // exists) - opening one loads the clearly-labeled demo plan, never a real
+  // run, and the reviewer screen is told isDemoPlan so it can say so.
   const handleOpenPreviousPlan = (runId: string) => {
     setPlan({
-      ...mockBaselinePlan,
+      ...demoHistoricalPlan,
       run_id: runId,
       approval: {
         reviewer: "Arnav Pathak",
-        comment: "Historical approved run",
+        comment: "Historical approved run (demo data)",
         approved_at: "2026-08-23T12:00:00Z",
         run_id: runId,
         snapshot_id: "SNAP-013",
         ruleset_version: "Demo Ruleset v1",
       },
     });
+    setIsDemoPlan(true);
     setIsDirty(false);
     setCurrentView("wizard-step-4");
-    showToast("info", "Opened Past Plan", `Viewing ${runId} in Read-Only Mode`);
+    showToast("info", "Opened Past Plan (Demo Data)", `Viewing ${runId} in read-only mode - not sourced from the live backend.`);
   };
 
-  const isWizardView =
-    currentView === "wizard-step-1" ||
-    currentView === "wizard-step-2" ||
-    currentView === "wizard-step-3" ||
-    currentView === "wizard-step-4" ||
-    currentView === "wizard-step-5";
+  // --- Rapid Block Handler ---
+  // Adopts the approved emergency child run as the new active plan, so the
+  // rest of the app (header, review screen, etc.) reflects the real
+  // post-dispatch state going forward.
+  const handleDispatchApproved = (newPlan: PlanRunView) => {
+    setPlan(newPlan);
+    setIsDemoPlan(false);
+    setIsDirty(false);
+    setDirtySectionIds(new Set());
+    setDirtyWindowIds(new Set());
+    setOptimizationStatus("UP_TO_DATE");
+    showToast("success", "Emergency Dispatch Successful", `${newPlan.run_id} is now the active plan.`);
+  };
+
 
   return (
     <main className="railniyojan-app-root">
@@ -311,9 +397,11 @@ export default function RailNiyojanApp() {
       <AppHeader
         currentView={currentView}
         onNavigate={setCurrentView}
-        planId={plan.run_id}
+        planId={plan?.run_id}
         isPlanCreated={hasPlanCreated}
-        isApproved={Boolean(plan.approval)}
+        isApproved={Boolean(plan?.approval)}
+        canGoBack={canGoBack}
+        onGoBack={goBack}
       />
 
       {/* 2. Main Dynamic Content Switcher */}
@@ -321,7 +409,7 @@ export default function RailNiyojanApp() {
         {currentView === "home" && (
           <HomeScreen
             onNavigate={setCurrentView}
-            activePlanId={plan.run_id}
+            activePlanId={plan?.run_id ?? ""}
             hasActivePlan={hasPlanCreated}
           />
         )}
@@ -350,48 +438,60 @@ export default function RailNiyojanApp() {
 
         {currentView === "wizard-step-3" && (
           <CreatePlanStep
-            snapshotId={validation.snapshotCandidateId || "SNAP-014"}
+            snapshotId={validation.snapshotCandidateId ?? ""}
             onPlanReady={handlePlanReady}
-            onCancel={() => setCurrentView("wizard-step-2")}
+            onCancel={handleCancelSolve}
             onTriggerSolve={handleTriggerSolve}
           />
         )}
 
-        {currentView === "wizard-step-4" && (
-          <ReviewPlanScreen
-            plan={plan}
-            isDirty={isDirty}
-            lockedCount={lockedCount}
-            optimizationStatus={optimizationStatus}
-            isBusy={isBusy}
-            onLockJob={handleLockJob}
-            onChangeWindow={handleChangeWindow}
-            onFindAlternative={handleFindAlternative}
-            onExcludeJob={handleExcludeJob}
-            onReoptimize={handleReoptimize}
-            onApproveStep={() => setCurrentView("wizard-step-5")}
-            onExport={handleExportPlan}
-            onNewVersion={handleNewPlanVersion}
-          />
-        )}
+        {currentView === "wizard-step-4" &&
+          (plan ? (
+            <ReviewPlanScreen
+              plan={plan}
+              isDirty={isDirty}
+              lockedCount={lockedCount}
+              optimizationStatus={optimizationStatus}
+              isBusy={isBusy}
+              isDemoPlan={isDemoPlan}
+              onLockJob={handleLockJob}
+              onChangeWindow={handleChangeWindow}
+              onExcludeJob={handleExcludeJob}
+              onReoptimize={handleReoptimize}
+              onApproveStep={() => setCurrentView("wizard-step-5")}
+              onExport={handleExportPlan}
+              isExporting={isExporting}
+              onNewVersion={handleNewPlanVersion}
+            />
+          ) : (
+            <NoPlanRedirect onNavigateHome={() => setCurrentView("home")} />
+          ))}
 
-        {currentView === "wizard-step-5" && (
-          <ApprovePlanStep
-            plan={plan}
-            onApprove={handleApprovePlan}
-            onBack={() => setCurrentView("wizard-step-4")}
-            onExport={handleExportPlan}
-            isBusy={isBusy}
-          />
-        )}
+        {currentView === "wizard-step-5" &&
+          (plan ? (
+            <ApprovePlanStep
+              plan={plan}
+              onApprove={handleApprovePlan}
+              onBack={() => setCurrentView("wizard-step-4")}
+              onExport={handleExportPlan}
+              isBusy={isBusy}
+              isExporting={isExporting}
+            />
+          ) : (
+            <NoPlanRedirect onNavigateHome={() => setCurrentView("home")} />
+          ))}
 
-        {currentView === "plan-approved" && (
-          <PlanApprovedScreen
-            plan={plan}
-            onExport={handleExportPlan}
-            onNewVersion={handleNewPlanVersion}
-          />
-        )}
+        {currentView === "plan-approved" &&
+          (plan ? (
+            <PlanApprovedScreen
+              plan={plan}
+              onExport={handleExportPlan}
+              isExporting={isExporting}
+              onNewVersion={handleNewPlanVersion}
+            />
+          ) : (
+            <NoPlanRedirect onNavigateHome={() => setCurrentView("home")} />
+          ))}
 
         {currentView === "previous-plans" && (
           <PreviousPlansList
@@ -400,13 +500,17 @@ export default function RailNiyojanApp() {
           />
         )}
 
-        {currentView === "rapid-block" && (
-          <RapidBlockView
-            baseRunId={plan.run_id}
-            onExitToHome={() => setCurrentView("home")}
-            onShowToast={showToast}
-          />
-        )}
+        {currentView === "rapid-block" &&
+          (plan ? (
+            <RapidBlockView
+              plan={plan}
+              onExitToHome={() => setCurrentView("home")}
+              onShowToast={showToast}
+              onDispatchApproved={handleDispatchApproved}
+            />
+          ) : (
+            <NoPlanRedirect onNavigateHome={() => setCurrentView("home")} message="Create a plan first - Rapid Block needs an active run to inject an emergency job into." />
+          ))}
       </div>
 
       {/* 4. Global Toast Notifications Container */}
@@ -426,5 +530,16 @@ export default function RailNiyojanApp() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function NoPlanRedirect({ onNavigateHome, message }: { onNavigateHome: () => void; message?: string }) {
+  return (
+    <div className="rn-no-plan-redirect">
+      <p>{message ?? "There is no active plan yet."}</p>
+      <button type="button" className="btn-back-home-top" onClick={onNavigateHome}>
+        ← Back to Home
+      </button>
+    </div>
   );
 }

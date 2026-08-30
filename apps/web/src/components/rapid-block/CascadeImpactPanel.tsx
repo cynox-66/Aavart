@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { RapidBlockImpactView } from "@/types";
 import { ConfirmModal } from "@/components/layout/ConfirmModal";
+import { mapReasonCodeToLabel } from "@/lib/utils";
 
 interface CascadeImpactPanelProps {
   impact: RapidBlockImpactView | null;
@@ -17,123 +18,145 @@ export function CascadeImpactPanel({
 }: CascadeImpactPanelProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
+  // Idle: nothing submitted yet.
   if (!impact) {
     return (
       <div className="cascade-impact-card empty">
-        <span className="mono-kicker">CASCADE IMPACT SIMULATION</span>
+        <span className="emergency-kicker">3. Cascade Impact</span>
         <h3>Awaiting Incident Submission</h3>
         <p>
-          Submit the emergency defect form on the left to let the optimizer compute downstream job
-          rescheduling and train headway delays.
+          Submit the incident form to let the CP-SAT optimizer compute which scheduled work must
+          move around this emergency block.
+        </p>
+      </div>
+    );
+  }
+
+  // Solver could not fit the emergency job.
+  if (!impact.isCandidateReady) {
+    return (
+      <div className="cascade-impact-card no-candidate">
+        <span className="emergency-kicker">3. Cascade Impact</span>
+        <h3>No Feasible Schedule Found</h3>
+        <p>The optimizer could not fit this emergency job into the plan. Reason:</p>
+        <ul className="cascade-reason-list">
+          {impact.reasonCodes.map((code) => (
+            <li key={code}>{mapReasonCodeToLabel(code).label}</li>
+          ))}
+        </ul>
+        <p className="cascade-empty-note">
+          Adjust the section or duration on the left and submit again.
         </p>
       </div>
     );
   }
 
   const rescheduledCount = impact.rescheduledJobs.length;
-  const delayedTrainCount = impact.delayedTrains.length;
   const preservedCount = impact.preservedLockedJobs.length;
 
   return (
     <div className="cascade-impact-card">
       <div className="cascade-top-header">
-        <div>
-          <span className="emergency-kicker">CASCADE IMPACT ANALYSIS</span>
-          <h3>Downstream Schedule Adjustments</h3>
-        </div>
-
+        <span className="emergency-kicker">3. Cascade Impact (If Injected)</span>
         <div className="candidate-status-tag">
-          <span className="bullet-green" /> CANDIDATE SCHEDULE READY
+          <span className="bullet-green" aria-hidden="true" /> Candidate ready
         </div>
       </div>
 
-      {/* 3 Impact Stat Boxes */}
+      {/* Impact stat cards */}
       <div className="cascade-stats-grid">
         <div className="cascade-stat-box warning">
           <span className="cascade-num warn">{rescheduledCount}</span>
-          <span className="cascade-label">Maintenance Tasks Rescheduled</span>
-        </div>
-
-        <div className="cascade-stat-box danger">
-          <span className="cascade-num bad">{delayedTrainCount}</span>
-          <span className="cascade-label">Passenger Trains Delayed</span>
+          <span className="cascade-label">
+            Scheduled maintenance job{rescheduledCount === 1 ? "" : "s"}
+            <small>will be rescheduled</small>
+          </span>
         </div>
 
         <div className="cascade-stat-box good">
           <span className="cascade-num good">{preservedCount}</span>
-          <span className="cascade-label">Locked Jobs Preserved</span>
+          <span className="cascade-label">
+            Locked job{preservedCount === 1 ? "" : "s"}
+            <small>will be preserved</small>
+          </span>
         </div>
       </div>
 
-      {/* Affected Maintenance Tasks List */}
-      <div className="impact-sub-section">
-        <h4 className="sub-section-title">Rescheduled Maintenance Jobs</h4>
-        <div className="affected-items-list">
-          {impact.rescheduledJobs.map((job) => (
-            <div key={job.jobId} className="affected-job-row">
-              <div className="job-id-dept">
-                <span className={`dept-pill-sm ${job.department.toLowerCase()}`}>
-                  {job.department}
-                </span>
-                <strong>{job.jobId}</strong>
-                <small className="sec-txt">Section {job.sectionId}</small>
+      {/* Rescheduled job list */}
+      {rescheduledCount > 0 && (
+        <div className="impact-sub-section">
+          <h4 className="sub-section-title">Rescheduled maintenance jobs</h4>
+          <div className="affected-items-list">
+            {impact.rescheduledJobs.map((job) => (
+              <div key={job.jobId} className="affected-job-row">
+                <div className="job-id-dept">
+                  <span className={`dept-pill-sm ${job.department.toLowerCase()}`}>{job.department}</span>
+                  <strong>{job.jobId}</strong>
+                  <small className="sec-txt">{job.sectionId}</small>
+                </div>
+                <div className="shift-badge">
+                  <span className="prev-time">{job.previousWindow}</span>
+                  <span className="arrow-shift" aria-hidden="true">→</span>
+                  <strong className="new-time">{job.newWindow}</strong>
+                </div>
               </div>
-
-              <div className="shift-badge">
-                <span className="prev-time">{job.previousWindow}</span>
-                <span className="arrow-shift">→</span>
-                <strong className="new-time">{job.newWindow}</strong>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Affected Commercial Trains List */}
-      <div className="impact-sub-section">
-        <h4 className="sub-section-title">Anticipated Passenger Train Delays</h4>
-        <div className="affected-trains-list">
-          {impact.delayedTrains.map((train) => (
-            <div key={train.trainId} className="affected-train-row">
-              <div className="train-meta">
-                <span className="train-id-badge">{train.trainId}</span>
-                <strong>{train.trainName}</strong>
-                <small>{train.affectedSection}</small>
-              </div>
+      {rescheduledCount === 0 && (
+        <p className="cascade-empty-note">
+          No other jobs needed to move — the emergency block fits without displacing existing work.
+        </p>
+      )}
 
-              <div className="delay-badge">
-                <span className="delay-min">+{train.delayMinutes} min delay</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Dispatch Action Bar */}
+      {/* What happens next + dispatch */}
       <div className="emergency-dispatch-action-bar">
         <div className="dispatch-notice">
-          <span className="notice-icon">⚡</span>
-          <p>
-            Approving dispatch creates candidate version <strong>SNAP-014-EMG</strong> and broadcasts
-            track possession orders to Western Railway controllers.
-          </p>
+          <span className="notice-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" strokeWidth="2.2">
+              <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+          </span>
+          <div>
+            <strong>What happens next?</strong>
+            <p>
+              Approving locks the emergency block and makes candidate run{" "}
+              <code>{impact.childRunId}</code> the active plan. Affected tasks are rescheduled
+              automatically.
+            </p>
+          </div>
         </div>
 
-        <button
-          type="button"
-          className="btn-approve-emergency-dispatch"
-          onClick={() => setIsConfirmModalOpen(true)}
-          disabled={isBusy}
-        >
-          {isBusy ? "Dispatching Orders..." : "⚡ Approve Emergency Dispatch"}
-        </button>
+        <div className="dispatch-cta-group">
+          <button
+            type="button"
+            className="btn-approve-emergency-dispatch"
+            onClick={() => setIsConfirmModalOpen(true)}
+            disabled={isBusy}
+          >
+            {isBusy ? (
+              <><span className="spinner-inline" aria-hidden="true" /> Dispatching…</>
+            ) : (
+              <>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                </svg>
+                Approve Emergency Dispatch
+              </>
+            )}
+          </button>
+          <span className="dispatch-cta-hint">Requires no further review — dispatches immediately.</span>
+        </div>
       </div>
 
-      {/* Confirmation Modal */}
       <ConfirmModal
         isOpen={isConfirmModalOpen}
-        title="Authorize Emergency Block Dispatch?"
-        description={`You are about to sanction an emergency possession block on Section ST-03 (AKW–BHU). This will shift ${rescheduledCount} scheduled maintenance tasks and delay ${delayedTrainCount} commercial train services.`}
+        title="Authorize emergency block dispatch?"
+        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). This action is real and cannot be undone from this screen.`}
         confirmLabel="Confirm & Authorize Dispatch"
         cancelLabel="Abort"
         variant="emergency"

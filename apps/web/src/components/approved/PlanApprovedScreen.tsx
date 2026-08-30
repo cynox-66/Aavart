@@ -1,22 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { PlanRunView } from "@/types";
+import { DepartmentType, PlanRunView } from "@/types";
 import { ConfirmModal } from "@/components/layout/ConfirmModal";
+import { formatPercent, getDepartmentLabel } from "@/lib/utils";
 
 interface PlanApprovedScreenProps {
   plan: PlanRunView;
   onExport: () => Promise<void>;
+  isExporting?: boolean;
   onNewVersion: () => void;
 }
 
 export function PlanApprovedScreen({
   plan,
   onExport,
+  isExporting = false,
   onNewVersion,
 }: PlanApprovedScreenProps) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const integratedBlockCount = plan.schedule_items.filter((s) => s.is_integrated_block).length;
+  const qualityTone = plan.kpis.plan_quality === "OPTIMAL" ? "green" : plan.kpis.plan_quality === "FEASIBLE" ? "amber" : "red";
+  const jobCountsByDept = new Map<DepartmentType, number>();
+  plan.jobs.forEach((j) => jobCountsByDept.set(j.department, (jobCountsByDept.get(j.department) ?? 0) + 1));
 
   const handlePrint = () => {
     window.print();
@@ -52,7 +60,7 @@ export function PlanApprovedScreen({
         <div className="rn-celebration-text center">
           <h1 className="rn-celebration-title">Plan Approved!</h1>
           <p className="rn-celebration-subtitle">
-            Plan <strong className="rn-green-snap">{plan.snapshot_id || "SNAP-014"}</strong> has been approved and is ready for export.
+            Plan <strong className="rn-green-snap">{plan.snapshot_id}</strong> has been approved and is ready for export.
           </p>
         </div>
       </div>
@@ -67,7 +75,7 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className="rn-stat-number">26</div>
+            <div className="rn-stat-number">{plan.jobs.length}</div>
             <span className="rn-stat-label">Maintenance Tasks</span>
           </div>
         </div>
@@ -83,8 +91,8 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className="rn-stat-number">1</div>
-            <span className="rn-stat-label">Integrated Block</span>
+            <div className="rn-stat-number">{integratedBlockCount}</div>
+            <span className="rn-stat-label">Integrated Block{integratedBlockCount === 1 ? "" : "s"}</span>
           </div>
         </div>
 
@@ -96,8 +104,10 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className="rn-stat-number">-36%</div>
-            <span className="rn-stat-label">Closure Time vs. Previous Plan</span>
+            <div className={`rn-stat-number ${plan.kpis.closure_reduction_percent >= 0 ? "green" : ""}`}>
+              {formatPercent(-plan.kpis.closure_reduction_percent)}
+            </div>
+            <span className="rn-stat-label">Closure Time vs. Baseline</span>
           </div>
         </div>
 
@@ -109,7 +119,7 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className="rn-stat-number green">Optimal</div>
+            <div className={`rn-stat-number ${qualityTone}`}>{plan.kpis.plan_quality}</div>
             <span className="rn-stat-label">Plan Quality</span>
           </div>
         </div>
@@ -135,13 +145,14 @@ export function PlanApprovedScreen({
               type="button"
               className="rn-btn-tile-action green"
               onClick={onExport}
+              disabled={isExporting}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
-              <span>Export Plan</span>
+              <span>{isExporting ? "Exporting…" : "Export Plan"}</span>
             </button>
           </div>
 
@@ -251,27 +262,21 @@ export function PlanApprovedScreen({
         onCancel={() => setIsShareModalOpen(false)}
       >
         <div className="share-channels-list">
-          <div className="share-channel-row">
-            <span className="channel-icon">🚂</span>
-            <div>
-              <strong>Track Engineering (TMS)</strong>
-              <small>Auto-sync payload ready for 12 work orders</small>
-            </div>
-          </div>
-          <div className="share-channel-row">
-            <span className="channel-icon">⚡</span>
-            <div>
-              <strong>Signal & Interlocking (SMMS)</strong>
-              <small>Auto-sync payload ready for 8 work orders</small>
-            </div>
-          </div>
-          <div className="share-channel-row">
-            <span className="channel-icon">🔌</span>
-            <div>
-              <strong>Traction / OHE (TDMS)</strong>
-              <small>Auto-sync payload ready for 6 work orders</small>
-            </div>
-          </div>
+          {(["TRACK", "SIGNAL", "ELECTRICAL", "CIVIL"] as DepartmentType[])
+            .filter((dept) => (jobCountsByDept.get(dept) ?? 0) > 0)
+            .map((dept) => {
+              const count = jobCountsByDept.get(dept) ?? 0;
+              const { name } = getDepartmentLabel(dept);
+              return (
+                <div className="share-channel-row" key={dept}>
+                  <span className="channel-icon">📋</span>
+                  <div>
+                    <strong>{name}</strong>
+                    <small>Auto-sync payload ready for {count} work order{count === 1 ? "" : "s"}</small>
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </ConfirmModal>
     </div>

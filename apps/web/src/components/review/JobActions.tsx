@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { JobDetailView } from "@/types";
+import { ConfirmModal } from "@/components/layout/ConfirmModal";
 
 interface JobActionsProps {
   job: JobDetailView;
@@ -8,7 +10,6 @@ interface JobActionsProps {
   isBusy: boolean;
   onLockJob: (jobId: string) => Promise<void>;
   onChangeWindow: (jobId: string, newWindowId: string) => void;
-  onFindAlternative: (jobId: string) => void;
   onExcludeJob: (jobId: string) => void;
 }
 
@@ -18,9 +19,23 @@ export function JobActions({
   isBusy,
   onLockJob,
   onChangeWindow,
-  onFindAlternative,
   onExcludeJob,
 }: JobActionsProps) {
+  const [isWindowModalOpen, setIsWindowModalOpen] = useState(false);
+  const [windowInput, setWindowInput] = useState("");
+
+  const openWindowModal = () => {
+    setWindowInput(job.scheduled_window_id ?? "");
+    setIsWindowModalOpen(true);
+  };
+
+  const confirmWindowChange = () => {
+    if (windowInput.trim()) {
+      onChangeWindow(job.job_id, windowInput.trim());
+    }
+    setIsWindowModalOpen(false);
+  };
+
   return (
     <div className="rn-job-actions-block">
       <h3 className="rn-sidebar-section-heading">ACTIONS</h3>
@@ -46,11 +61,12 @@ export function JobActions({
           </div>
         </button>
 
-        {/* Action 2: Change Window */}
+        {/* Action 2: Change Window - manual entry (there's no backend data
+            source to auto-suggest an alternative window from) */}
         <button
           type="button"
           className="rn-action-btn"
-          onClick={() => onChangeWindow(job.job_id, "WIN-ST03-SAT-MORN")}
+          onClick={openWindowModal}
           disabled={isApproved || isBusy}
           title="Manually move this job to another window"
         >
@@ -64,7 +80,7 @@ export function JobActions({
           </div>
           <div className="rn-btn-text-wrap">
             <strong className="rn-btn-title">Change Window</strong>
-            <span className="rn-btn-sub">Manually move this job</span>
+            <span className="rn-btn-sub">Enter a target window ID</span>
           </div>
         </button>
 
@@ -87,28 +103,25 @@ export function JobActions({
             <span className="rn-btn-sub">Remove this job</span>
           </div>
         </button>
-
-        {/* Action 4: Find Alternative */}
-        <button
-          type="button"
-          className="rn-action-btn"
-          onClick={() => onFindAlternative(job.job_id)}
-          disabled={isApproved || isBusy}
-          title="Ask AI optimizer for alternative non-conflicting slots"
-        >
-          <div className="rn-btn-icon-wrap">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2.2">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          </div>
-          <div className="rn-btn-text-wrap">
-            <strong className="rn-btn-title">Find Alternative</strong>
-            <span className="rn-btn-sub">AI suggests slots</span>
-          </div>
-        </button>
       </div>
+
+      <ConfirmModal
+        isOpen={isWindowModalOpen}
+        title={`Change window for ${job.job_id}`}
+        description="Enter the target window ID to move this job to. There is no automatic suggestion - the backend does not expose a list of alternative windows, so this must be entered manually."
+        confirmLabel="Move Job"
+        onConfirm={confirmWindowChange}
+        onCancel={() => setIsWindowModalOpen(false)}
+      >
+        <input
+          type="text"
+          className="rn-window-id-input"
+          value={windowInput}
+          onChange={(e) => setWindowInput(e.target.value)}
+          placeholder="e.g. WIN-002"
+          autoFocus
+        />
+      </ConfirmModal>
     </div>
   );
 }

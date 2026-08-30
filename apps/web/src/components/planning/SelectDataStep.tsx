@@ -76,7 +76,6 @@ export function SelectDataStep({
           <div className="source-cards-stack">
             {sources.map((source) => {
               const isLoaded = source.status === "loaded";
-              const isSkipped = source.status === "skipped";
 
               return (
                 <div
