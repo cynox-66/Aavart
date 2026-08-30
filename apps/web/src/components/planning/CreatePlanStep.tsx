@@ -106,7 +106,7 @@ export function CreatePlanStep({
           <div className="rn-create-left">
             <h1 className="rn-create-title">Creating Your Plan</h1>
             <p className="rn-create-subtitle">
-              Finding the best way to do maintenance with least disruption.
+              Running the synchronous CP-SAT solver on the validated snapshot.
             </p>
 
             <div className="rn-pipeline-list">

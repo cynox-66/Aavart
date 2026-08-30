@@ -464,7 +464,7 @@ function Inspector({
       <div className="kpi-stack">
         <TruthPill label="Scheduled min" value={run.kpis.scheduled_maintenance_minutes.toString()} tone="good" />
         <TruthPill label="Rejected min" value={run.kpis.rejected_maintenance_minutes.toString()} tone={run.kpis.rejected_maintenance_minutes ? "warn" : "good"} />
-        <TruthPill label="Downtime cut" value={`${run.kpis.downtime_reduction_percent.toFixed(1)}%`} />
+        <TruthPill label="Coverage" value={`${run.kpis.maintenance_coverage_percent.toFixed(1)}%`} tone={run.kpis.maintenance_coverage_percent >= 80 ? "good" : "warn"} />
       </div>
       <div className="review-actions">
         <button disabled={busy !== null || !schedule || schedule.locked || schedule.status !== "SCHEDULED"} onClick={onLock}>

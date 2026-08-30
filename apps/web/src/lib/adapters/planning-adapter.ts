@@ -148,17 +148,20 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     kpis: {
       baseline_closure_minutes: run.kpis.baseline_closure_minutes,
       optimized_closure_minutes: run.kpis.optimized_closure_minutes,
-      closure_reduction_percent: closureReduction,
-      baseline_asset_downtime_minutes: run.kpis.baseline_asset_downtime_minutes,
-      optimized_asset_downtime_minutes: run.kpis.optimized_asset_downtime_minutes,
-      downtime_reduction_minutes: run.kpis.downtime_reduction_minutes,
-      downtime_reduction_percent: run.kpis.downtime_reduction_percent,
+      closure_minutes_saved: run.kpis.closure_minutes_saved,
+      closure_reduction_percent: run.kpis.closure_reduction_percent || closureReduction,
+      total_maintenance_minutes: run.kpis.total_maintenance_minutes,
       scheduled_maintenance_minutes: run.kpis.scheduled_maintenance_minutes,
       rejected_maintenance_minutes: run.kpis.rejected_maintenance_minutes,
+      maintenance_coverage_percent: run.kpis.maintenance_coverage_percent,
+      rejected_maintenance_percent: run.kpis.rejected_maintenance_percent,
       plan_quality: run.state === "OPTIMAL" ? "OPTIMAL" : run.state === "FEASIBLE" ? "FEASIBLE" : "DEGRADED",
     },
     changes: run.changes,
     validator: run.validator,
+    planning_horizon: run.planning_horizon,
+    horizon_start: run.horizon_start,
+    horizon_end: run.horizon_end,
     approval: run.approval,
     intent_id: run.intent_id,
     intent: run.intent,
@@ -177,10 +180,9 @@ export function mapBackendSummaryToArchiveEntry(summary: PlanningRunSummary): Pl
     totalJobCount: summary.total_job_count,
     scheduledJobCount: summary.scheduled_job_count,
     validatorPassed: summary.validator_passed,
-    // Runs persisted before KPIs were recorded carry no kpis block - report
-    // that as unknown rather than as a 0% gain.
-    downtimeReductionPercent: summary.kpis?.downtime_reduction_percent ?? null,
+    maintenanceCoveragePercent: summary.kpis?.maintenance_coverage_percent ?? null,
     triggerType: summary.trigger_type,
+    planningHorizon: summary.planning_horizon,
   };
 }
 
@@ -214,6 +216,9 @@ export async function validateDatasetAdapter(
       valid: res.valid,
       snapshotCandidateId: res.snapshot_candidate_id,
       sourceHash: res.source_hash,
+      planningHorizon: res.planning_horizon,
+      horizonStart: res.horizon_start,
+      horizonEnd: res.horizon_end,
       issues: res.errors.map((err, i) => ({
         id: `API-ERR-${i + 1}`,
         code: err.code,

@@ -85,9 +85,12 @@ export function SelectDataStep({
               className={`toggle-btn ${horizon === "MONTHLY" ? "active" : ""}`}
               onClick={() => onHorizonChange("MONTHLY")}
             >
-              Monthly (Macro)
+              Monthly (30-day filter)
             </button>
           </div>
+          <p className="validation-hint">
+            Monthly mode uses the same CP-SAT solver on a 30-day date-bounded snapshot. It does not create a separate monthly optimizer.
+          </p>
         </div>
       </div>
 

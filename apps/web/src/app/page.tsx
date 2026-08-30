@@ -44,6 +44,9 @@ const EMPTY_VALIDATION_STATE: ValidationState = {
   valid: false,
   snapshotCandidateId: null,
   sourceHash: null,
+  planningHorizon: null,
+  horizonStart: null,
+  horizonEnd: null,
   issues: [],
   counts: { jobs: 0, windows: 0, assets: 0, sections: 0, resources: 0 },
   sourceSummaries: [],
@@ -78,8 +81,6 @@ export default function RailNiyojanApp() {
   // Active Planning Run State - null until a real plan actually exists.
   const [plan, setPlan] = useState<PlanRunView | null>(null);
   const [hasPlanCreated, setHasPlanCreated] = useState(false);
-  // Whether the currently-open plan is the out-of-scope "Previous Plans" demo
-  // path rather than a real backend run (no list-runs endpoint exists yet).
   // Whether the currently-open plan was opened from the archive (Previous
   // Plans) rather than created in this session - it is a real backend run,
   // but it is shown read-only so a historical record is never mutated.
@@ -202,32 +203,6 @@ export default function RailNiyojanApp() {
     } finally {
       setIsBusy(false);
     }
-  };
-
-  // --- Step 2: Check Data Handlers ---
-  const handleResolveIssue = (issueId: string) => {
-    setValidation((prev) => {
-      const updated = prev.issues.map((i) => (i.id === issueId ? { ...i, resolved: true } : i));
-      const allResolved = updated.every((i) => i.resolved);
-      return {
-        ...prev,
-        valid: allResolved,
-        issues: updated,
-      };
-    });
-    showToast("success", "Issue Marked Resolved", "This will be re-checked by the solver at plan creation.");
-  };
-
-  const handleAutoFixAll = () => {
-    // Mark the real issues already returned by the backend as resolved
-    // locally - there is no backend "auto-fix" endpoint, so this must not
-    // claim a fabricated "backend verified perfect" state.
-    setValidation((prev) => ({
-      ...prev,
-      valid: true,
-      issues: prev.issues.map((i) => ({ ...i, resolved: true })),
-    }));
-    showToast("success", "Issues Marked Resolved", "Resolved locally - the solver will re-validate at plan creation.");
   };
 
   // --- Step 3: Create Plan Handlers ---
@@ -508,8 +483,6 @@ export default function RailNiyojanApp() {
         {currentView === "wizard-step-2" && (
           <CheckDataStep
             validation={validation}
-            onResolveIssue={handleResolveIssue}
-            onAutoFixAll={handleAutoFixAll}
             onContinue={() => setCurrentView("wizard-step-3")}
             onBack={() => setCurrentView("wizard-step-1")}
             isBusy={isBusy}

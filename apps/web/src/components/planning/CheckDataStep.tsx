@@ -5,8 +5,6 @@ import { ValidationState } from "@/types";
 
 interface CheckDataStepProps {
   validation: ValidationState;
-  onResolveIssue: (issueId: string) => void;
-  onAutoFixAll: () => void;
   onContinue: () => void;
   onBack: () => void;
   isBusy?: boolean;
@@ -14,8 +12,6 @@ interface CheckDataStepProps {
 
 export function CheckDataStep({
   validation,
-  onResolveIssue,
-  onAutoFixAll,
   onContinue,
   onBack,
   isBusy = false,
@@ -24,8 +20,8 @@ export function CheckDataStep({
     validation.issues.find((i) => !i.resolved)?.id ?? null,
   );
 
-  const unresolvedIssues = validation.issues.filter((i) => !i.resolved);
-  const isValid = validation.valid || unresolvedIssues.length === 0;
+  const unresolvedIssues = validation.issues;
+  const isValid = validation.valid;
 
   return (
     <div className="check-data-layout">
@@ -97,12 +93,9 @@ export function CheckDataStep({
                 <div className="attention-title-group">
                   <h3>Needs Attention ({unresolvedIssues.length} issues found)</h3>
                   <p className="attention-sub">
-                    Resolve the following item-level inconsistencies to enable deterministic planning.
+                    Correct the uploaded source data and run backend validation again before planning.
                   </p>
                 </div>
-                <button type="button" className="btn-auto-fix-all" onClick={onAutoFixAll}>
-                  ⚡ Auto-Fix All Recommended
-                </button>
               </div>
 
               <div className="issues-accordion">
@@ -148,24 +141,9 @@ export function CheckDataStep({
                           )}
 
                           <div className="issue-actions-row">
-                            {issue.resolved ? (
-                              <span className="resolved-status-text">
-                                ✓ Issue resolved in candidate snapshot
-                              </span>
-                            ) : (
-                              <>
-                                <button
-                                  type="button"
-                                  className="btn-fix-item"
-                                  onClick={() => onResolveIssue(issue.id)}
-                                >
-                                  ✓ Mark as Resolved
-                                </button>
-                                <span className="issue-resolve-note">
-                                  Marked locally — the solver re-validates this at plan creation.
-                                </span>
-                              </>
-                            )}
+                            <span className="issue-resolve-note">
+                              Backend rejected this candidate. Return to Step 1, update the source file, and validate again.
+                            </span>
                           </div>
                         </div>
                       )}
@@ -233,7 +211,7 @@ export function CheckDataStep({
         <div className="step-next-group">
           {!isValid && (
             <span className="validation-hint error">
-              Resolve {unresolvedIssues.length} remaining issue(s) before launching solver
+              Backend validation must pass before the solver can run
             </span>
           )}
           <button

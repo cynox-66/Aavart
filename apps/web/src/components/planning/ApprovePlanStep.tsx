@@ -45,7 +45,7 @@ export function ApprovePlanStep({
           <h2>Review &amp; Approve Plan</h2>
           <p className="step-desc">
             Confirm the optimized schedule for <strong>{plan.snapshot_id}</strong> meets
-            safety and operational requirements. Once approved, it will be locked and published.
+            safety and operational requirements. Once approved, it will be locked and exported for operational review.
           </p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function ApprovePlanStep({
             <div className={`rn-kpi-card-value ${plan.kpis.closure_reduction_percent >= 0 ? "green" : "red"}`}>
               {formatPercent(-plan.kpis.closure_reduction_percent)}
             </div>
-            <span className="rn-kpi-card-sub">vs. baseline</span>
+            <span className="rn-kpi-card-sub">{plan.kpis.closure_minutes_saved} minutes saved</span>
           </div>
         </div>
 
@@ -107,9 +107,9 @@ export function ApprovePlanStep({
             </svg>
           </div>
           <div className="rn-kpi-content">
-            <span className="rn-kpi-card-label">Total Tasks</span>
-            <div className="rn-kpi-card-value dark">{plan.jobs.length}</div>
-            <span className="rn-kpi-card-sub">{scheduledCount} scheduled</span>
+            <span className="rn-kpi-card-label">Coverage</span>
+            <div className="rn-kpi-card-value dark">{formatPercent(plan.kpis.maintenance_coverage_percent)}</div>
+            <span className="rn-kpi-card-sub">{scheduledCount} scheduled / {plan.unscheduled_jobs.length} unscheduled</span>
           </div>
         </div>
       </div>
@@ -220,9 +220,9 @@ export function ApprovePlanStep({
                 detail={`${lockedCount} works locked`}
               />
               <ReadinessRow
-                ok={plan.kpis.closure_reduction_percent >= 0}
-                title="Plan impact vs. baseline"
-                detail={`Closure time change: ${formatPercent(-plan.kpis.closure_reduction_percent)}`}
+                ok={plan.kpis.maintenance_coverage_percent > 0}
+                title="Coverage reviewed alongside closure reduction"
+                detail={`Coverage ${formatPercent(plan.kpis.maintenance_coverage_percent)} with closure change ${formatPercent(-plan.kpis.closure_reduction_percent)}`}
               />
             </div>
           </div>
@@ -292,7 +292,7 @@ export function ApprovePlanStep({
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                <span>Once approved, the plan will be locked and published.</span>
+                <span>Once approved, the plan will be locked and ready for export.</span>
               </div>
             </div>
           </div>

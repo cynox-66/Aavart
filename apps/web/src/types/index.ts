@@ -124,6 +124,9 @@ export interface ValidationState {
   valid: boolean;
   snapshotCandidateId: string | null;
   sourceHash: string | null;
+  planningHorizon: PlanningHorizon | null;
+  horizonStart: string | null;
+  horizonEnd: string | null;
   issues: ValidationIssueItem[];
   counts: {
     jobs: number;
@@ -196,13 +199,13 @@ export interface JobDetailView {
 export interface KpiView {
   baseline_closure_minutes: number;
   optimized_closure_minutes: number;
+  closure_minutes_saved: number;
   closure_reduction_percent: number;
-  baseline_asset_downtime_minutes: number;
-  optimized_asset_downtime_minutes: number;
-  downtime_reduction_minutes: number;
-  downtime_reduction_percent: number;
+  total_maintenance_minutes: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
+  maintenance_coverage_percent: number;
+  rejected_maintenance_percent: number;
   plan_quality: "OPTIMAL" | "FEASIBLE" | "DEGRADED";
 }
 
@@ -225,6 +228,9 @@ export interface PlanRunView {
     issues: Array<Record<string, unknown>>;
     validated_at: string;
   };
+  planning_horizon: PlanningHorizon | null;
+  horizon_start: string | null;
+  horizon_end: string | null;
   approval: {
     reviewer: string;
     comment: string;
@@ -261,9 +267,9 @@ export interface PlanArchiveEntry {
   totalJobCount: number;
   scheduledJobCount: number;
   validatorPassed: boolean;
-  /** Downtime reduction as reported by the run's KPIs; null when unknown. */
-  downtimeReductionPercent: number | null;
+  maintenanceCoveragePercent: number | null;
   triggerType: string;
+  planningHorizon: PlanningHorizon | null;
 }
 
 export interface RapidBlockFormValues {

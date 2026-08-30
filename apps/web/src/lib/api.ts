@@ -24,6 +24,9 @@ export interface ValidationResponse {
     job_count: number;
     warning_count: number;
   }>;
+  planning_horizon: "WEEKLY" | "MONTHLY" | null;
+  horizon_start: string | null;
+  horizon_end: string | null;
 }
 
 export interface ScheduleItem {
@@ -66,12 +69,13 @@ export interface ValidatorSummary {
 export interface KpiSummary {
   baseline_closure_minutes: number;
   optimized_closure_minutes: number;
+  closure_minutes_saved: number;
+  closure_reduction_percent: number;
+  total_maintenance_minutes: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
-  baseline_asset_downtime_minutes: number;
-  optimized_asset_downtime_minutes: number;
-  downtime_reduction_minutes: number;
-  downtime_reduction_percent: number;
+  maintenance_coverage_percent: number;
+  rejected_maintenance_percent: number;
 }
 
 export interface AiEstimate {
@@ -102,6 +106,9 @@ export interface RunDetail {
   export_ready: boolean;
   kpis: KpiSummary;
   ai_estimates: AiEstimate[];
+  planning_horizon: "WEEKLY" | "MONTHLY" | null;
+  horizon_start: string | null;
+  horizon_end: string | null;
   intent_id: string | null;
   intent: Record<string, unknown> | null;
   rejected_intent_edits: Array<Record<string, unknown>>;
@@ -122,6 +129,9 @@ export interface PlanningRunSummary {
   validator_passed: boolean;
   approval: ApprovalSummary | null;
   kpis: KpiSummary | null;
+  planning_horizon: "WEEKLY" | "MONTHLY" | null;
+  horizon_start: string | null;
+  horizon_end: string | null;
 }
 
 interface RunCreated {

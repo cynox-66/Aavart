@@ -50,11 +50,12 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             <div className={`rn-impact-value ${kpis.closure_reduction_percent >= 0 ? "green" : "red"}`}>
               {formatPercent(-kpis.closure_reduction_percent)}
             </div>
-            <span className="rn-impact-sub">vs. baseline (unoptimized) plan</span>
+            <span className="rn-impact-sub">{formatDuration(kpis.closure_minutes_saved)} saved vs. serial section baseline</span>
           </div>
         </div>
 
-        {/* Metric 2: Asset downtime reduction - real KPI from the solver */}
+        {/* Metric 2: Coverage cannot improve by rejecting work, unlike the
+            old "downtime saved" headline. */}
         <div className="rn-impact-item">
           <div className="rn-impact-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E293B" strokeWidth="2">
@@ -66,11 +67,11 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
             </svg>
           </div>
           <div className="rn-impact-info">
-            <span className="rn-impact-label">Asset Downtime</span>
-            <div className={`rn-impact-value ${kpis.downtime_reduction_percent >= 0 ? "green" : "red"}`}>
-              {formatPercent(-kpis.downtime_reduction_percent)}
+            <span className="rn-impact-label">Maintenance Coverage</span>
+            <div className={`rn-impact-value ${kpis.maintenance_coverage_percent >= 80 ? "green" : "red"}`}>
+              {formatPercent(kpis.maintenance_coverage_percent)}
             </div>
-            <span className="rn-impact-sub">vs. baseline (unoptimized) plan</span>
+            <span className="rn-impact-sub">{formatDuration(kpis.scheduled_maintenance_minutes)} scheduled / {formatDuration(kpis.total_maintenance_minutes)} requested</span>
           </div>
         </div>
 
@@ -133,15 +134,16 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
                 <td className="gain-cell"><strong>{formatPercent(-kpis.closure_reduction_percent)}</strong></td>
               </tr>
               <tr>
-                <td><strong>Maintenance Work Done</strong></td>
-                <td colSpan={2}>{jobCounts.scheduled} / {jobCounts.total} tasks scheduled</td>
-                <td className="neutral-cell">{jobCounts.unscheduled} unscheduled</td>
+                <td><strong>Maintenance Coverage</strong></td>
+                <td>{formatDuration(kpis.total_maintenance_minutes)} requested</td>
+                <td>{formatDuration(kpis.scheduled_maintenance_minutes)} scheduled</td>
+                <td className="neutral-cell">{formatPercent(kpis.maintenance_coverage_percent)}</td>
               </tr>
               <tr>
-                <td><strong>Scheduled vs. Rejected Minutes</strong></td>
-                <td>{formatDuration(kpis.scheduled_maintenance_minutes)} scheduled</td>
+                <td><strong>Rejected Work</strong></td>
+                <td>{jobCounts.unscheduled} tasks</td>
                 <td>{formatDuration(kpis.rejected_maintenance_minutes)} rejected</td>
-                <td className="neutral-cell">—</td>
+                <td className="neutral-cell">{formatPercent(kpis.rejected_maintenance_percent)}</td>
               </tr>
               <tr>
                 <td><strong>Safety & Conflict Checks</strong></td>

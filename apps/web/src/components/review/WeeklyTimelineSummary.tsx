@@ -92,6 +92,10 @@ export function WeeklyTimelineSummary({
 
   const scheduledCount = plan.schedule_items.length;
   const unscheduledCount = plan.unscheduled_jobs.length;
+  const horizonLabel = plan.planning_horizon === "MONTHLY" ? "30-Day Timeline Overview" : "Weekly Timeline Overview";
+  const horizonWindow = plan.horizon_start && plan.horizon_end
+    ? formatDateRange(new Date(plan.horizon_start), new Date(plan.horizon_end))
+    : formatDateRange(start, end);
 
   return (
     <div className="rn-card rn-timeline-card">
@@ -102,9 +106,9 @@ export function WeeklyTimelineSummary({
             <svg className="wt-icon-calendar" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
             </svg>
-            Weekly Timeline Overview
+            {horizonLabel}
           </h2>
-          <span className="wt-date-badge">{formatDateRange(start, end)}</span>
+          <span className="wt-date-badge">{horizonWindow}</span>
         </div>
         <button
           type="button"
