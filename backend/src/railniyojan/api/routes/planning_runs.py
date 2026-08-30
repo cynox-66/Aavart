@@ -156,6 +156,9 @@ def _detail(run: RunRecord) -> PlanningRunDetail:
                 section_id=job.section_id,
                 work_type=job.work_type,
                 priority=job.priority,
+                duration_minutes=job.duration_minutes,
+                required_resources=job.required_resources,
+                allowed_windows=job.allowed_windows,
             )
             for job in snapshot.dataset.jobs
         ],
