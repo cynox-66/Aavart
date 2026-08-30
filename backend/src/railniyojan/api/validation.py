@@ -54,6 +54,16 @@ def _source_summaries(payload: dict[str, Any]) -> list[SourceSummary]:
     return summaries
 
 
+def _horizon_metadata(payload: dict[str, Any]) -> tuple[str | None, Any, Any]:
+    metadata = payload.get("metadata")
+    if not isinstance(metadata, dict):
+        return None, None, None
+    horizon = metadata.get("horizon")
+    if horizon not in {"WEEKLY", "MONTHLY"}:
+        horizon = None
+    return horizon, metadata.get("horizon_start"), metadata.get("horizon_end")
+
+
 def _pydantic_issues(error: ValidationError) -> list[ValidationIssue]:
     issues: list[ValidationIssue] = []
     for item in error.errors(include_url=False):
@@ -211,6 +221,7 @@ def _reference_issues(dataset: DatasetPayload) -> list[ValidationIssue]:
 def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
     counts = _counts(payload)
     source_summaries = _source_summaries(payload)
+    planning_horizon, horizon_start, horizon_end = _horizon_metadata(payload)
     try:
         dataset = DatasetPayload.model_validate(payload)
     except ValidationError as error:
@@ -221,6 +232,9 @@ def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
             errors=_pydantic_issues(error),
             counts=counts,
             source_summaries=source_summaries,
+            planning_horizon=planning_horizon,
+            horizon_start=horizon_start,
+            horizon_end=horizon_end,
         )
 
     issues: list[ValidationIssue] = []
@@ -247,6 +261,9 @@ def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
             errors=issues,
             counts=counts,
             source_summaries=source_summaries,
+            planning_horizon=planning_horizon,
+            horizon_start=horizon_start,
+            horizon_end=horizon_end,
         )
 
     canonical = json.dumps(dataset.model_dump(mode="json"), sort_keys=True, separators=(",", ":"))
@@ -261,4 +278,7 @@ def validate_dataset(payload: dict[str, Any]) -> DatasetValidationResponse:
         errors=[],
         counts=counts,
         source_summaries=source_summaries,
+        planning_horizon=planning_horizon,
+        horizon_start=horizon_start,
+        horizon_end=horizon_end,
     )

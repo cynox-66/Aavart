@@ -1,7 +1,7 @@
 [project]
 name = "railniyojan-backend"
 version = "0.1.0"
-description = "RailNiyojan API, contracts, and optimizer worker"
+description = "RailNiyojan API, contracts, and synchronous optimizer path"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "alembic>=1.14,<2",

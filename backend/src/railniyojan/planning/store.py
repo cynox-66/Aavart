@@ -77,6 +77,9 @@ class RunSummaryRecord:
     validator_passed: bool
     approval: ApprovalSummary | None = None
     kpis: KpiSummary | None = None
+    planning_horizon: str | None = None
+    horizon_start: datetime | None = None
+    horizon_end: datetime | None = None
 
 
 @dataclass
@@ -119,9 +122,20 @@ class ExportRecord:
     created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
-def summarize_run(run: RunRecord) -> RunSummaryRecord:
+def _snapshot_horizon_fields(snapshot: SnapshotRecord | None) -> dict[str, datetime | str | None]:
+    metadata = snapshot.dataset.metadata if snapshot and isinstance(snapshot.dataset.metadata, dict) else {}
+    horizon = metadata.get("horizon")
+    return {
+        "planning_horizon": horizon if horizon in {"WEEKLY", "MONTHLY"} else None,
+        "horizon_start": metadata.get("horizon_start"),
+        "horizon_end": metadata.get("horizon_end"),
+    }
+
+
+def summarize_run(run: RunRecord, snapshot: SnapshotRecord | None = None) -> RunSummaryRecord:
     """Projects a full RunRecord onto the lightweight archive row."""
     total = len(run.changes) or (len(run.schedule_items) + len(run.unscheduled_reason_codes))
+    metadata = _snapshot_horizon_fields(snapshot)
     return RunSummaryRecord(
         run_id=run.run_id,
         snapshot_id=run.snapshot_id,
@@ -136,9 +150,10 @@ def summarize_run(run: RunRecord) -> RunSummaryRecord:
         validator_passed=run.validator_passed,
         approval=run.approval,
         kpis=run.kpis,
+        planning_horizon=metadata["planning_horizon"],
+        horizon_start=metadata["horizon_start"],
+        horizon_end=metadata["horizon_end"],
     )
-
-
 class PlanningStore:
     def __init__(self) -> None:
         self._snapshots: dict[str, SnapshotRecord] = {}
@@ -214,7 +229,10 @@ class PlanningStore:
 
     def list_runs(self) -> list[RunSummaryRecord]:
         with self._lock:
-            summaries = [summarize_run(run) for run in self._runs.values()]
+            summaries = [
+                summarize_run(run, self._snapshots.get(run.snapshot_id))
+                for run in self._runs.values()
+            ]
         summaries.sort(key=lambda summary: (summary.created_at, summary.run_id), reverse=True)
         return summaries
 

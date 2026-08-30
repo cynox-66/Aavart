@@ -43,6 +43,9 @@ class DatasetValidationResponse(ApiModel):
     errors: list[ValidationIssue]
     counts: DatasetCounts
     source_summaries: list[SourceSummary] = Field(default_factory=list)
+    planning_horizon: Literal["WEEKLY", "MONTHLY"] | None = None
+    horizon_start: datetime | None = None
+    horizon_end: datetime | None = None
 
 
 class PlanningRunCreateRequest(ApiModel):
@@ -97,12 +100,13 @@ class JobContext(ApiModel):
 class KpiSummary(ApiModel):
     baseline_closure_minutes: int
     optimized_closure_minutes: int
+    closure_minutes_saved: int
+    closure_reduction_percent: float
+    total_maintenance_minutes: int
     scheduled_maintenance_minutes: int
     rejected_maintenance_minutes: int
-    baseline_asset_downtime_minutes: int
-    optimized_asset_downtime_minutes: int
-    downtime_reduction_minutes: int
-    downtime_reduction_percent: float
+    maintenance_coverage_percent: float
+    rejected_maintenance_percent: float
 
 
 class AiEstimate(ApiModel):
@@ -135,6 +139,9 @@ class PlanningRunSummary(ApiModel):
     validator_passed: bool
     approval: ApprovalSummary | None = None
     kpis: KpiSummary | None = None
+    planning_horizon: Literal["WEEKLY", "MONTHLY"] | None = None
+    horizon_start: datetime | None = None
+    horizon_end: datetime | None = None
 
 
 class PlanningRunDetail(ApiModel):
@@ -155,6 +162,9 @@ class PlanningRunDetail(ApiModel):
     export_ready: bool
     kpis: KpiSummary
     ai_estimates: list[AiEstimate]
+    planning_horizon: Literal["WEEKLY", "MONTHLY"] | None = None
+    horizon_start: datetime | None = None
+    horizon_end: datetime | None = None
     intent_id: str | None = None
     intent: dict[str, Any] | None = None
     rejected_intent_edits: list[dict[str, Any]] = Field(default_factory=list)

@@ -138,8 +138,11 @@ def test_planning_run_returns_schedule_and_unscheduled_reasons(
     ]
     assert body["kpis"]["baseline_closure_minutes"] == 390
     assert body["kpis"]["optimized_closure_minutes"] == 270
-    assert body["kpis"]["downtime_reduction_minutes"] == 120
-    assert body["kpis"]["downtime_reduction_percent"] == 30.77
+    assert body["kpis"]["closure_minutes_saved"] == 120
+    assert body["kpis"]["closure_reduction_percent"] == 30.77
+    assert body["kpis"]["total_maintenance_minutes"] == 390
+    assert body["kpis"]["maintenance_coverage_percent"] == 69.23
+    assert body["kpis"]["rejected_maintenance_percent"] == 30.77
     assert {estimate["source"] for estimate in body["ai_estimates"]} == {"LOCAL_HEURISTIC"}
     assert {item["job_id"] for item in body["jobs"]} == {
         "JOB-001",
@@ -504,7 +507,7 @@ def test_list_planning_runs_returns_newest_first_archive_rows(
     assert approved["scheduled_job_count"] == len(
         client.get(f"/planning-runs/{second_run_id}").json()["schedule_items"]
     )
-    assert approved["kpis"]["downtime_reduction_minutes"] >= 0
+    assert approved["kpis"]["maintenance_coverage_percent"] >= 0
     assert unapproved["approval"] is None
     # The archive row must stay lightweight - no per-job payloads.
     assert "schedule_items" not in approved

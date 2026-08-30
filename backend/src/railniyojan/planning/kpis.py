@@ -28,6 +28,7 @@ def _minutes_from_origin(origin: datetime, value: datetime) -> int:
 def calculate_kpis(dataset: DatasetPayload, schedule_items: list[ScheduleItem]) -> KpiSummary:
     origin = min(window.start for window in dataset.windows)
     schedule_by_job = {item.job_id: item for item in schedule_items}
+    total_minutes = sum(job.duration_minutes for job in dataset.jobs)
     scheduled_minutes = 0
     rejected_minutes = 0
     optimized_by_section: dict[str, list[tuple[int, int]]] = {}
@@ -67,15 +68,18 @@ def calculate_kpis(dataset: DatasetPayload, schedule_items: list[ScheduleItem]) 
     optimized_closure = sum(
         _union_minutes(intervals) for intervals in optimized_by_section.values()
     )
-    reduction = max(0, baseline_closure - optimized_closure)
-    percent = round((reduction / baseline_closure) * 100, 2) if baseline_closure else 0.0
+    closure_saved = max(0, baseline_closure - optimized_closure)
+    closure_percent = round((closure_saved / baseline_closure) * 100, 2) if baseline_closure else 0.0
+    coverage_percent = round((scheduled_minutes / total_minutes) * 100, 2) if total_minutes else 0.0
+    rejected_percent = round((rejected_minutes / total_minutes) * 100, 2) if total_minutes else 0.0
     return KpiSummary(
         baseline_closure_minutes=baseline_closure,
         optimized_closure_minutes=optimized_closure,
+        closure_minutes_saved=closure_saved,
+        closure_reduction_percent=closure_percent,
+        total_maintenance_minutes=total_minutes,
         scheduled_maintenance_minutes=scheduled_minutes,
         rejected_maintenance_minutes=rejected_minutes,
-        baseline_asset_downtime_minutes=baseline_closure,
-        optimized_asset_downtime_minutes=optimized_closure,
-        downtime_reduction_minutes=reduction,
-        downtime_reduction_percent=percent,
+        maintenance_coverage_percent=coverage_percent,
+        rejected_maintenance_percent=rejected_percent,
     )

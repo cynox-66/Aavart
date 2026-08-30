@@ -6,11 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 def run() -> None:
-    logger.info("optimizer worker foundation ready; queue execution is not implemented")
+    logger.info("optimizer worker entrypoint is unused in the current synchronous demo path")
     while True:
         time.sleep(30)
 
 
 if __name__ == "__main__":
     run()
-
