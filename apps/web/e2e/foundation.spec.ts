@@ -58,6 +58,11 @@ async function validateAndCreate(page: import("@playwright/test").Page): Promise
   return runId;
 }
 
+async function expectNoAuthorityCopy(page: import("@playwright/test").Page) {
+  const text = await page.locator("body").innerText();
+  expect(text).not.toMatch(/dispatch|authorize|official clearance|no further review/i);
+}
+
 test("renders the mounted RailNiyojan planning desk", async ({ page }) => {
   await page.goto("/");
 
@@ -179,4 +184,16 @@ test("backend outage during validation surfaces an error instead of fake progres
 
   await expect(page.getByText("Validation Failed")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Select Maintenance Planning Data" })).toBeVisible();
+});
+
+test("active UI avoids authority and dispatch language", async ({ page }) => {
+  await startPlan(page);
+  await validateAndCreate(page);
+  await expectNoAuthorityCopy(page);
+
+  await page.getByTitle(/Go to Home/).click();
+  await page.getByRole("button", { name: /Rapid-Block Review/ }).click();
+  await page.getByRole("button", { name: /Submit Incident & Re-Optimize Plan/ }).click();
+  await expect(page.getByText("Candidate ready")).toBeVisible({ timeout: 15_000 });
+  await expectNoAuthorityCopy(page);
 });

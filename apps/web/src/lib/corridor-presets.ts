@@ -5,7 +5,7 @@
  * be posted to /datasets/validate when the user proceeds from Step 1.
  *
  * NOTE: These are CONTROLLED-SCENARIO datasets (synthetic, demo ruleset).
- * They must never be presented as Railway-authorized operational data.
+ * They must never be presented as Railway operational data.
  */
 import c1Dataset from "../../../../fixtures/generated/corridor_1/dataset.json";
 import c1Stations from "../../../../fixtures/generated/corridor_1/stations.json";

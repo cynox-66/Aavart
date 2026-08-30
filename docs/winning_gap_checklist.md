@@ -11,7 +11,7 @@ Current honest rating:
 - Hackathon demo: 7.5/10 after real mounted ingestion, backend-enforced review intent, honest synchronous planning, real archive reopen, stronger browser coverage, and defensible KPI presentation.
 - Product: 3/10. There is still no trusted identity, durable default runtime, operational authority integration, or safety-vetted RapidBlock copy.
 
-The backend has a credible constrained decision-support core. The mounted product now uses that core for selected data and review edits, and it now describes the planning path more honestly. The remaining credibility risk is unsafe authority language and product-hardening gaps.
+The backend has a credible constrained decision-support core. The mounted product now uses that core for selected data and review edits, and it now describes the planning path more honestly. The remaining credibility risk is unsafe authority language, duplicate frontend drift, the worker stub, and product-hardening gaps.
 
 ## Audit evidence
 
@@ -117,11 +117,11 @@ Verification:
 
 ## P1 — high-impact gaps after the mounted flow is truthful
 
-### 6. Two frontend implementations create product drift
+### 6. Two frontend implementations create product drift — fixed 2026-08-31
 
-Evidence: `apps/web/src/app/page.tsx` is the mounted app; `apps/web/src/app/planner-dashboard.tsx` exports an unused alternate dashboard. The two surfaces have different ingestion behavior, controls, copy, and state models.
+Evidence was: `apps/web/src/app/page.tsx` is the mounted app; `apps/web/src/app/planner-dashboard.tsx` exported an unused alternate dashboard with different ingestion behavior, controls, copy, and state models.
 
-Impact: fixes made in one surface do not fix the judged product. This is dead code with a high chance of misleading demos and reviewers.
+Fixed: `planner-dashboard.tsx` is deleted, along with the orphaned `health-check.tsx` / `health-check.test.tsx` pair and the unreferenced mock plan/job fixtures in `lib/mock-data.ts` that still carried a fabricated reviewer identity. `pnpm lint:web` is now warning-free, so the next piece of dead code is visible rather than buried.
 
 Action: delete the unused surface or make one explicit canonical app. Do not maintain two planning workflows.
 
@@ -192,6 +192,12 @@ Fixed evidence:
 - The Create Plan button now stays blocked until backend validation passes; the screen tells the planner to return to Step 1 and correct the uploaded source.
 - `apps/web/src/app/page.tsx` no longer mutates validation state into a fake ready state.
 - `apps/web/e2e/foundation.spec.ts` now proves invalid uploaded data remains blocked and cannot advance the solver.
+
+### 13. The optimizer worker is still a no-op stub — fixed 2026-08-31
+
+Evidence was: `backend/src/railniyojan/optimizer/worker.py` logged that its entrypoint was unused and then slept forever, while `compose.yaml` no longer started it.
+
+Fixed: the file is deleted, together with the rest of the asynchronous fiction — the never-assigned `QUEUED` and `RUNNING` states, and `status_url` (now `detail_url`, because it addresses a run that is already complete). `backend/tests/test_concurrency.py` fails if any of the three comes back, so they return together with a real queue or not at all. The queued production design is written up in `docs/architecture.md`, "Execution model".
 
 ## P2 — important for product credibility, not first demo work
 

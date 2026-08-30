@@ -26,7 +26,7 @@ export function CascadeImpactPanel({
         <h3>Awaiting Incident Submission</h3>
         <p>
           Submit the incident form to let the CP-SAT optimizer compute which scheduled work must
-          move around this emergency block.
+          move around this incident.
         </p>
       </div>
     );
@@ -38,7 +38,7 @@ export function CascadeImpactPanel({
       <div className="cascade-impact-card no-candidate">
         <span className="emergency-kicker">3. Cascade Impact</span>
         <h3>No Feasible Schedule Found</h3>
-        <p>The optimizer could not fit this emergency job into the plan. Reason:</p>
+        <p>The optimizer could not fit this incident into the plan. Reason:</p>
         <ul className="cascade-reason-list">
           {impact.reasonCodes.map((code) => (
             <li key={code}>{mapReasonCodeToLabel(code).label}</li>
@@ -57,7 +57,7 @@ export function CascadeImpactPanel({
   return (
     <div className="cascade-impact-card">
       <div className="cascade-top-header">
-        <span className="emergency-kicker">3. Cascade Impact (If Injected)</span>
+        <span className="emergency-kicker">3. Cascade Impact (If Submitted)</span>
         <div className="candidate-status-tag">
           <span className="bullet-green" aria-hidden="true" /> Candidate ready
         </div>
@@ -111,9 +111,9 @@ export function CascadeImpactPanel({
         </p>
       )}
 
-      {/* What happens next + approval */}
-      <div className="emergency-approval-action-bar">
-        <div className="approval-notice">
+      {/* What happens next */}
+      <div className="emergency-review-action-bar">
+        <div className="review-notice">
           <span className="notice-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" strokeWidth="2.2">
               <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -124,15 +124,16 @@ export function CascadeImpactPanel({
           <div>
             <strong>What happens next?</strong>
             <p>
-              Approving records candidate run <code>{impact.childRunId}</code> as the
-              recommended revision and reschedules the affected tasks within it. It does not
-              grant a block, issue railway authority, or move any train — the recommendation
-              still has to be actioned through the normal operational channel.
+              Approving creates the revised recommendation and makes candidate run{" "}
+              <code>{impact.childRunId}</code> the active plan. Affected tasks are rescheduled
+              automatically. It does not grant a block, issue railway authority, or move any
+              train — the recommendation still has to be actioned through the normal
+              operational channel.
             </p>
           </div>
         </div>
 
-        <div className="approval-cta-group">
+        <div className="review-cta-group">
           <button
             type="button"
             className="btn-approve-emergency-recommendation"
@@ -146,21 +147,25 @@ export function CascadeImpactPanel({
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                 </svg>
-                Approve Emergency Recommendation
+                Approve Candidate Recommendation
               </>
             )}
           </button>
-          <span className="approval-cta-hint">
-            Decision support only — the block still needs operational sanction.
+          {/* Say what approval actually does. "Requires standard review before it
+              becomes the active plan" contradicted the paragraph above, which
+              correctly states that approving makes it active straight away. */}
+          <span className="review-cta-hint">
+            Becomes the active plan immediately — decision support only, the block still needs
+            operational sanction.
           </span>
         </div>
       </div>
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
-        title="Approve emergency block recommendation?"
-        description={`This approves candidate run ${impact.childRunId} as a recommendation and reschedules ${rescheduledCount} maintenance task(s) within it. It confers no railway authority. This action cannot be undone from this screen.`}
-        confirmLabel="Confirm Recommendation"
+        title="Approve candidate recommendation?"
+        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). It updates the active plan, confers no railway authority, and cannot be undone from this screen.`}
+        confirmLabel="Confirm Approval"
         cancelLabel="Abort"
         variant="emergency"
         isBusy={isBusy}

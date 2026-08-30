@@ -154,10 +154,10 @@ test("export before approval is refused by the backend and surfaced, not silentl
 
 // --------------------------------------------------------------- rapidblock
 
-test("emergency planning is unreachable until a plan exists", async ({ page }) => {
+test("rapid-block review is unreachable until a plan exists", async ({ page }) => {
   await page.goto("/");
 
-  const emergency = page.getByRole("button", { name: /Emergency Block Planning/ });
+  const emergency = page.getByRole("button", { name: /Rapid-Block Review/ });
   await expect(emergency).toBeDisabled();
   await expect(emergency).toContainText("Create a plan first");
 });
@@ -179,8 +179,8 @@ test("a backend-rejected emergency request surfaces its reason code", async ({ p
   // Navigate in-app: a full page load would drop the plan that unlocks this
   // entry point, which is what the previous test asserts.
   await page.getByRole("button", { name: "RailNiyojan" }).click();
-  await page.getByRole("button", { name: /Emergency Block Planning/ }).click();
-  await page.getByRole("button", { name: /Inject & Re-Optimize Plan/ }).click();
+  await page.getByRole("button", { name: /Rapid-Block Review/ }).click();
+  await page.getByRole("button", { name: /Submit Incident & Re-Optimize Plan/ }).click();
 
   const toast = page.locator(".toast-card").filter({ hasText: "RapidBlock Request Rejected" });
   await expect(toast).toBeVisible();
@@ -194,7 +194,10 @@ test("a backend-rejected emergency request surfaces its reason code", async ({ p
 test("no prohibited railway-authority term appears anywhere in the workflow", async ({ page }) => {
   // docs/security_and_safety.md: this product is decision support. It does not
   // issue railway authority or dispatch trains, and its copy must not imply it.
-  const prohibited = /\b(dispatch(ed|es|ing)?|authoriz(e|ed|es|ing|ation)|official clearance)\b/i;
+  // Deliberately unanchored, matching the guard on main: "authorized" and
+  // "dispatching" must fail too. "no further review" is here because that exact
+  // phrase once promised RapidBlock bypassed human sign-off.
+  const prohibited = /dispatch|authoriz|official clearance|no further review/i;
 
   const assertClean = async (where: string) => {
     const text = (await page.locator("body").innerText()).replace(/\s+/g, " ");

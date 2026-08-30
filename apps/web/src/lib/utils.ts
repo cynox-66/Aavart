@@ -1,8 +1,8 @@
 import { DepartmentType, RunState } from "@/types";
 
-// Single simulated planner identity used throughout the demo UI - not a real
-// authenticated user, but kept in one place rather than duplicated literals.
-export const CURRENT_REVIEWER = "AR (Divisional Manager, WR - Vadodara)";
+// Single simulated reviewer identity used throughout the demo UI. This is not
+// authenticated user state; it is just a visible demo label.
+export const CURRENT_REVIEWER = "Simulated Reviewer (Demo)";
 
 // Rapid Block's actor must be in the backend's PLANNER_ALLOWLIST env var
 // (defaults to "planner-01" in .env) or the request is REJECTED with

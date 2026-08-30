@@ -51,8 +51,8 @@ export function EmergencyIncidentForm({
     <form className="emergency-incident-form-card" onSubmit={handleSubmit} noValidate>
       <div className="incident-form-header">
         <span className="emergency-kicker">1. Incident Details</span>
-        <h3>Report Emergency Defect</h3>
-        <p>Inject an unplanned track, signal, or OHE breakdown into the active corridor plan.</p>
+        <h3>Report Incident</h3>
+        <p>Add an unplanned track, signal, or OHE incident to the active corridor plan.</p>
       </div>
 
       <div className="form-group">
@@ -110,7 +110,7 @@ export function EmergencyIncidentForm({
             <option key={hrs} value={hrs}>{hrs} {hrs === 1 ? "Hour" : "Hours"}</option>
           ))}
         </select>
-        <span className="form-hint">Block duration requested for this possession.</span>
+        <span className="form-hint">Block duration requested for this incident review.</span>
       </div>
 
       <div className="form-group">
@@ -144,7 +144,7 @@ export function EmergencyIncidentForm({
                 <circle cx="12" cy="12" r="3" />
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6h.09A1.65 1.65 0 0 0 10.6 3.09V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9v.09A1.65 1.65 0 0 0 21 10.6h.09a2 2 0 1 1 0 4H21a1.65 1.65 0 0 0-1.51 1z" />
               </svg>
-              Inject &amp; Re-Optimize Plan
+              Submit Incident &amp; Re-Optimize Plan
             </>
           )}
         </button>

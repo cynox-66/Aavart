@@ -16,10 +16,10 @@ interface RapidBlockViewProps {
   onExitToHome: () => void;
   onShowToast: (type: "success" | "warning" | "error" | "info", title: string, message?: string) => void;
   /** Adopts the approved emergency child run as the new active plan. */
-  onRecommendationApproved: (newPlan: PlanRunView) => void;
+  onRapidBlockApproved: (newPlan: PlanRunView) => void;
 }
 
-export function RapidBlockView({ plan, onExitToHome, onShowToast, onRecommendationApproved }: RapidBlockViewProps) {
+export function RapidBlockView({ plan, onExitToHome, onShowToast, onRapidBlockApproved }: RapidBlockViewProps) {
   const [isBusy, setIsBusy] = useState(false);
   const [impact, setImpact] = useState<RapidBlockImpactView | null>(null);
   const [selectedSection, setSelectedSection] = useState(plan.sections[0]?.section_id ?? "");
@@ -60,7 +60,7 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onRecommendati
       const approved = await approveRunAdapter(
         impact.childRunId,
         CURRENT_REVIEWER,
-        `Emergency recommendation: ${impact.incidentLocation.incidentType}`,
+        `Rapid-block review: ${impact.incidentLocation.incidentType}`,
       );
       setApprovedPlan(approved);
       setIsSuccessModalOpen(true);
@@ -84,11 +84,11 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onRecommendati
             </svg>
           </span>
           <div className="banner-text">
-            <strong>Emergency Rapid-Block Mode</strong>
+            <strong>Rapid-Block Review Mode</strong>
             <p>
               Current target → <code>{plan.snapshot_id}</code>
               <span className="banner-sep">·</span>
-              Injected blocks bypass the 5-step wizard and re-optimize the active plan.
+              This path skips the main wizard and recalculates the active plan after the incident is submitted.
             </p>
           </div>
         </div>
@@ -131,14 +131,14 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onRecommendati
       {/* Success Modal */}
       <ConfirmModal
         isOpen={isSuccessModalOpen}
-        title="Emergency Recommendation Approved"
+        title="Candidate Recommendation Approved"
         description={`The revised recommendation (${approvedPlan?.snapshot_id ?? ""}) has been created and approved. Export it for operational review — it does not sanction a block on its own.`}
         confirmLabel="Return to Home Dashboard"
-        cancelLabel="Stay in Emergency View"
+        cancelLabel="Stay in Rapid-Block View"
         variant="default"
         onConfirm={() => {
           setIsSuccessModalOpen(false);
-          if (approvedPlan) onRecommendationApproved(approvedPlan);
+          if (approvedPlan) onRapidBlockApproved(approvedPlan);
           onExitToHome();
         }}
         onCancel={() => setIsSuccessModalOpen(false)}
@@ -146,7 +146,7 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onRecommendati
         <div className="emergency-success-summary">
           <div className="success-check-badge">✓</div>
           <p>
-            Emergency block registered on <strong>{impact?.incidentLocation.sectionId ?? selectedSection}</strong>.{" "}
+            Incident registered on <strong>{impact?.incidentLocation.sectionId ?? selectedSection}</strong>.{" "}
             {impact?.rescheduledJobs.length ?? 0} downstream job(s) rescheduled,{" "}
             {impact?.preservedLockedJobs.length ?? 0} locked job(s) preserved.
           </p>
