@@ -46,12 +46,13 @@ KPI fields:
 {
   "baseline_closure_minutes": 390,
   "optimized_closure_minutes": 270,
+  "closure_minutes_saved": 120,
+  "closure_reduction_percent": 30.77,
+  "total_maintenance_minutes": 390,
   "scheduled_maintenance_minutes": 270,
   "rejected_maintenance_minutes": 120,
-  "baseline_asset_downtime_minutes": 390,
-  "optimized_asset_downtime_minutes": 270,
-  "downtime_reduction_minutes": 120,
-  "downtime_reduction_percent": 30.77
+  "maintenance_coverage_percent": 69.23,
+  "rejected_maintenance_percent": 30.77
 }
 ```
 

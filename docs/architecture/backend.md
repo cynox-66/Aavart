@@ -26,7 +26,7 @@ API layer
   -> audit service
 ```
 
-The API submits work to one optimizer worker. The API does not construct CP-SAT constraints directly.
+The API executes one synchronous CP-SAT solve path per request. The API does not construct CP-SAT constraints directly.
 
 ## Required operations
 

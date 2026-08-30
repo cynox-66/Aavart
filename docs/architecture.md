@@ -37,7 +37,7 @@ Ingestion and validation
 Canonical snapshot store ----> Audit and lineage store
       |
       v
-Planning API --> Optimizer worker --> Independent validator
+Planning API --> CP-SAT solver --> Independent validator
       |                  |                    |
       |                  v                    v
       |            Candidate plan       Validated result
@@ -62,9 +62,9 @@ FastAPI owns validation orchestration, immutable snapshots, run lifecycle, appro
 
 See `docs/architecture/backend.md`.
 
-### Optimizer worker
+### Synchronous solver path
 
-The worker converts a snapshot and `Demo Ruleset v1` into a CP-SAT model, runs under a time budget, returns a candidate plan, and emits stable reason codes.
+The API converts a validated snapshot and `Demo Ruleset v1` into a CP-SAT model, runs it inside the request path under a time budget, returns a candidate plan, and emits stable reason codes.
 
 See `docs/architecture/solver.md`.
 
@@ -96,7 +96,7 @@ An authorised urgent-job request creates a derived immutable snapshot and a chil
 
 ## Planning run states
 
-`QUEUED` -> `RUNNING` -> `FEASIBLE` or `OPTIMAL`
+`FEASIBLE` or `OPTIMAL`
 
 Failure states are `INFEASIBLE`, `TIMEOUT`, `INVALID`, and `FAILED`.
 
@@ -118,7 +118,7 @@ Docker Compose runs:
 - web UI
 - FastAPI service
 - PostgreSQL/PostGIS
-- one optimizer worker
+- one synchronous CP-SAT solve path
 
 No Kubernetes, high availability, multi-worker scaling, or live identity integration is required for the hackathon demo.
 
