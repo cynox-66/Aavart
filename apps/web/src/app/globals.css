@@ -1979,6 +1979,27 @@ button:disabled {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
+/* Re-optimization animation classes */
+.wt-bar-hold {
+  transition: none !important;
+}
+
+.wt-bar-moving {
+  transition: left 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              top 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 1.2s ease,
+              box-shadow 1.2s ease !important;
+  box-shadow: 0 0 12px 2px currentColor !important;
+  z-index: 10 !important;
+  animation: wt-bar-glow 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes wt-bar-glow {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.4); }
+}
+
 .wt-bar:hover {
   transform: scaleY(1.2) scaleX(1.02);
   opacity: 1;
