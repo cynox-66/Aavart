@@ -29,6 +29,9 @@ function movableFixturePath(): string {
 async function startPlan(page: import("@playwright/test").Page) {
   await page.goto("/");
   await page.getByRole("button", { name: /Start New Plan/ }).click();
+  // Step 1 opens on the C1 demonstration corridor. These tests assert against
+  // the 4-job baseline fixture, so pick that corridor explicitly.
+  await page.getByRole("radio", { name: /Baseline Test Corridor/ }).click();
 }
 
 async function validateAndCreate(page: import("@playwright/test").Page): Promise<string> {

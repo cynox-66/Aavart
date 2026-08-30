@@ -114,13 +114,25 @@ function sourceJobCount(payload: DatasetPayloadShape, department: DepartmentType
   return payload.jobs.filter((job) => job.department === department).length;
 }
 
+/**
+ * Reads one uploaded dataset file into a payload. Shared by the per-department
+ * "Replace File" action and the custom corridor's base upload, so both accept
+ * the same JSON and CSV shapes.
+ */
+export async function parseDatasetFile(
+  file: File,
+): Promise<{ payload: DatasetPayloadShape; text: string; isCsv: boolean }> {
+  const text = await file.text();
+  const isCsv = file.type === "text/csv" || file.name.toLowerCase().endsWith(".csv");
+  const payload = isCsv ? parseCsvPayload(text) : (JSON.parse(text) as DatasetPayloadShape);
+  return { payload, text, isCsv };
+}
+
 export async function sourceFromFile(
   current: DepartmentDataSource,
   file: File,
 ): Promise<DepartmentDataSource> {
-  const text = await file.text();
-  const isCsv = file.type === "text/csv" || file.name.toLowerCase().endsWith(".csv");
-  const payload = isCsv ? parseCsvPayload(text) : JSON.parse(text) as DatasetPayloadShape;
+  const { payload, text, isCsv } = await parseDatasetFile(file);
   const taskCount = sourceJobCount(payload, current.department);
   return {
     ...current,
