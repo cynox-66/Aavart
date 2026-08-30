@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import {
+  CorridorPresetId,
   DepartmentDataSource,
   OptimizationStatus,
   PendingMoveIntent,
@@ -10,7 +11,8 @@ import {
   ToastMessage,
   ValidationState,
 } from "@/types";
-import { initialDepartmentSources } from "@/lib/mock-data";
+import { getDepartmentSources, initialDepartmentSources } from "@/lib/mock-data";
+import { getPreset } from "@/lib/corridor-presets";
 import {
   approveRunAdapter,
   createPlanningRunAdapter,
@@ -21,7 +23,7 @@ import {
   validateDatasetAdapter,
 } from "@/lib/adapters/planning-adapter";
 import { errorMessage } from "@/lib/utils";
-import { mergeDepartmentSources, sourceFromFile } from "@/lib/ingestion";
+import { mergeDepartmentSources, parseDatasetFile, sourceFromFile } from "@/lib/ingestion";
 import { useViewHistory } from "@/lib/use-view-history";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { ToastContainer } from "@/components/layout/Toast";
@@ -34,6 +36,9 @@ import { ApprovePlanStep } from "@/components/planning/ApprovePlanStep";
 import { PlanApprovedScreen } from "@/components/approved/PlanApprovedScreen";
 import { PreviousPlansList } from "@/components/previous-plans/PreviousPlansList";
 import { RapidBlockView } from "@/components/rapid-block/RapidBlockView";
+
+/** Corridor that Step 1 opens on. */
+const DEFAULT_CORRIDOR_ID: CorridorPresetId = "corridor-c1";
 
 const EMPTY_VALIDATION_STATE: ValidationState = {
   valid: false,
@@ -49,10 +54,26 @@ export default function RailNiyojanApp() {
   // Back button moves between screens instead of leaving the app.
   const { currentView, navigate: setCurrentView, goBack, canGoBack } = useViewHistory("home");
 
-  // Ingestion & Validation State
-  const [sources, setSources] = useState<DepartmentDataSource[]>(initialDepartmentSources);
+  // Ingestion & Validation State.
+  // Seeded from the corridor Step 1 opens pre-selected (C1 / Narmada) so the
+  // per-department task counts and the "Total Maintenance Load" figure match
+  // the dataset that will actually be posted to /datasets/validate. Seeding
+  // from the baseline fixture instead showed "4 Jobs" for a 90-job corridor.
+  const [sources, setSources] = useState<DepartmentDataSource[]>(() => {
+    const initial = getPreset(DEFAULT_CORRIDOR_ID);
+    return initial.dataset
+      ? getDepartmentSources(initial.dataset, initial.label)
+      : initialDepartmentSources;
+  });
   const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [validation, setValidation] = useState<ValidationState>(EMPTY_VALIDATION_STATE);
+
+  // Corridor selection - Step 1 selector. The chosen preset's dataset.json is
+  // what every department card carries until a per-department file overrides it.
+  const [selectedCorridorId, setSelectedCorridorId] =
+    useState<CorridorPresetId>(DEFAULT_CORRIDOR_ID);
+  // Base dataset for the "custom" preset - only set once the user uploads one.
+  const [customBaseDataset, setCustomBaseDataset] = useState<Record<string, unknown> | null>(null);
 
   // Active Planning Run State - null until a real plan actually exists.
   const [plan, setPlan] = useState<PlanRunView | null>(null);
@@ -107,6 +128,42 @@ export default function RailNiyojanApp() {
   };
 
   // --- Step 1: Select Data Handlers ---
+
+  /**
+   * Picking a corridor re-seeds the department cards from that corridor's
+   * dataset, so any per-department file override from the previous corridor is
+   * dropped rather than being silently merged into a different corridor.
+   */
+  const handleSelectCorridor = (id: CorridorPresetId) => {
+    setSelectedCorridorId(id);
+    const preset = getPreset(id);
+    if (preset.dataset) {
+      setSources(getDepartmentSources(preset.dataset, preset.label));
+      return;
+    }
+    // "custom" ships no dataset. Blank the cards rather than leaving the
+    // previous corridor's counts on screen next to "No dataset loaded".
+    setCustomBaseDataset(null);
+    setSources(getDepartmentSources({ jobs: [] }, "Awaiting upload", "-"));
+  };
+
+  /**
+   * Base dataset for the "custom" corridor. Parsed through the same reader as a
+   * per-department replacement so an uploaded CSV works here too, then used to
+   * seed all four department cards.
+   */
+  const handleUploadCustomBase = async (file: File) => {
+    try {
+      const { payload } = await parseDatasetFile(file);
+      const dataset = payload as unknown as Record<string, unknown>;
+      setCustomBaseDataset(dataset);
+      setSources(getDepartmentSources(dataset, file.name));
+      showToast("success", "Custom Dataset Loaded", `${file.name} will be used as the base planning dataset.`);
+    } catch (err) {
+      showToast("error", "File Read Failed", errorMessage(err) || "Could not read this dataset file.");
+    }
+  };
+
   const handleToggleSource = (id: string) => {
     setSources((prev) =>
       prev.map((s) =>
@@ -359,6 +416,11 @@ export default function RailNiyojanApp() {
     setPendingMoves([]);
     setPendingExclusions(new Set());
     setOptimizationStatus("UP_TO_DATE");
+    // Re-seed the department cards from the corridor still selected in Step 1,
+    // so a new version starts from that corridor rather than the previous run's
+    // per-department overrides.
+    const preset = getPreset(selectedCorridorId);
+    if (preset.dataset) setSources(getDepartmentSources(preset.dataset, preset.label));
     setCurrentView("wizard-step-1");
   };
 
@@ -429,6 +491,10 @@ export default function RailNiyojanApp() {
         {currentView === "wizard-step-1" && (
           <SelectDataStep
             sources={sources}
+            selectedCorridorId={selectedCorridorId}
+            onSelectCorridor={handleSelectCorridor}
+            customBaseDataset={customBaseDataset}
+            onUploadCustomBase={handleUploadCustomBase}
             horizon={horizon}
             onHorizonChange={setHorizon}
             onToggleSourceStatus={handleToggleSource}

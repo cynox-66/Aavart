@@ -1,6 +1,7 @@
 "use client";
 
-import { DepartmentDataSource, PlanningHorizon } from "@/types";
+import { CorridorPresetId, DepartmentDataSource, PlanningHorizon } from "@/types";
+import { CORRIDOR_PRESETS, getPreset } from "@/lib/corridor-presets";
 
 interface SelectDataStepProps {
   sources: DepartmentDataSource[];
@@ -11,6 +12,12 @@ interface SelectDataStepProps {
   onContinue: () => void;
   onCancel: () => void;
   isBusy?: boolean;
+  /** Corridor whose dataset seeds the department cards. */
+  selectedCorridorId: CorridorPresetId;
+  onSelectCorridor: (id: CorridorPresetId) => void;
+  /** Only relevant when selectedCorridorId === "custom". */
+  customBaseDataset: Record<string, unknown> | null;
+  onUploadCustomBase: (file: File) => Promise<void>;
 }
 
 export function SelectDataStep({
@@ -22,17 +29,32 @@ export function SelectDataStep({
   onContinue,
   onCancel,
   isBusy = false,
+  selectedCorridorId,
+  onSelectCorridor,
+  customBaseDataset,
+  onUploadCustomBase,
 }: SelectDataStepProps) {
   const loadedCount = sources.filter((s) => s.status === "loaded").length;
   const totalTasks = sources
     .filter((s) => s.status === "loaded")
     .reduce((acc, s) => acc + s.taskCount, 0);
 
-  const canContinue = loadedCount > 0 && !isBusy;
+  const selectedPreset = getPreset(selectedCorridorId);
+  const isCustom = selectedCorridorId === "custom";
+
+  // The custom preset has no bundled dataset, so it cannot be validated until
+  // the planner uploads a base file.
+  const canContinue = loadedCount > 0 && !isBusy && (!isCustom || customBaseDataset !== null);
 
   const handleFileInput = (id: string, files: FileList | null) => {
     if (files && files[0]) {
       void onReplaceFile(id, files[0]);
+    }
+  };
+
+  const handleCustomBaseFileInput = (files: FileList | null) => {
+    if (files && files[0]) {
+      void onUploadCustomBase(files[0]);
     }
   };
 
@@ -69,6 +91,92 @@ export function SelectDataStep({
         </div>
       </div>
 
+      {/* Corridor Selector - picks the base dataset posted to /datasets/validate */}
+      <div className="corridor-selector-section">
+        <h3 className="corridor-selector-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          Select Corridor
+        </h3>
+        <div className="corridor-selector-cards" role="radiogroup" aria-label="Corridor selection">
+          {CORRIDOR_PRESETS.map((preset) => {
+            const isSelected = preset.id === selectedCorridorId;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                className={`corridor-card ${isSelected ? "selected" : ""}`}
+                onClick={() => onSelectCorridor(preset.id)}
+                disabled={isBusy}
+              >
+                {isSelected && (
+                  <span className="corridor-card-check" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
+                <div className="corridor-card-label">{preset.label}</div>
+                <div className="corridor-card-meta">
+                  {preset.id !== "custom" ? (
+                    <>
+                      <span className="corridor-meta-pill">{preset.lineType}</span>
+                      <span className="corridor-meta-pill">{preset.sectionCount} sec</span>
+                      <span className="corridor-meta-pill">{preset.jobCount} jobs</span>
+                    </>
+                  ) : (
+                    <span className="corridor-meta-pill upload-pill">Upload file</span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Custom base upload zone - only shown for the "Custom" preset */}
+        {isCustom && (
+          <div className={`custom-base-upload-zone ${customBaseDataset ? "uploaded" : ""}`}>
+            {customBaseDataset ? (
+              <div className="custom-base-uploaded-state">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span>Base dataset loaded</span>
+                <label className="custom-base-reupload-btn" title="Replace dataset">
+                  Replace
+                  <input
+                    type="file"
+                    accept=".csv,.json,text/csv,application/json"
+                    onChange={(e) => handleCustomBaseFileInput(e.target.files)}
+                    style={{ display: "none" }}
+                  />
+                </label>
+              </div>
+            ) : (
+              <label className="custom-base-drop-zone">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                <span>Upload base dataset (JSON or CSV)</span>
+                <small>Upload a full <code>dataset.json</code> file - the planner will use it as the base for every department.</small>
+                <input
+                  type="file"
+                  accept=".csv,.json,text/csv,application/json"
+                  onChange={(e) => handleCustomBaseFileInput(e.target.files)}
+                  style={{ display: "none" }}
+                />
+              </label>
+            )}
+          </div>
+        )}
+      </div>
+
       <div className="select-data-grid">
         {/* Department Data Sources List */}
         <div className="data-sources-column">
@@ -77,6 +185,7 @@ export function SelectDataStep({
           <div className="source-cards-stack">
             {sources.map((source) => {
               const isLoaded = source.status === "loaded";
+              const hasCustomFile = Boolean(source.customDataset);
 
               return (
                 <div
@@ -89,6 +198,7 @@ export function SelectDataStep({
                         {source.department}
                       </span>
                       <span className="source-format-tag">{source.sourceType}</span>
+                      {hasCustomFile && <span className="custom-file-badge">Custom</span>}
                     </div>
 
                     <h4 className="source-title">{source.name}</h4>
@@ -124,7 +234,7 @@ export function SelectDataStep({
                     {isLoaded ? (
                       <>
                         <label className="btn-upload-label" title="Upload new CSV/JSON file">
-                          <span>Replace File</span>
+                          <span>{hasCustomFile ? "Replace File" : "Override"}</span>
                           <input
                             type="file"
                             accept=".csv,.json,text/csv,application/json"
@@ -164,8 +274,26 @@ export function SelectDataStep({
             <dl className="info-kv-list">
               <div>
                 <dt>Corridor</dt>
-                <dd>WR • BRC to SUR (Km 0–256)</dd>
+                <dd>
+                  {isCustom
+                    ? customBaseDataset
+                      ? "Custom dataset (uploaded)"
+                      : "No dataset loaded"
+                    : selectedPreset.label}
+                </dd>
               </div>
+              {!isCustom && (
+                <>
+                  <div>
+                    <dt>Chainage</dt>
+                    <dd>{selectedPreset.chainage}</dd>
+                  </div>
+                  <div>
+                    <dt>Line Type</dt>
+                    <dd>{selectedPreset.lineType}</dd>
+                  </div>
+                </>
+              )}
               <div>
                 <dt>Ruleset Version</dt>
                 <dd>Demo Ruleset v1 (Strict Safety)</dd>
@@ -196,7 +324,9 @@ export function SelectDataStep({
           <div className="sidebar-action-card">
             {!canContinue && (
               <div className="validation-hint">
-                ⚠️ Select at least one department dataset to continue
+                {isCustom && customBaseDataset === null
+                  ? "⚠️ Upload a base dataset for the custom corridor to continue"
+                  : "⚠️ Select at least one department dataset to continue"}
               </div>
             )}
             <div className="sidebar-actions-row">
