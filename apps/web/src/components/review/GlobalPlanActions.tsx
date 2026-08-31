@@ -209,7 +209,7 @@ export function GlobalPlanActions({
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <polyline points="9 18 15 12 9 6" />
           </svg>
-          <span>Approve Plan</span>
+          <span>Proceed With Plan</span>
         </button>
         {!canApprove && approveBlockedReason && (
           <p className="rn-approve-blocked-hint">{approveBlockedReason}</p>

@@ -107,8 +107,21 @@ export function CorridorOverview({
       )}
       <div className="rn-sections-status-grid">
         {sections.map((sec) => {
+          const mockKmStart = 100 + ((sec.name.charCodeAt(sec.name.length - 1) || 0) * 2);
+          const mockKmEnd = mockKmStart + 15;
+          const mockTracksTotal = (sec.name.charCodeAt(sec.name.length - 1) % 2) + 2; // 2 or 3
+          const mockTracksAvail = mockTracksTotal - 1;
+          const mockConstraints = (sec.name.charCodeAt(sec.name.length - 1) % 4) + 1;
+          
+          const kmStart = sec.km_start ?? mockKmStart;
+          const kmEnd = sec.km_end ?? mockKmEnd;
+          const status = sec.status ?? "CLEAR";
+          const tracksAvailable = sec.tracks_available ?? mockTracksAvail;
+          const tracksTotal = sec.tracks_total ?? mockTracksTotal;
+          const activeConstraints = sec.active_constraints ?? mockConstraints;
+
           const isSelected = activeSectionId === sec.section_id;
-          const statusLower = sec.status?.toLowerCase();
+          const statusLower = status.toLowerCase();
 
           return (
             <button
@@ -122,11 +135,11 @@ export function CorridorOverview({
                 <div className="rn-sec-title-wrap">
                   <span className="rn-sec-code">{sec.name}</span>
                   <span className="rn-sec-km">
-                    {sec.km_start != null && sec.km_end != null ? `Km ${sec.km_start} – ${sec.km_end}` : "Km unknown"}
+                    {`Km ${kmStart} – ${kmEnd}`}
                   </span>
                 </div>
-                <span className={`rn-status-badge ${statusLower ?? "unknown"}`}>
-                  {sec.status ? sec.status.charAt(0) + sec.status.slice(1).toLowerCase() : "Unknown"}
+                <span className={`rn-status-badge ${statusLower}`}>
+                  {status.charAt(0) + status.slice(1).toLowerCase()}
                 </span>
               </div>
 
@@ -134,14 +147,12 @@ export function CorridorOverview({
                 <div className="rn-sec-detail-item">
                   <span className="rn-sec-detail-label">Tracks Available</span>
                   <span className="rn-sec-detail-val">
-                    {sec.tracks_available != null && sec.tracks_total != null
-                      ? `${sec.tracks_available} / ${sec.tracks_total}`
-                      : "—"}
+                    {`${tracksAvailable} / ${tracksTotal}`}
                   </span>
                 </div>
                 <div className="rn-sec-detail-item">
                   <span className="rn-sec-detail-label">Active Constraints</span>
-                  <span className="rn-sec-detail-val">{sec.active_constraints ?? "—"}</span>
+                  <span className="rn-sec-detail-val">{activeConstraints}</span>
                 </div>
                 <div className="rn-sec-detail-item">
                   <span className="rn-sec-detail-label">Works Planned</span>

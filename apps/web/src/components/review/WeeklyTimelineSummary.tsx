@@ -169,8 +169,8 @@ export function WeeklyTimelineSummary({
         requestAnimationFrame(() => {
           setAnimState("MOVING");
           
-          // 4. Clean up after the longest animation finishes (1.2s duration + max delay)
-          const totalTime = (i * 40) + 1400; 
+          // 4. Clean up after the longest animation finishes (0.5s duration + max delay)
+          const totalTime = (i * 40) + 700; 
           setTimeout(() => {
             setAnimState("IDLE");
           }, totalTime);
@@ -237,23 +237,25 @@ export function WeeklyTimelineSummary({
         </span>
       </div>
 
-      {/* Day axis header */}
-      {days.length > 0 && (
-        <div className="wt-day-axis">
-          <div className="wt-day-axis-spacer" />
-          <div className="wt-day-axis-cols">
-            {days.map((d) => (
-              <div key={d.startMs} className="wt-day-col">
-                <b>{d.label}</b>
-                <i>{d.date}</i>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Gantt rows */}
+      {/* Gantt Table */}
       <div className="wt-gantt-wrap">
+        {/* Day axis header */}
+        {days.length > 0 && (
+          <div className="wt-day-axis">
+            <div className="wt-day-axis-spacer">
+              <span className="wt-section-header-text">SECTION</span>
+            </div>
+            <div className="wt-day-axis-cols">
+              {days.map((d) => (
+                <div key={d.startMs} className="wt-day-col">
+                  <b>{d.label}</b>
+                  <i>{d.date}</i>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {rows.length === 0 && (
           <div className="wt-empty-state">No sections in this plan yet.</div>
         )}
@@ -265,7 +267,6 @@ export function WeeklyTimelineSummary({
               {section.from_node && section.to_node && (
                 <small>{section.from_node} – {section.to_node}</small>
               )}
-              <span className="wt-job-count-badge">{items.length} {items.length === 1 ? "job" : "jobs"}</span>
             </div>
 
             {/* Track lane */}

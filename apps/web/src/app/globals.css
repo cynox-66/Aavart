@@ -1857,10 +1857,24 @@ button:disabled {
   display: flex;
   align-items: stretch;
   margin-bottom: 0;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-card);
 }
 
 .wt-day-axis-spacer {
   flex: 0 0 140px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.7rem;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.wt-section-header-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .wt-day-axis-cols {
@@ -1877,10 +1891,11 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   gap: 0.05rem;
-  padding: 0.3rem 0.15rem;
+  padding: 0.5rem 0.15rem;
   text-align: center;
   border-left: 1px solid var(--border-subtle);
   overflow: hidden;
+  justify-content: center;
 }
 
 .wt-day-col:first-child {
@@ -1891,8 +1906,8 @@ button:disabled {
   font-size: 0.66rem;
   font-weight: 700;
   color: var(--text-main);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
 }
 
 .wt-day-col i {
@@ -1907,7 +1922,7 @@ button:disabled {
   width: 100%;
   overflow: auto;
   min-height: 80px;
-  max-height: 280px;
+  max-height: 340px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   margin-bottom: 0.65rem;
@@ -1939,18 +1954,19 @@ button:disabled {
   width: 140px;
   min-width: 140px;
   flex-shrink: 0;
-  padding: 0.55rem 0.7rem;
+  padding: 1rem 0.7rem;
   border-right: 1px solid var(--border-subtle);
-  background: var(--bg-subtle);
+  background: var(--bg-card);
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  justify-content: center;
+  gap: 0.2rem;
 }
 
 .wt-section-label strong {
   display: block;
   font-size: 0.76rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-main);
   line-height: 1.2;
 }
@@ -1961,25 +1977,11 @@ button:disabled {
   line-height: 1.2;
 }
 
-.wt-job-count-badge {
-  display: inline-flex;
-  align-self: flex-start;
-  margin-top: 0.2rem;
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: var(--text-dim);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  padding: 0.05rem 0.4rem;
-  border-radius: 100px;
-  letter-spacing: 0.02em;
-}
-
 /* --- Track lane (bar container) --- */
 .wt-track-lane {
   flex: 1;
   min-width: 0;
-  min-height: 36px;
+  min-height: 50px;
   padding: 0.4rem 0.5rem;
   position: relative;
   background: var(--bg-card);
@@ -2031,14 +2033,14 @@ button:disabled {
 }
 
 .wt-bar-moving {
-  transition: left 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-              width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-              top 1.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-              background-color 1.2s ease,
-              box-shadow 1.2s ease !important;
+  transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 0.5s ease,
+              box-shadow 0.5s ease !important;
   box-shadow: 0 0 12px 2px currentColor !important;
   z-index: 10 !important;
-  animation: wt-bar-glow 1.2s ease-in-out infinite alternate;
+  animation: wt-bar-glow 0.5s ease-in-out infinite alternate;
 }
 
 @keyframes wt-bar-glow {
