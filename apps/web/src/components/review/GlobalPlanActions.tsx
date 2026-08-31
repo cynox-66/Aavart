@@ -209,11 +209,22 @@ export function GlobalPlanActions({
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <polyline points="9 18 15 12 9 6" />
           </svg>
-          <span>Proceed With Plan</span>
+          <span>Proceed</span>
         </button>
         {!canApprove && approveBlockedReason && (
           <p className="rn-approve-blocked-hint">{approveBlockedReason}</p>
         )}
+      </div>
+      <div className="rn-important-banner" style={{ marginTop: "16px", borderRadius: "8px" }}>
+        <div className="rn-important-left">
+          <div className="rn-info-circle-icon">
+            <i aria-hidden="true" className="fi fi-sr-octagon-exclamation" style={{ fontSize: "18px", color: "#0047BA", display: "flex" }}></i>
+          </div>
+          <div className="rn-important-text">
+            <strong>Important</strong>
+            <p>Locking or changing a job requires re-optimizing the plan before it can be approved.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
