@@ -24,61 +24,66 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
             </div>
           </div>
 
-          <div className="rn-home-left-indented">
-            <h2 className="rn-welcome-tagline-blue">
-              Integrated Block Planning for Indian Railways
-            </h2>
+          <h2 className="rn-welcome-tagline-blue">
+            Integrated Block Planning for Indian Railways
+          </h2>
 
-            <div className="rn-blue-divider" />
+          <div className="rn-blue-divider" />
 
-            {/* 3 Value Proposition Cards */}
-            <div className="rn-value-props-list">
-              <div className="rn-value-prop-card">
-                <div className="rn-value-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                  </svg>
-                </div>
-                <div className="rn-value-text">
-                  <h3>Coordinate maintenance work efficiently</h3>
-                </div>
+          <p className="rn-welcome-desc">
+            Plan maintenance together, reduce disruptions, and keep trains moving.
+          </p>
+
+          {/* 3 Value Proposition Cards */}
+          <div className="rn-value-props-list">
+            <div className="rn-value-prop-card">
+              <div className="rn-value-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
               </div>
-
-              <div className="rn-value-prop-card">
-                <div className="rn-value-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </div>
-                <div className="rn-value-text">
-                  <h3>Reduce disruptions to train operations</h3>
-                </div>
-              </div>
-
-              <div className="rn-value-prop-card">
-                <div className="rn-value-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <polyline points="9 12 11 14 15 10" />
-                  </svg>
-                </div>
-                <div className="rn-value-text">
-                  <h3>Improve safety &amp; reliability</h3>
-                </div>
+              <div className="rn-value-text">
+                <h3>Coordinate maintenance work efficiently</h3>
+                <p>Bring Engineering, Signalling and Traction teams together for integrated planning.</p>
               </div>
             </div>
 
-            <div className="rn-compliance-note">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <polyline points="9 12 11 14 15 10" />
-              </svg>
-              <span>All planning is done with safety and compliance as the highest priority.</span>
+            <div className="rn-value-prop-card">
+              <div className="rn-value-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div className="rn-value-text">
+                <h3>Reduce disruptions to train operations</h3>
+                <p>Find the best maintenance windows around train movements.</p>
+              </div>
             </div>
+
+            <div className="rn-value-prop-card">
+              <div className="rn-value-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0047BA" strokeWidth="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <polyline points="9 12 11 14 15 10" />
+                </svg>
+              </div>
+              <div className="rn-value-text">
+                <h3>Improve safety &amp; reliability</h3>
+                <p>Ensure safety constraints while optimizing maintenance and resources.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rn-compliance-note">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
+            <span>All planning is done with safety and compliance as the highest priority.</span>
           </div>
         </div>
 
@@ -113,6 +118,11 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>Start New Plan</h3>
+                <p>
+                  {hasActivePlan && activePlanId
+                    ? `Replaces the active plan (${activePlanId}) with a new planning session.`
+                    : "Create a new planning session for your corridor and planning period."}
+                </p>
               </div>
 
               <div className="rn-action-arrow-btn primary">
@@ -135,6 +145,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>View Previous Plans</h3>
+                <p>Access and review your past planning sessions and exported plans.</p>
               </div>
 
               <div className="rn-action-arrow-btn secondary">
@@ -159,6 +170,11 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>Rapid-Block Review</h3>
+                <p>
+                  {hasActivePlan && activePlanId
+                    ? `Add an urgent incident to ${activePlanId} and re-optimize around it.`
+                    : "Create a plan first — this adds an urgent incident to an active run."}
+                </p>
               </div>
 
               <div className="rn-action-arrow-btn">
