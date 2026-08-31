@@ -102,6 +102,7 @@ That fixture is what the current demo flow is built around.
 - Do not edit the tracker unless you are Akash.
 - Do not change the shared contract without updating the docs, fixtures, and tests that depend on it.
 
-## Need the exact workflow?
+## Need the exact  workflow?
 
 Read `docs/local_development.md`. It has the step-by-step day-to-day commands and troubleshooting notes.
+
