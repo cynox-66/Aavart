@@ -83,7 +83,7 @@ make migrate
 make openapi
 ```
 
-## Demo data
+## Demo  data
 
 The baseline fixture lives at `fixtures/baseline_valid/dataset.json`.
 
