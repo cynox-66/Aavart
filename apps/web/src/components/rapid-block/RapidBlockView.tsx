@@ -15,15 +15,15 @@ interface RapidBlockViewProps {
   onExitToHome: () => void;
   onShowToast: (type: "success" | "warning" | "error" | "info", title: string, message?: string) => void;
   /** Adopts the approved emergency child run as the new active plan. */
-  onDispatchApproved: (newPlan: PlanRunView) => void;
+  onRapidBlockApproved: (newPlan: PlanRunView) => void;
 }
 
-export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchApproved }: RapidBlockViewProps) {
+export function RapidBlockView({ plan, onExitToHome, onShowToast, onRapidBlockApproved }: RapidBlockViewProps) {
   const [isBusy, setIsBusy] = useState(false);
   const [impact, setImpact] = useState<RapidBlockImpactView | null>(null);
   const [selectedSection, setSelectedSection] = useState(plan.sections[0]?.section_id ?? "");
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [dispatchedPlan, setDispatchedPlan] = useState<PlanRunView | null>(null);
+  const [approvedPlan, setApprovedPlan] = useState<PlanRunView | null>(null);
 
   const handleInjectAndSolve = async (form: RapidBlockFormValues) => {
     setIsBusy(true);
@@ -50,12 +50,12 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
       const approved = await approveRunAdapter(
         impact.childRunId,
         CURRENT_REVIEWER,
-        `Emergency dispatch: ${impact.incidentLocation.incidentType}`,
+        `Rapid-block review: ${impact.incidentLocation.incidentType}`,
       );
-      setDispatchedPlan(approved);
+      setApprovedPlan(approved);
       setIsSuccessModalOpen(true);
     } catch (err) {
-      onShowToast("error", "Dispatch Failed", errorMessage(err) || "Emergency approval failed. Please try again.");
+      onShowToast("error", "Approval Failed", errorMessage(err) || "Emergency approval failed. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -74,11 +74,11 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
             </svg>
           </span>
           <div className="banner-text">
-            <strong>Emergency Rapid-Block Mode</strong>
+            <strong>Rapid-Block Review Mode</strong>
             <p>
               Current target → <code>{plan.snapshot_id}</code>
               <span className="banner-sep">·</span>
-              Injected blocks bypass the 5-step wizard and re-optimize the active plan.
+              This path skips the main wizard and recalculates the active plan after the incident is submitted.
             </p>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
           <CascadeImpactPanel
             impact={impact}
             isBusy={isBusy}
-            onApproveDispatch={handleApproveDispatch}
+            onApproveRecommendation={handleApproveDispatch}
           />
         </div>
       </div>
@@ -121,14 +121,14 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
       {/* Success Modal */}
       <ConfirmModal
         isOpen={isSuccessModalOpen}
-        title="Emergency Dispatch Successful"
-        description={`The revised schedule (${dispatchedPlan?.snapshot_id ?? ""}) has been created and approved.`}
+        title="Candidate Recommendation Approved"
+        description={`The revised recommendation (${approvedPlan?.snapshot_id ?? ""}) has been created and approved.`}
         confirmLabel="Return to Home Dashboard"
-        cancelLabel="Stay in Emergency View"
+        cancelLabel="Stay in Rapid-Block View"
         variant="default"
         onConfirm={() => {
           setIsSuccessModalOpen(false);
-          if (dispatchedPlan) onDispatchApproved(dispatchedPlan);
+          if (approvedPlan) onRapidBlockApproved(approvedPlan);
           onExitToHome();
         }}
         onCancel={() => setIsSuccessModalOpen(false)}
@@ -136,7 +136,7 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onDispatchAppr
         <div className="emergency-success-summary">
           <div className="success-check-badge"><i className="fi fi-ss-check-circle"></i></div>
           <p>
-            Emergency block registered on <strong>{impact?.incidentLocation.sectionId ?? selectedSection}</strong>.{" "}
+            Incident registered on <strong>{impact?.incidentLocation.sectionId ?? selectedSection}</strong>.{" "}
             {impact?.rescheduledJobs.length ?? 0} downstream job(s) rescheduled,{" "}
             {impact?.preservedLockedJobs.length ?? 0} locked job(s) preserved.
           </p>

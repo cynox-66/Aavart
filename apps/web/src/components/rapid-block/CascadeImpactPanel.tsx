@@ -8,13 +8,13 @@ import { mapReasonCodeToLabel } from "@/lib/utils";
 interface CascadeImpactPanelProps {
   impact: RapidBlockImpactView | null;
   isBusy: boolean;
-  onApproveDispatch: () => Promise<void>;
+  onApproveRecommendation: () => Promise<void>;
 }
 
 export function CascadeImpactPanel({
   impact,
   isBusy,
-  onApproveDispatch,
+  onApproveRecommendation,
 }: CascadeImpactPanelProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
@@ -26,7 +26,7 @@ export function CascadeImpactPanel({
         <h3>Awaiting Incident Submission</h3>
         <p>
           Submit the incident form to let the CP-SAT optimizer compute which scheduled work must
-          move around this emergency block.
+          move around this incident.
         </p>
       </div>
     );
@@ -38,7 +38,7 @@ export function CascadeImpactPanel({
       <div className="cascade-impact-card no-candidate">
         <span className="emergency-kicker">3. Cascade Impact</span>
         <h3>No Feasible Schedule Found</h3>
-        <p>The optimizer could not fit this emergency job into the plan. Reason:</p>
+        <p>The optimizer could not fit this incident into the plan. Reason:</p>
         <ul className="cascade-reason-list">
           {impact.reasonCodes.map((code) => (
             <li key={code}>{mapReasonCodeToLabel(code).label}</li>
@@ -57,7 +57,7 @@ export function CascadeImpactPanel({
   return (
     <div className="cascade-impact-card">
       <div className="cascade-top-header">
-        <span className="emergency-kicker">3. Cascade Impact (If Injected)</span>
+        <span className="emergency-kicker">3. Cascade Impact (If Submitted)</span>
         <div className="candidate-status-tag">
           <span className="bullet-green" aria-hidden="true" /> Candidate ready
         </div>
@@ -111,9 +111,9 @@ export function CascadeImpactPanel({
         </p>
       )}
 
-      {/* What happens next + dispatch */}
-      <div className="emergency-dispatch-action-bar">
-        <div className="dispatch-notice">
+      {/* What happens next */}
+      <div className="emergency-review-action-bar">
+        <div className="review-notice">
           <span className="notice-icon" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B45309" strokeWidth="2.2">
               <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
@@ -124,46 +124,46 @@ export function CascadeImpactPanel({
           <div>
             <strong>What happens next?</strong>
             <p>
-              Approving locks the emergency block and makes candidate run{" "}
+              Approving creates the revised recommendation and makes candidate run{" "}
               <code>{impact.childRunId}</code> the active plan. Affected tasks are rescheduled
               automatically.
             </p>
           </div>
         </div>
 
-        <div className="dispatch-cta-group">
+        <div className="review-cta-group">
           <button
             type="button"
-            className="btn-approve-emergency-dispatch"
+            className="btn-approve-emergency-recommendation"
             onClick={() => setIsConfirmModalOpen(true)}
             disabled={isBusy}
           >
             {isBusy ? (
-              <><span className="spinner-inline" aria-hidden="true" /> Dispatching…</>
+              <><span className="spinner-inline" aria-hidden="true" /> Approving…</>
             ) : (
               <>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
                   <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
                 </svg>
-                Approve Emergency Dispatch
+                Approve Candidate Recommendation
               </>
             )}
           </button>
-          <span className="dispatch-cta-hint">Requires no further review — dispatches immediately.</span>
+          <span className="review-cta-hint">Requires standard review before it becomes the active plan.</span>
         </div>
       </div>
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
-        title="Authorize emergency block dispatch?"
-        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). This action is real and cannot be undone from this screen.`}
-        confirmLabel="Confirm & Authorize Dispatch"
+        title="Approve candidate recommendation?"
+        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). This action updates the active plan and cannot be undone from this screen.`}
+        confirmLabel="Confirm Approval"
         cancelLabel="Abort"
         variant="emergency"
         isBusy={isBusy}
         onConfirm={async () => {
           setIsConfirmModalOpen(false);
-          await onApproveDispatch();
+          await onApproveRecommendation();
         }}
         onCancel={() => setIsConfirmModalOpen(false)}
       />

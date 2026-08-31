@@ -115,6 +115,7 @@ export function ReviewPlanScreen({
               selectedJobId={selectedJobId}
               onSelectJobId={setSelectedJobId}
               onExpandTimeline={() => setIsExpandedTimelineOpen(true)}
+              optimizationStatus={optimizationStatus}
             />
 
             <PlanImpact
