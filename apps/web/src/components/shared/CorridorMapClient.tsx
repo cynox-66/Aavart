@@ -32,7 +32,7 @@ const STATUS_COLOR: Record<string, string> = {
 /** Status is not reported by the current backend payload - draw it as neutral. */
 const UNKNOWN_COLOR = "#0047BA";
 const INCIDENT_COLOR = "#DC2626";
-const ACTIVE_COLOR = "#0047BA";
+const ACTIVE_COLOR = "#16A34A";
 
 /** Centre of the demo corridors - only used before bounds are known. */
 const FALLBACK_CENTER: LatLngTuple = [22.9, 76.2];
