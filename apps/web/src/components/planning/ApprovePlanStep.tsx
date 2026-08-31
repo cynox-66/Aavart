@@ -5,7 +5,7 @@ import { PlanRunView } from "@/types";
 import { CorridorMap } from "@/components/shared/CorridorMap";
 import { WeeklyTimelineSummary } from "@/components/review/WeeklyTimelineSummary";
 import { ExpandedTimelineModal } from "@/components/review/ExpandedTimelineModal";
-import { CURRENT_REVIEWER, formatDuration, formatPercent } from "@/lib/utils";
+import { CURRENT_REVIEWER, formatDuration, formatPercent, formatPercentValue } from "@/lib/utils";
 
 interface ApprovePlanStepProps {
   plan: PlanRunView;
@@ -227,7 +227,7 @@ export function ApprovePlanStep({
                 title="Plan beats one possession per job"
                 detail={
                   `Closure change ${formatPercent(-plan.kpis.closure_reduction_percent)} ` +
-                  `at ${formatPercent(plan.kpis.maintenance_coverage_percent)} coverage`
+                  `at ${formatPercentValue(plan.kpis.maintenance_coverage_percent)} coverage`
                 }
               />
             </div>

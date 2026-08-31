@@ -68,9 +68,22 @@ export function getScheduleDateRange(scheduleItems: Array<{ start: string; end: 
   return { start: new Date(Math.min(...starts)), end: new Date(Math.max(...ends)) };
 }
 
+/**
+ * A signed *change*: "+3.2%", "-63.8%". Only for deltas, where the direction is
+ * the point.
+ */
 export function formatPercent(value: number): string {
   const prefix = value > 0 ? "+" : "";
   return `${prefix}${value.toFixed(1)}%`;
+}
+
+/**
+ * An unsigned *level*: "87.9%". Coverage is a proportion of the whole, not a
+ * movement, and rendering it as "+87.9%" reads as a gain over some earlier
+ * figure that does not exist.
+ */
+export function formatPercentValue(value: number): string {
+  return `${value.toFixed(1)}%`;
 }
 
 export function mapReasonCodeToLabel(code: string): { label: string; tone: "good" | "warn" | "neutral" | "bad" } {

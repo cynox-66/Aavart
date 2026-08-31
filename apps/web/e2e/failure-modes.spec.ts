@@ -90,6 +90,35 @@ test("a 500 on planning-runs shows the failure and produces no phantom plan", as
   await expect(page.locator(".rn-solver-error")).toBeVisible({ timeout: 15_000 });
   // The review screen must never appear for a run that failed to be created.
   await expect(page.getByText("Plan Quality")).toHaveCount(0);
+
+  // And the screen must stop claiming to be working. A failed solve used to
+  // leave a disabled "Please Wait…" button on screen forever, so the only exit
+  // was to abandon the plan.
+  await expect(page.getByText("Please Wait")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Try Again" })).toBeEnabled();
+});
+
+test("a failed solve can be retried without abandoning the plan", async ({ page }) => {
+  let failNext = true;
+  await page.route("**/planning-runs", async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    if (failNext) {
+      failNext = false;
+      return route.fulfill({ status: 500, contentType: "application/json", body: '{"detail":"boom"}' });
+    }
+    return route.continue();
+  });
+
+  await startPlan(page);
+  await page.getByRole("button", { name: "Check Data →" }).click();
+  await expect(page.getByText("Backend hash")).toBeVisible();
+  await page.getByRole("button", { name: /3\. Create Plan/ }).click();
+  await expect(page.locator(".rn-solver-error")).toBeVisible({ timeout: 15_000 });
+
+  await page.getByRole("button", { name: "Try Again" }).click();
+
+  await expect(page.getByText("Plan Quality")).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator(".rn-solver-error")).toHaveCount(0);
 });
 
 for (const state of ["INFEASIBLE", "TIMEOUT"] as const) {

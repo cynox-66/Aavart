@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { KpiView } from "@/types";
 import { ConfirmModal } from "@/components/layout/ConfirmModal";
-import { formatDuration, formatPercent } from "@/lib/utils";
+import { formatDuration, formatPercent, formatPercentValue } from "@/lib/utils";
 
 interface PlanImpactProps {
   kpis: KpiView;
@@ -179,13 +179,13 @@ export function PlanImpact({ kpis, jobCounts, validatorPassed }: PlanImpactProps
                 <td><strong>Maintenance Coverage</strong></td>
                 <td>{formatDuration(kpis.total_maintenance_minutes)} requested</td>
                 <td>{formatDuration(kpis.scheduled_maintenance_minutes)} scheduled</td>
-                <td className="neutral-cell">{formatPercent(kpis.maintenance_coverage_percent)}</td>
+                <td className="neutral-cell">{formatPercentValue(kpis.maintenance_coverage_percent)}</td>
               </tr>
               <tr>
                 <td><strong>Rejected Work</strong></td>
                 <td>{jobCounts.unscheduled} tasks</td>
                 <td>{formatDuration(kpis.rejected_maintenance_minutes)} rejected</td>
-                <td className="neutral-cell">{formatPercent(kpis.rejected_maintenance_percent)}</td>
+                <td className="neutral-cell">{formatPercentValue(kpis.rejected_maintenance_percent)}</td>
               </tr>
               <tr>
                 <td><strong>Safety & Conflict Checks</strong></td>
