@@ -15,7 +15,10 @@ jobs:
           python-version: "3.12"
       - run: uv sync --project backend --dev
       - run: uv run --project backend ruff check backend
-      - run: uv run --project backend mypy backend/src
+      # --config-file: mypy looks for [tool.mypy] in the working directory, so
+      # without this it runs from the repo root with neither `strict` nor the
+      # pydantic plugin - a weaker check than the project declares.
+      - run: uv run --project backend mypy --config-file backend/pyproject.toml backend/src
       - run: uv run --project backend pytest backend/tests
 
   web:

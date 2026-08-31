@@ -35,11 +35,12 @@ reading of these numbers.
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Final, Literal
 
 from railniyojan.contracts.api import KpiSummary
 from railniyojan.contracts.models import DatasetPayload, Job, ScheduleItem
 
-BASELINE_METHOD = "SERIAL_PER_SECTION"
+BASELINE_METHOD: Final[Literal["SERIAL_PER_SECTION"]] = "SERIAL_PER_SECTION"
 
 
 def _union_minutes(intervals: list[tuple[int, int]]) -> int:

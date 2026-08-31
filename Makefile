@@ -30,5 +30,5 @@ lint:
 	pnpm lint:web
 
 typecheck:
-	uv run --project backend mypy backend/src
+	uv run --project backend mypy --config-file backend/pyproject.toml backend/src
 	pnpm typecheck:web
