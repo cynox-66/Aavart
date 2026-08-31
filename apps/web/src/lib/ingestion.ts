@@ -1,8 +1,8 @@
 import {
+  PlanningHorizon,
   DatasetPayloadShape,
   DepartmentDataSource,
   DepartmentType,
-  PlanningHorizon,
 } from "@/types";
 
 const ENTITY_KEYS: Record<string, keyof DatasetPayloadShape> = {
@@ -150,9 +150,20 @@ export async function sourceFromFile(
   };
 }
 
+/**
+ * How many days of windows and jobs each horizon admits. Monthly is a genuine
+ * data-scoping choice - the same CP-SAT model solves a 30-day snapshot - and the
+ * chosen horizon is stamped into metadata below so the backend can echo it back
+ * and the review screen can label the run truthfully.
+ */
+export const PLANNING_HORIZON_DAYS: Record<PlanningHorizon, number> = {
+  WEEKLY: 7,
+  MONTHLY: 30,
+};
+
 export function mergeDepartmentSources(
   sources: DepartmentDataSource[],
-  horizon: PlanningHorizon,
+  horizon: PlanningHorizon = "WEEKLY",
 ): DatasetPayloadShape {
   const loaded = sources.filter((source) => source.status === "loaded");
   if (loaded.length === 0) throw new Error("Select at least one department dataset");
@@ -186,7 +197,7 @@ export function mergeDepartmentSources(
     .map((window) => Date.parse(String(window.start)))
     .filter((value) => Number.isFinite(value));
   const horizonStartMs = starts.length ? Math.min(...starts) : Date.now();
-  const horizonDays = horizon === "MONTHLY" ? 30 : 7;
+  const horizonDays = PLANNING_HORIZON_DAYS[horizon];
   const horizonEndMs = horizonStartMs + horizonDays * 24 * 60 * 60 * 1000;
   const keptWindowIds = new Set(
     merged.windows

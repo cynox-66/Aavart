@@ -67,7 +67,7 @@ export function WorkflowStepper({
           >
             <div className="rn-step-badge">
               {isCompleted ? (
-                <i className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "currentColor", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "currentColor", display: "flex" }}></i>
               ) : (
                 <span>{step.number}</span>
               )}

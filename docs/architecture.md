@@ -37,16 +37,20 @@ Ingestion and validation
 Canonical snapshot store ----> Audit and lineage store
       |
       v
-Planning API --> CP-SAT solver --> Independent validator
-      |                  |                    |
-      |                  v                    v
-      |            Candidate plan       Validated result
-      v                                       |
-Planner UI <-------------------------------+
+Planning API ......................................... one process
+      |  CP-SAT solve --> Independent validator       .
+      |        |                    |                 .
+      |        v                    v                 .
+      |  Candidate plan       Validated result        .
+      v                              |                .
+Planner UI <-----------------------+ .................
       |
       v
 Human approval --> CSV/PDF export
 ```
+
+The solve runs inside the API process, not in a separate service. See
+"Execution model" below.
 
 ## Components
 
@@ -62,11 +66,11 @@ FastAPI owns validation orchestration, immutable snapshots, run lifecycle, appro
 
 See `docs/architecture/backend.md`.
 
-### Synchronous solver path
+### Optimizer
 
-The API converts a validated snapshot and `Demo Ruleset v1` into a CP-SAT model, runs it inside the request path under a time budget, returns a candidate plan, and emits stable reason codes.
+`railniyojan.optimizer` converts a validated snapshot and `Demo Ruleset v1` into a CP-SAT model, runs it inside the request path under the configured time budget, returns a candidate plan, and emits stable reason codes.
 
-See `docs/architecture/solver.md`.
+It is a library the API calls in-process, not a separate worker service. See `docs/architecture/solver.md` and "Execution model" below.
 
 ### PostgreSQL/PostGIS
 
@@ -96,11 +100,96 @@ An authorised urgent-job request creates a derived immutable snapshot and a chil
 
 ## Planning run states
 
-`FEASIBLE` or `OPTIMAL`
+`FEASIBLE` or `OPTIMAL` on success. Failure states are `INFEASIBLE`, `TIMEOUT`, `INVALID`, and `FAILED`.
 
-Failure states are `INFEASIBLE`, `TIMEOUT`, `INVALID`, and `FAILED`.
+All of these are terminal. There is no `QUEUED` or `RUNNING` state, because there is no moment at which a caller could observe one: `POST /planning-runs` solves before it responds and stores the run once, at the end. Both states previously existed in the enum and were assigned nowhere. They come back with a real queue, not before.
 
 The system must not label a `FEASIBLE` result as `OPTIMAL`.
+
+## Execution model
+
+Planning is **synchronous**. `POST /planning-runs`, `POST /planning-runs/{id}/replan`
+and `POST /rapidblock-requests` each build the model, solve it, run the independent
+validator, compute KPIs, and persist the finished run before returning `201`. The
+response carries `detail_url`, which addresses a run that is already complete - it
+is not a status endpoint to poll.
+
+This is a deliberate choice, and the system says so rather than implying otherwise.
+An earlier design advertised asynchronous execution it did not have: a `QUEUED` /
+`RUNNING` lifecycle nothing assigned, a `status_url` with nothing to report, and an
+`optimizer` service in Compose whose only behaviour was to log
+`queue execution is not implemented` every thirty seconds. All of that is removed.
+
+### What synchronous actually costs
+
+Less than it sounds, and the number is measured rather than assumed - see
+`backend/tests/test_concurrency.py`.
+
+The three endpoints are `def`, not `async def`. FastAPI runs sync handlers in
+anyio's worker threadpool (40 threads by default), so the event loop is never
+blocked and the API keeps serving during a solve; CP-SAT also releases the GIL
+while solving. Measured against a 1.5 s solve: `/health` answers in milliseconds,
+and two concurrent runs overlap instead of serialising.
+
+So the real limits are:
+
+- **Throughput** is bounded by threadpool width and available cores, not by one
+  run at a time.
+- **Latency** is the solve time, paid by the caller. The solver time budget
+  (`solver_time_budget_seconds`) bounds it.
+- **No cancellation.** A caller that gives up leaves the solve running to
+  completion; the UI discards the result rather than adopting a plan the operator
+  backed out of.
+- **No backpressure.** Enough concurrent requests will exhaust the threadpool,
+  and further requests queue inside anyio with no visibility.
+
+Those limits are acceptable for a single-operator demo, which never exercises
+concurrent planning. They are not acceptable for production.
+
+### Production path: a real queue
+
+This is the stated production design, not a rewrite the demo needs. It is
+genuinely reachable, because the pieces already exist: `SqlAlchemyPlanningStore`
+is complete and unit-tested for reload survival, and is selected by setting
+`store_backend=sql`.
+
+1. Set `store_backend=sql` in `.env` and Compose. A cross-process worker and the
+   API must share state, which the default in-memory store cannot provide.
+2. Queue in PostgreSQL with `SELECT ... FOR UPDATE SKIP LOCKED`. No Redis and no
+   Celery need enter the stack.
+3. The API creates the run `QUEUED` and returns `202` with a status URL; the
+   worker claims it `RUNNING`, then writes the terminal state. `QUEUED` and
+   `RUNNING` return to `PlanningRunState` at this point, with something assigning
+   them.
+4. Migrate all three call sites together - create, replan, and rapidblock - so no
+   path keeps its own execution model.
+5. The frontend's solver progress screen polls the status URL. It already shows
+   an honest "waiting" state; this replaces its heartbeat with real progress.
+6. Ship stale-claim recovery and a cancel endpoint **in the same change**. Without
+   them a worker that dies leaves runs stuck in `QUEUED` forever, which trades one
+   false claim for a new hang.
+
+Step 6 is the reason this is not in the demo build. Its payoff is concurrent
+throughput that a single-operator demo does not exercise, and it introduces a
+failure mode the synchronous design does not have.
+
+## Planning horizon
+
+A run is scoped to either a `WEEKLY` (7-day) or `MONTHLY` (30-day) window. This is
+a data-scoping choice, not a second optimizer: the client trims the snapshot to
+the chosen span and stamps `horizon`, `horizon_start` and `horizon_end` into
+metadata, and the API echoes them back as `planning_horizon`, `horizon_start` and
+`horizon_end` so a stored run records the horizon it was planned against. The same
+CP-SAT model, ruleset, and validator apply to both, and the UI says so at the point
+of choice rather than implying a separate monthly planner.
+
+## Coverage and capacity
+
+The planner does not schedule every submitted job, and the reason is documented
+rather than hidden: see `docs/solver_capacity.md`. It carries the measured
+coverage for both demo corridors, what blocks the remainder, why the headline
+reduction is what it is, and why Plan Quality reads `FEASIBLE` rather than
+`OPTIMAL`.
 
 ## Safety boundaries
 
@@ -116,9 +205,8 @@ The system must not label a `FEASIBLE` result as `OPTIMAL`.
 Docker Compose runs:
 
 - web UI
-- FastAPI service
+- FastAPI service (solves in-process)
 - PostgreSQL/PostGIS
-- one synchronous CP-SAT solve path
 
 No Kubernetes, high availability, multi-worker scaling, or live identity integration is required for the hackathon demo.
 
@@ -126,5 +214,5 @@ No Kubernetes, high availability, multi-worker scaling, or live identity integra
 
 - File adapters can later implement TMS, SMMS, TDMS, COA, timetable, and BDMS boundaries.
 - AI estimate services provide priority or duration inputs behind the same deterministic fallback contract.
-- Monthly planning can later create capacity reservations above the weekly planner.
+- Monthly planning currently re-scopes the snapshot to a 30-day window solved by the same model; it can later add capacity reservations above the weekly planner.
 - Multi-corridor planning can later extend topology and conflict scope.

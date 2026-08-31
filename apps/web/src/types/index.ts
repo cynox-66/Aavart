@@ -11,7 +11,6 @@ export type AppView =
 
 export type DepartmentType = "TRACK" | "SIGNAL" | "ELECTRICAL" | "CIVIL";
 
-export type PlanningHorizon = "WEEKLY" | "MONTHLY";
 export type SourceId = "tms" | "smms" | "tdms" | "civil";
 
 export interface StationInfo {
@@ -45,9 +44,19 @@ export interface CorridorPreset {
   stations?: StationInfo[];
 }
 
+/**
+ * Terminal states only. Planning is synchronous - POST /planning-runs solves
+ * before it responds - so a run is never observable in flight. QUEUED and
+ * RUNNING were in this union but the backend assigned them nowhere.
+ */
+/**
+ * Weekly is the standard horizon. Monthly re-scopes the snapshot to a 30-day
+ * window and is solved by the same CP-SAT model - it is a data-scoping choice,
+ * not a second optimizer, and the UI says so.
+ */
+export type PlanningHorizon = "WEEKLY" | "MONTHLY";
+
 export type RunState =
-  | "QUEUED"
-  | "RUNNING"
   | "FEASIBLE"
   | "OPTIMAL"
   | "INFEASIBLE"
@@ -196,14 +205,29 @@ export interface JobDetailView {
   };
 }
 
+/**
+ * Mirrors the backend's KpiSummary field for field. There is deliberately no
+ * derived percentage here: the adapter used to recompute the headline from the
+ * minute totals, which left two sources of truth for the same number and meant
+ * a backend fix would not have reached the screen.
+ */
 export interface KpiView {
-  baseline_closure_minutes: number;
+  baseline_method: "SERIAL_PER_SECTION";
+  serial_baseline_closure_minutes: number;
   optimized_closure_minutes: number;
-  closure_minutes_saved: number;
+  closure_reduction_minutes: number;
   closure_reduction_percent: number;
+  serial_baseline_asset_downtime_minutes: number;
+  optimized_asset_downtime_minutes: number;
+  asset_downtime_reduction_minutes: number;
+  asset_downtime_reduction_percent: number;
+  /** Coverage. Never render a reduction without these beside it. */
   total_maintenance_minutes: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
+  scheduled_jobs: number;
+  total_jobs: number;
+  job_coverage_percent: number;
   maintenance_coverage_percent: number;
   rejected_maintenance_percent: number;
   plan_quality: "OPTIMAL" | "FEASIBLE" | "DEGRADED";
@@ -267,6 +291,8 @@ export interface PlanArchiveEntry {
   totalJobCount: number;
   scheduledJobCount: number;
   validatorPassed: boolean;
+  /** Both, always. A reduction shown without coverage is the defect this pair fixes. */
+  closureReductionPercent: number | null;
   maintenanceCoveragePercent: number | null;
   triggerType: string;
   planningHorizon: PlanningHorizon | null;
@@ -309,7 +335,7 @@ export interface RapidBlockImpactView {
   // True only if this result could not be computed by the real backend
   // (e.g. no template job/resources available to build a valid request) -
   // drives the "Simulated preview" badge so it's never confused with a real
-  // operating result.
+  // backend-computed recommendation.
   isSimulated: boolean;
 }
 

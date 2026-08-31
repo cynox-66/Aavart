@@ -17,7 +17,7 @@ describe("corridor selection", () => {
     "merges $id into a payload the corridor map can place",
     (preset) => {
       const sources = getDepartmentSources(preset.dataset!, preset.label);
-      const merged = mergeDepartmentSources(sources, "WEEKLY");
+      const merged = mergeDepartmentSources(sources);
 
       expect(merged.jobs.length).toBeGreaterThan(0);
       expect(merged.sections.length).toBe(preset.sectionCount || merged.sections.length);
@@ -32,7 +32,7 @@ describe("corridor selection", () => {
 
   it("keeps every job of the selected corridor inside the weekly horizon", () => {
     const c1 = CORRIDOR_PRESETS.find((preset) => preset.id === "corridor-c1")!;
-    const merged = mergeDepartmentSources(getDepartmentSources(c1.dataset!, c1.label), "WEEKLY");
+    const merged = mergeDepartmentSources(getDepartmentSources(c1.dataset!, c1.label));
     expect(merged.jobs.length).toBe(c1.jobCount);
   });
 });

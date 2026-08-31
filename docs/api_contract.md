@@ -34,7 +34,9 @@ Request:
 }
 ```
 
-Response includes `run_id`, `state`, `snapshot_id`, `ruleset_version`, `created_at`, and `status_url`.
+Response includes `run_id`, `state`, `snapshot_id`, `ruleset_version`, `created_at`, and `detail_url`.
+
+The solve completes before this response is returned, so `state` is already terminal and `detail_url` addresses a finished run. It is not a status endpoint to poll.
 
 ## `GET /planning-runs/{run_id}`
 
@@ -131,7 +133,7 @@ Request:
 }
 ```
 
-The backend records the request, validates the actor and urgent job, creates a derived immutable snapshot, and launches a child planning run. The response includes `request_id`, `state`, `base_run_id`, nullable `derived_snapshot_id`, nullable `child_run_id`, and `status_url`. Invalid requests remain auditable and return `REJECTED` with stable reason codes.
+The backend records the request, validates the actor and urgent job, creates a derived immutable snapshot, and launches a child planning run. The response includes `request_id`, `state`, `base_run_id`, nullable `derived_snapshot_id`, nullable `child_run_id`, and `detail_url`. Invalid requests remain auditable and return `REJECTED` with stable reason codes.
 
 ## `GET /rapidblock-requests/{request_id}`
 

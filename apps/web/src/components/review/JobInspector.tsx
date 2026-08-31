@@ -191,7 +191,7 @@ export function JobInspector({
                     <line x1="18" y1="6" x2="6" y2="18" />
                   </svg>
                 ) : (
-                  <i className="fi fi-ss-check-circle" style={{ fontSize: "14px", color: iconColor, display: "flex" }}></i>
+                  <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "14px", color: iconColor, display: "flex" }}></i>
                 )}
                 <span>{label}</span>
               </div>

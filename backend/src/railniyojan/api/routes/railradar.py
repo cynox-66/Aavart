@@ -26,7 +26,7 @@ async def _fetch(path: str, params: dict[str, str] | None = None) -> dict[str, A
 async def timetable(
     train_number: str,
     halts_only: bool = Query(False),
-) -> dict:
+) -> dict[str, Any]:
     if not train_number.isdigit() or len(train_number) != 5:
         raise HTTPException(status_code=422, detail="train_number must be a 5-digit number")
     return await _fetch(f"/trains/{train_number}", {"haltsOnly": str(halts_only).lower()})
@@ -37,7 +37,7 @@ async def route(
     train_number: str,
     geometry_format: str = Query("geojson", alias="format"),
     stops: bool = Query(False),
-) -> dict:
+) -> dict[str, Any]:
     if not train_number.isdigit() or len(train_number) != 5:
         raise HTTPException(status_code=422, detail="train_number must be a 5-digit number")
     if geometry_format not in {"geojson", "polyline", "coordinates"}:
@@ -51,7 +51,7 @@ async def route(
 
 
 @router.get("/trains/{train_number}/live")
-async def live(train_number: str) -> dict:
+async def live(train_number: str) -> dict[str, Any]:
     if not train_number.isdigit() or len(train_number) != 5:
         raise HTTPException(status_code=422, detail="train_number must be a 5-digit number")
     return await _fetch(f"/trains/{train_number}/live")

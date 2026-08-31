@@ -15,6 +15,7 @@ Start with these files:
 - `docs/project-context/02_acceptance_checks.md`
 - `docs/project-context/06_progress_tracker.md`
 - `docs/local_development.md`
+- `docs/solver_capacity.md` - measured coverage, what the planner cannot fit, and why
 
 Those files explain the scope, the rules, the current demo target, and how the repo is expected to evolve.
 
@@ -23,7 +24,7 @@ Those files explain the scope, the rules, the current demo target, and how the r
 - `apps/web` - Next.js UI for the planning desk
 - `backend/src/railniyojan/api` - FastAPI routes, validation, and run lifecycle
 - `backend/src/railniyojan/contracts` - shared data contracts
-- `backend/src/railniyojan/optimizer` - OR-Tools planner, validator, and worker
+- `backend/src/railniyojan/optimizer` - OR-Tools planner and independent validator
 - `backend/migrations` - Alembic migrations
 - `fixtures` - deterministic sample data and expected outputs
 - `openapi` - generated API schema used by the web app
@@ -66,8 +67,7 @@ make dev
 The Docker Compose stack starts:
 
 - `db` for PostgreSQL/PostGIS
-- `api` for FastAPI
-- `optimizer` for the CP-SAT worker
+- `api` for FastAPI, which solves in-process
 - `web` for Next.js
 
 ## Useful commands

@@ -68,9 +68,16 @@ def test_skipped_department_changes_hash_and_job_count(baseline_payload: dict[st
     assert full["source_hash"] != skipped["source_hash"]
 
 
-def test_monthly_horizon_filtered_payload_validates(
+def test_horizon_filtered_payload_validates_and_horizon_metadata_is_opaque(
     baseline_payload: dict[str, Any],
 ) -> None:
+    """The web app trims the payload to a fixed weekly horizon before posting it.
+
+    The backend has no horizon concept of its own - `metadata.horizon` is carried
+    but never read - so a trimmed payload must validate on its trimmed contents
+    alone. This is why the removed 'Monthly (Macro)' toggle changed nothing that
+    mattered: it widened a client-side filter the solver could not act on.
+    """
     payload = json.loads(json.dumps(baseline_payload))
     payload["windows"].append(
         {
@@ -88,14 +95,25 @@ def test_monthly_horizon_filtered_payload_validates(
             "allowed_windows": ["WIN-FUTURE"],
         }
     )
-    payload["windows"] = [window for window in payload["windows"] if window["window_id"] != "WIN-FUTURE"]
+    payload["windows"] = [
+        window for window in payload["windows"] if window["window_id"] != "WIN-FUTURE"
+    ]
     payload["jobs"] = [job for job in payload["jobs"] if job["job_id"] != "JOB-FUTURE"]
-    payload["metadata"] = {**payload["metadata"], "horizon": "MONTHLY", "horizon_days": 30}
+    payload["metadata"] = {**payload["metadata"], "horizon": "WEEKLY", "horizon_days": 7}
     validation = client.post("/datasets/validate", json=payload)
 
     assert validation.status_code == 200
     assert validation.json()["valid"] is True
     assert validation.json()["counts"]["jobs"] == 4
+
+    # Same payload, a different horizon label: the backend must answer identically,
+    # because it never reads the field.
+    relabelled = json.loads(json.dumps(payload))
+    relabelled["metadata"] = {**relabelled["metadata"], "horizon": "MONTHLY", "horizon_days": 30}
+    other = client.post("/datasets/validate", json=relabelled)
+
+    assert other.status_code == 200
+    assert other.json()["counts"] == validation.json()["counts"]
 
 
 def _create_run(baseline_payload: dict[str, Any]) -> tuple[str, str]:
@@ -136,12 +154,25 @@ def test_planning_run_returns_schedule_and_unscheduled_reasons(
     assert body["unscheduled_jobs"] == [
         {"job_id": "JOB-004", "reason_codes": ["TRAIN_PATH_CONFLICT"]}
     ]
-    assert body["kpis"]["baseline_closure_minutes"] == 390
+    # These numbers were recomputed, not preserved. The old fixture asserted a
+    # 390-minute baseline against a 270-minute plan for a 30.77% saving - but the
+    # whole 120-minute "saving" was JOB-004's rejection: it counted in the
+    # baseline and vanished from the optimized side. Measured over the three jobs
+    # actually scheduled, this plan co-locates nothing and saves nothing, and the
+    # summary now says so out loud while reporting 3-of-4 coverage beside it.
+    assert body["kpis"]["baseline_method"] == "SERIAL_PER_SECTION"
+    assert body["kpis"]["serial_baseline_closure_minutes"] == 270
     assert body["kpis"]["optimized_closure_minutes"] == 270
-    assert body["kpis"]["closure_minutes_saved"] == 120
-    assert body["kpis"]["closure_reduction_percent"] == 30.77
+    assert body["kpis"]["closure_reduction_minutes"] == 0
+    assert body["kpis"]["closure_reduction_percent"] == 0.0
+    # Coverage, kept from the parallel branch's version of this test, is the
+    # figure that makes a 0% reduction readable rather than alarming.
     assert body["kpis"]["total_maintenance_minutes"] == 390
+    assert body["kpis"]["scheduled_jobs"] == 3
+    assert body["kpis"]["total_jobs"] == 4
+    assert body["kpis"]["job_coverage_percent"] == 75.0
     assert body["kpis"]["maintenance_coverage_percent"] == 69.23
+    assert body["kpis"]["rejected_maintenance_minutes"] == 120
     assert body["kpis"]["rejected_maintenance_percent"] == 30.77
     assert {estimate["source"] for estimate in body["ai_estimates"]} == {"LOCAL_HEURISTIC"}
     assert {item["job_id"] for item in body["jobs"]} == {
@@ -371,7 +402,7 @@ def test_rapidblock_authorised_request_creates_candidate_with_lineage(
 
     response = client.post("/rapidblock-requests", json=_rapidblock_payload(run_id))
     body = response.json()
-    detail = client.get(body["status_url"]).json()
+    detail = client.get(body["detail_url"]).json()
     base_after = client.get(f"/planning-runs/{run_id}").json()
     child = client.get(f"/planning-runs/{body['child_run_id']}").json()
     blocked_export = client.get(f"/planning-runs/{body['child_run_id']}/export")

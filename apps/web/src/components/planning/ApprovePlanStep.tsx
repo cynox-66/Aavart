@@ -5,7 +5,7 @@ import { PlanRunView } from "@/types";
 import { CorridorMap } from "@/components/shared/CorridorMap";
 import { WeeklyTimelineSummary } from "@/components/review/WeeklyTimelineSummary";
 import { ExpandedTimelineModal } from "@/components/review/ExpandedTimelineModal";
-import { CURRENT_REVIEWER, formatPercent } from "@/lib/utils";
+import { CURRENT_REVIEWER, formatDuration, formatPercent } from "@/lib/utils";
 
 interface ApprovePlanStepProps {
   plan: PlanRunView;
@@ -31,7 +31,6 @@ export function ApprovePlanStep({
     await onApprove(CURRENT_REVIEWER, notes);
   };
 
-  const scheduledCount = plan.jobs.filter((j) => j.status === "SCHEDULED" || j.status === "LOCKED").length;
   const lockedCount = plan.jobs.filter((j) => j.locked).length;
   const departmentCount = new Set(plan.jobs.map((j) => j.department)).size;
   const qualityTone = plan.kpis.plan_quality === "OPTIMAL" ? "green" : plan.kpis.plan_quality === "FEASIBLE" ? "amber" : "red";
@@ -54,7 +53,7 @@ export function ApprovePlanStep({
       <div className="rn-kpi-cards-row">
         <div className="rn-kpi-card">
           <div className="rn-kpi-icon-box">
-            <i className="fi fi-ss-check-circle" style={{ fontSize: "22px", color: "#16A34A", display: "flex" }}></i>
+            <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "22px", color: "#16A34A", display: "flex" }}></i>
           </div>
           <div className="rn-kpi-content">
             <span className="rn-kpi-card-label">Plan Quality</span>
@@ -65,7 +64,7 @@ export function ApprovePlanStep({
 
         <div className="rn-kpi-card">
           <div className="rn-kpi-icon-box">
-            <i className="fi fi-bs-train-track" style={{ fontSize: "22px", color: "#F59E0B", display: "flex" }}></i>
+            <i aria-hidden="true" className="fi fi-bs-train-track" style={{ fontSize: "22px", color: "#F59E0B", display: "flex" }}></i>
           </div>
           <div className="rn-kpi-content">
             <span className="rn-kpi-card-label">Jobs Locked</span>
@@ -82,11 +81,13 @@ export function ApprovePlanStep({
             </svg>
           </div>
           <div className="rn-kpi-content">
-            <span className="rn-kpi-card-label">Closure Time</span>
-            <div className={`rn-kpi-card-value ${plan.kpis.closure_reduction_percent >= 0 ? "green" : "red"}`}>
+            <span className="rn-kpi-card-label">Section Closure Time</span>
+            <div className={`rn-kpi-card-value ${plan.kpis.closure_reduction_percent > 0 ? "green" : ""}`}>
               {formatPercent(-plan.kpis.closure_reduction_percent)}
             </div>
-            <span className="rn-kpi-card-sub">{plan.kpis.closure_minutes_saved} minutes saved</span>
+            <span className="rn-kpi-card-sub">
+              {formatDuration(plan.kpis.closure_reduction_minutes)} saved vs. one possession per job
+            </span>
           </div>
         </div>
 
@@ -98,9 +99,14 @@ export function ApprovePlanStep({
             </svg>
           </div>
           <div className="rn-kpi-content">
-            <span className="rn-kpi-card-label">Coverage</span>
-            <div className="rn-kpi-card-value dark">{formatPercent(plan.kpis.maintenance_coverage_percent)}</div>
-            <span className="rn-kpi-card-sub">{scheduledCount} scheduled / {plan.unscheduled_jobs.length} unscheduled</span>
+            <span className="rn-kpi-card-label">Work Covered</span>
+            <div className={`rn-kpi-card-value ${plan.kpis.job_coverage_percent >= 100 ? "green" : "amber"}`}>
+              {plan.kpis.job_coverage_percent.toFixed(1)}%
+            </div>
+            <span className="rn-kpi-card-sub">
+              {plan.kpis.scheduled_jobs} of {plan.kpis.total_jobs} jobs ·{" "}
+              {plan.kpis.maintenance_coverage_percent.toFixed(1)}% of minutes
+            </span>
           </div>
         </div>
       </div>
@@ -196,9 +202,15 @@ export function ApprovePlanStep({
                 detail={plan.validator.passed ? "No blocking issues found" : "Issues were flagged - review before approving"}
               />
               <ReadinessRow
-                ok={plan.unscheduled_jobs.length === 0}
+                ok={plan.kpis.scheduled_jobs === plan.kpis.total_jobs}
                 title="All maintenance tasks scheduled"
-                detail={`${scheduledCount} / ${plan.jobs.length} tasks planned`}
+                detail={
+                  plan.kpis.scheduled_jobs === plan.kpis.total_jobs
+                    ? `All ${plan.kpis.total_jobs} jobs placed`
+                    : `${plan.kpis.total_jobs - plan.kpis.scheduled_jobs} of ` +
+                      `${plan.kpis.total_jobs} jobs unscheduled ` +
+                      `(${formatDuration(plan.kpis.rejected_maintenance_minutes)} of work)`
+                }
               />
               <ReadinessRow
                 ok={plan.state === "OPTIMAL" || plan.state === "FEASIBLE"}
@@ -211,9 +223,12 @@ export function ApprovePlanStep({
                 detail={`${lockedCount} works locked`}
               />
               <ReadinessRow
-                ok={plan.kpis.maintenance_coverage_percent > 0}
-                title="Coverage reviewed alongside closure reduction"
-                detail={`Coverage ${formatPercent(plan.kpis.maintenance_coverage_percent)} with closure change ${formatPercent(-plan.kpis.closure_reduction_percent)}`}
+                ok={plan.kpis.closure_reduction_percent > 0}
+                title="Plan beats one possession per job"
+                detail={
+                  `Closure change ${formatPercent(-plan.kpis.closure_reduction_percent)} ` +
+                  `at ${formatPercent(plan.kpis.maintenance_coverage_percent)} coverage`
+                }
               />
             </div>
           </div>
@@ -272,7 +287,7 @@ export function ApprovePlanStep({
                 onClick={handleApproveClick}
                 disabled={isBusy}
               >
-                <i className="fi fi-ss-check-circle" style={{ fontSize: "18px", color: "currentColor", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "18px", color: "currentColor", display: "flex" }}></i>
                 <span>{isBusy ? "Approving..." : "Approve Plan"}</span>
               </button>
 
@@ -296,7 +311,7 @@ function ReadinessRow({ ok, title, detail }: { ok: boolean; title: string; detai
     <div className="rn-check-row">
       <div className="rn-check-circle">
         {ok ? (
-          <i className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "#16A34A", display: "flex" }}></i>
+          <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "#16A34A", display: "flex" }}></i>
         ) : (
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="3.5">
             <line x1="18" y1="6" x2="6" y2="18" />

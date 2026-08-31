@@ -319,8 +319,18 @@ export interface components {
             counts: components["schemas"]["DatasetCounts"];
             /** Errors */
             errors: components["schemas"]["ValidationIssue"][];
+            /** Horizon End */
+            horizon_end?: string | null;
+            /** Horizon Start */
+            horizon_start?: string | null;
+            /** Planning Horizon */
+            planning_horizon?: ("WEEKLY" | "MONTHLY") | null;
             /** Snapshot Candidate Id */
             snapshot_candidate_id: string | null;
+            /** Source Hash */
+            source_hash?: string | null;
+            /** Source Summaries */
+            source_summaries?: components["schemas"]["SourceSummary"][];
             /** Valid */
             valid: boolean;
         };
@@ -384,24 +394,51 @@ export interface components {
          * @enum {string}
          */
         JobStatus: "UNSCHEDULED" | "SCHEDULED" | "LOCKED" | "REJECTED" | "INVALID";
-        /** KpiSummary */
+        /**
+         * KpiSummary
+         * @description Plan impact, reported so that rejecting work cannot improve the score.
+         *
+         *     Every field is computed over the scheduled jobs only, and coverage is part
+         *     of the summary rather than an optional extra - see planning/kpis.py.
+         */
         KpiSummary: {
-            /** Baseline Asset Downtime Minutes */
-            baseline_asset_downtime_minutes: number;
-            /** Baseline Closure Minutes */
-            baseline_closure_minutes: number;
-            /** Downtime Reduction Minutes */
-            downtime_reduction_minutes: number;
-            /** Downtime Reduction Percent */
-            downtime_reduction_percent: number;
+            /** Asset Downtime Reduction Minutes */
+            asset_downtime_reduction_minutes: number;
+            /** Asset Downtime Reduction Percent */
+            asset_downtime_reduction_percent: number;
+            /**
+             * Baseline Method
+             * @constant
+             */
+            baseline_method: "SERIAL_PER_SECTION";
+            /** Closure Reduction Minutes */
+            closure_reduction_minutes: number;
+            /** Closure Reduction Percent */
+            closure_reduction_percent: number;
+            /** Job Coverage Percent */
+            job_coverage_percent: number;
+            /** Maintenance Coverage Percent */
+            maintenance_coverage_percent: number;
             /** Optimized Asset Downtime Minutes */
             optimized_asset_downtime_minutes: number;
             /** Optimized Closure Minutes */
             optimized_closure_minutes: number;
             /** Rejected Maintenance Minutes */
             rejected_maintenance_minutes: number;
+            /** Rejected Maintenance Percent */
+            rejected_maintenance_percent: number;
+            /** Scheduled Jobs */
+            scheduled_jobs: number;
             /** Scheduled Maintenance Minutes */
             scheduled_maintenance_minutes: number;
+            /** Serial Baseline Asset Downtime Minutes */
+            serial_baseline_asset_downtime_minutes: number;
+            /** Serial Baseline Closure Minutes */
+            serial_baseline_closure_minutes: number;
+            /** Total Jobs */
+            total_jobs: number;
+            /** Total Maintenance Minutes */
+            total_maintenance_minutes: number;
         };
         /** LockRequest */
         LockRequest: {
@@ -421,6 +458,18 @@ export interface components {
             /** Run Id */
             run_id: string;
         };
+        /** PlanningIntentMove */
+        PlanningIntentMove: {
+            /** Job Id */
+            job_id: string;
+            /**
+             * Reason
+             * @default planner requested move
+             */
+            reason: string;
+            /** Target Window Id */
+            target_window_id: string;
+        };
         /** PlanningRunCreateRequest */
         PlanningRunCreateRequest: {
             /** Ruleset Version */
@@ -435,6 +484,8 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Detail Url */
+            detail_url: string;
             /** Ruleset Version */
             ruleset_version: string;
             /** Run Id */
@@ -442,8 +493,6 @@ export interface components {
             /** Snapshot Id */
             snapshot_id: string;
             state: components["schemas"]["PlanningRunState"];
-            /** Status Url */
-            status_url: string;
         };
         /** PlanningRunDetail */
         PlanningRunDetail: {
@@ -463,11 +512,27 @@ export interface components {
             created_at: string;
             /** Export Ready */
             export_ready: boolean;
+            /** Horizon End */
+            horizon_end?: string | null;
+            /** Horizon Start */
+            horizon_start?: string | null;
+            /** Intent */
+            intent?: {
+                [key: string]: unknown;
+            } | null;
+            /** Intent Id */
+            intent_id?: string | null;
             /** Jobs */
             jobs: components["schemas"]["JobContext"][];
             kpis: components["schemas"]["KpiSummary"];
             /** Parent Run Id */
             parent_run_id?: string | null;
+            /** Planning Horizon */
+            planning_horizon?: ("WEEKLY" | "MONTHLY") | null;
+            /** Rejected Intent Edits */
+            rejected_intent_edits?: {
+                [key: string]: unknown;
+            }[];
             /** Ruleset Version */
             ruleset_version: string;
             /** Run Id */
@@ -485,9 +550,16 @@ export interface components {
         };
         /**
          * PlanningRunState
+         * @description Terminal states only.
+         *
+         *     Planning is synchronous: POST /planning-runs solves before it responds, so a
+         *     run is never observable in flight. QUEUED and RUNNING existed here but were
+         *     assigned nowhere, which advertised an execution model the system did not
+         *     have. Reintroduce them together with a real queue, not before - see
+         *     docs/architecture.md, "Execution model".
          * @enum {string}
          */
-        PlanningRunState: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
+        PlanningRunState: "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
         /**
          * PlanningRunSummary
          * @description Lightweight archive row for GET /planning-runs.
@@ -504,9 +576,15 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+            /** Horizon End */
+            horizon_end?: string | null;
+            /** Horizon Start */
+            horizon_start?: string | null;
             kpis?: components["schemas"]["KpiSummary"] | null;
             /** Parent Run Id */
             parent_run_id?: string | null;
+            /** Planning Horizon */
+            planning_horizon?: ("WEEKLY" | "MONTHLY") | null;
             /** Ruleset Version */
             ruleset_version: string;
             /** Run Id */
@@ -542,6 +620,8 @@ export interface components {
             child_run_id?: string | null;
             /** Derived Snapshot Id */
             derived_snapshot_id?: string | null;
+            /** Detail Url */
+            detail_url: string;
             /** Justification */
             justification: string;
             /** Preserved Locked Jobs */
@@ -556,8 +636,6 @@ export interface components {
              */
             source_reported_at: string;
             state: components["schemas"]["RapidBlockState"];
-            /** Status Url */
-            status_url: string;
             urgent_job: components["schemas"]["Job"];
             validator?: components["schemas"]["ValidatorSummary"] | null;
         };
@@ -591,13 +669,13 @@ export interface components {
             child_run_id?: string | null;
             /** Derived Snapshot Id */
             derived_snapshot_id?: string | null;
+            /** Detail Url */
+            detail_url: string;
             /** Reason Codes */
             reason_codes: string[];
             /** Request Id */
             request_id: string;
             state: components["schemas"]["RapidBlockState"];
-            /** Status Url */
-            status_url: string;
         };
         /**
          * RapidBlockState
@@ -606,10 +684,26 @@ export interface components {
         RapidBlockState: "SUBMITTED" | "VALIDATING" | "REJECTED" | "PLANNING" | "CANDIDATE_READY" | "NO_CANDIDATE";
         /** ReplanRequest */
         ReplanRequest: {
+            /**
+             * Actor
+             * @default planner
+             */
+            actor: string;
             /** Affected Section Ids */
-            affected_section_ids: string[];
+            affected_section_ids?: string[];
             /** Affected Window Ids */
-            affected_window_ids: string[];
+            affected_window_ids?: string[];
+            /** Exclusions */
+            exclusions?: string[];
+            /** Locked Job Ids */
+            locked_job_ids?: string[];
+            /** Moves */
+            moves?: components["schemas"]["PlanningIntentMove"][];
+            /**
+             * Reason
+             * @default planner requested re-optimization
+             */
+            reason: string;
         };
         /** ScheduleItem */
         ScheduleItem: {
@@ -641,6 +735,27 @@ export interface components {
          * @enum {string}
          */
         ScheduleStatus: "SCHEDULED" | "LOCKED" | "REJECTED";
+        /** SourceSummary */
+        SourceSummary: {
+            /** Department */
+            department: string;
+            /** File Name */
+            file_name?: string | null;
+            /**
+             * Job Count
+             * @default 0
+             */
+            job_count: number;
+            /** Source Id */
+            source_id: string;
+            /** Status */
+            status: string;
+            /**
+             * Warning Count
+             * @default 0
+             */
+            warning_count: number;
+        };
         /** UnscheduledJob */
         UnscheduledJob: {
             /** Job Id */

@@ -71,7 +71,9 @@ Fixed evidence:
 - `docs/architecture.md`, `docs/architecture/backend.md`, `docs/local_development.md`, and `backend/pyproject.toml` now describe a synchronous CP-SAT solve path rather than a worker-backed queue.
 - `apps/web/src/components/planning/CreatePlanStep.tsx` now says it is running the synchronous CP-SAT solver on the validated snapshot.
 
-Remaining limit: this is still a synchronous demo path. There is no durable queue, polling, retry, or cancellation contract, and `QUEUED` / `RUNNING` remain reserved enum values rather than exercised runtime states.
+Also removed: `optimizer/worker.py`, the never-assigned `QUEUED` / `RUNNING` members of `PlanningRunState`, and `status_url` (renamed `detail_url`, because it addresses a run that is already complete).
+
+Remaining limit: this is still a synchronous demo path. There is no durable queue, polling, retry, or cancellation contract. `QUEUED` and `RUNNING` return to the enum only alongside a real worker; `docs/architecture.md`, "Execution model", carries the measured cost of synchronous execution and the queued production design.
 
 Verification:
 
@@ -115,11 +117,11 @@ Verification:
 
 ## P1 — high-impact gaps after the mounted flow is truthful
 
-### 6. Two frontend implementations create product drift
+### 6. Two frontend implementations create product drift — fixed 2026-08-31
 
-Evidence: `apps/web/src/app/page.tsx` is the mounted app; `apps/web/src/app/planner-dashboard.tsx` exports an unused alternate dashboard. The two surfaces have different ingestion behavior, controls, copy, and state models.
+Evidence was: `apps/web/src/app/page.tsx` is the mounted app; `apps/web/src/app/planner-dashboard.tsx` exported an unused alternate dashboard with different ingestion behavior, controls, copy, and state models.
 
-Impact: fixes made in one surface do not fix the judged product. This is dead code with a high chance of misleading demos and reviewers.
+Fixed: `planner-dashboard.tsx` is deleted, along with the orphaned `health-check.tsx` / `health-check.test.tsx` pair and the unreferenced mock plan/job fixtures in `lib/mock-data.ts` that still carried a fabricated reviewer identity. `pnpm lint:web` is now warning-free, so the next piece of dead code is visible rather than buried.
 
 Action: delete the unused surface or make one explicit canonical app. Do not maintain two planning workflows.
 
@@ -148,12 +150,17 @@ Impact: anyone who can call the API can approve as anyone. For a demo, label it 
 
 Fixed evidence:
 
-- `backend/src/railniyojan/planning/kpis.py` now reports `closure_minutes_saved`, `closure_reduction_percent`, `total_maintenance_minutes`, `scheduled_maintenance_minutes`, `rejected_maintenance_minutes`, `maintenance_coverage_percent`, and `rejected_maintenance_percent`.
+- `backend/src/railniyojan/planning/kpis.py` computes both sides of the comparison over the **scheduled jobs only**, so rejecting work can no longer improve the score. Verified: `calculate_kpis(dataset, [])` returned `100.0` and now returns `0.0`.
+- It reports `closure_reduction_minutes`, `closure_reduction_percent`, `total_maintenance_minutes`, `scheduled_maintenance_minutes`, `rejected_maintenance_minutes`, `maintenance_coverage_percent`, `rejected_maintenance_percent`, `scheduled_jobs`, `total_jobs`, and `job_coverage_percent`.
+- The counterfactual is named: `baseline_method: "SERIAL_PER_SECTION"` with `serial_baseline_closure_minutes`, surfaced in the UI as "one possession per job" rather than an implied human plan.
+- Asset downtime is computed against assets instead of being a byte-identical copy of section closure, so it is now a second real measurement rather than a domain error.
 - The KPI contract in `backend/src/railniyojan/contracts/api.py` and the frontend mapping in `apps/web/src/lib/adapters/planning-adapter.ts` now carry those fields through end to end.
-- `apps/web/src/components/review/PlanImpact.tsx`, `apps/web/src/components/planning/ApprovePlanStep.tsx`, `apps/web/src/components/approved/PlanApprovedScreen.tsx`, and `apps/web/src/components/previous-plans/PreviousPlansList.tsx` now foreground closure change and maintenance coverage instead of “asset downtime saved.”
-- `backend/tests/test_api.py` now asserts coverage and rejected-percentage values for the baseline fixture.
+- `apps/web/src/components/review/PlanImpact.tsx`, `apps/web/src/components/planning/ApprovePlanStep.tsx`, `apps/web/src/components/approved/PlanApprovedScreen.tsx`, and `apps/web/src/components/previous-plans/PreviousPlansList.tsx` render coverage beside every reduction, never a reduction alone.
+- `apps/web/src/lib/adapters/planning-adapter.ts` no longer recomputes the headline from minute totals; the backend is the single source of truth.
+- `backend/tests/test_kpis.py` pins the adversarial cases as properties: scheduling nothing scores 0%, rejecting a long job never beats scheduling it, and asset downtime differs from section closure when a possession is shared.
+- `backend/tests/test_api.py` fixtures were recomputed, not preserved: the old 30.77% "saving" on the baseline fixture was entirely JOB-004's rejection, and now reads 0% with 75% coverage beside it.
 
-Remaining limit: baseline closure is still a controlled-scenario serial-stacking proxy, not a railway-authorized business KPI. Asset occupancy and service-level metrics are still separate future work.
+Remaining limit: the baseline is a declared serial-stacking counterfactual, not a railway-authorized business KPI, and the solver objective maximises priority-weighted job count with no closure term — closure reduction is a measured outcome, labelled as such. `docs/solver_capacity.md` carries the measured coverage and what the planner cannot fit.
 
 Verification:
 
@@ -186,16 +193,11 @@ Fixed evidence:
 - `apps/web/src/app/page.tsx` no longer mutates validation state into a fake ready state.
 - `apps/web/e2e/foundation.spec.ts` now proves invalid uploaded data remains blocked and cannot advance the solver.
 
-### 13. The optimizer worker is still a no-op stub
+### 13. The optimizer worker is still a no-op stub — fixed 2026-08-31
 
-Evidence:
+Evidence was: `backend/src/railniyojan/optimizer/worker.py` logged that its entrypoint was unused and then slept forever, while `compose.yaml` no longer started it.
 
-- `backend/src/railniyojan/optimizer/worker.py` only logs that the entrypoint is unused and then sleeps forever.
-- `compose.yaml` no longer starts that service, so the file is not part of any active execution path.
-
-Impact: this is worker-shaped theater. It makes the repo look as if queue-backed execution exists when the real product is explicitly synchronous. If someone revives it later, they will still find a process that does nothing but wait.
-
-Action: delete it or replace it with a tiny compatibility wrapper that exits clearly, rather than leaving a sleeping loop in the tree.
+Fixed: the file is deleted, together with the rest of the asynchronous fiction — the never-assigned `QUEUED` and `RUNNING` states, and `status_url` (now `detail_url`, because it addresses a run that is already complete). `backend/tests/test_concurrency.py` fails if any of the three comes back, so they return together with a real queue or not at all. The queued production design is written up in `docs/architecture.md`, "Execution model".
 
 ## P2 — important for product credibility, not first demo work
 

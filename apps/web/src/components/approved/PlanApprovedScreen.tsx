@@ -49,7 +49,7 @@ export function PlanApprovedScreen({
           <div className="rn-confetti-dot c7" />
           <div className="rn-confetti-dot c8" />
 
-          <i className="fi fi-ss-check-circle" style={{ fontSize: "64px", color: "#16A34A", display: "flex" }}></i>
+          <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "64px", color: "#16A34A", display: "flex" }}></i>
         </div>
 
         <div className="rn-celebration-text center">
@@ -77,7 +77,7 @@ export function PlanApprovedScreen({
 
         <div className="rn-stat-box">
           <div className="rn-stat-icon-wrap">
-            <i className="fi fi-bs-train-track" style={{ fontSize: "24px", color: "#F59E0B", display: "flex" }}></i>
+            <i aria-hidden="true" className="fi fi-bs-train-track" style={{ fontSize: "24px", color: "#F59E0B", display: "flex" }}></i>
           </div>
           <div className="rn-stat-data">
             <div className="rn-stat-number">{integratedBlockCount}</div>
@@ -93,16 +93,21 @@ export function PlanApprovedScreen({
             </svg>
           </div>
           <div className="rn-stat-data">
-            <div className={`rn-stat-number ${plan.kpis.closure_reduction_percent >= 0 ? "green" : ""}`}>
+            <div className={`rn-stat-number ${plan.kpis.closure_reduction_percent > 0 ? "green" : ""}`}>
               {formatPercent(-plan.kpis.closure_reduction_percent)}
             </div>
-            <span className="rn-stat-label">Closure Time vs. Baseline</span>
+            <span className="rn-stat-label">
+              Section closure vs. one possession per job
+            </span>
+            <span className="rn-stat-sub">
+              over the {plan.kpis.scheduled_jobs} of {plan.kpis.total_jobs} jobs scheduled
+            </span>
           </div>
         </div>
 
         <div className="rn-stat-box">
           <div className="rn-stat-icon-wrap">
-            <i className="fi fi-ss-check-circle" style={{ fontSize: "24px", color: "#16A34A", display: "flex" }}></i>
+            <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "24px", color: "#16A34A", display: "flex" }}></i>
           </div>
           <div className="rn-stat-data">
             <div className="rn-stat-number green">{formatPercent(plan.kpis.maintenance_coverage_percent)}</div>
@@ -242,7 +247,7 @@ export function PlanApprovedScreen({
         isOpen={isShareModalOpen}
         title="Share Approved Plan with Teams"
         description={`Share weekly schedule ${plan.run_id} with Western Railway departmental desks:`}
-        confirmLabel={copied ? <><i className="fi fi-ss-check-circle"></i> Copied Link!</> : "Copy Share Link"}
+        confirmLabel={copied ? <><i aria-hidden="true" className="fi fi-ss-check-circle"></i> Copied Link!</> : "Copy Share Link"}
         cancelLabel="Done"
         onConfirm={handleCopyLink}
         onCancel={() => setIsShareModalOpen(false)}

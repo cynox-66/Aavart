@@ -21,8 +21,15 @@ class ScheduleStatus(StrEnum):
 
 
 class PlanningRunState(StrEnum):
-    QUEUED = "QUEUED"
-    RUNNING = "RUNNING"
+    """Terminal states only.
+
+    Planning is synchronous: POST /planning-runs solves before it responds, so a
+    run is never observable in flight. QUEUED and RUNNING existed here but were
+    assigned nowhere, which advertised an execution model the system did not
+    have. Reintroduce them together with a real queue, not before - see
+    docs/architecture.md, "Execution model".
+    """
+
     FEASIBLE = "FEASIBLE"
     OPTIMAL = "OPTIMAL"
     INFEASIBLE = "INFEASIBLE"

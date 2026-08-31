@@ -125,7 +125,7 @@ export function CreatePlanStep({
                     <div className="rn-pipeline-icon">
                       {isStepDone ? (
                         <div className="rn-icon-circle done">
-                          <i className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "#16A34A", display: "flex" }}></i>
+                          <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "12px", color: "#16A34A", display: "flex" }}></i>
                         </div>
                       ) : isStepActive ? (
                         <div className="rn-icon-circle active">

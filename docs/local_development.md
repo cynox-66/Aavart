@@ -16,6 +16,8 @@ Docker Compose should run:
 - `db` for PostgreSQL/PostGIS;
 - `api` for validation, planning, re-plan, approval, export, and archive endpoints.
 
+There is no separate optimizer service: the API solves in-process.
+
 ## Configuration
 
 Keep secrets in an untracked `.env` file. Provide `.env.example` with non-secret defaults. At minimum define database URL, API URL, solver time budget, deterministic seed, and ruleset version.
@@ -55,7 +57,7 @@ The web container packages the verified Next.js standalone output. Run `pnpm bui
 
 ## Troubleshooting rules
 
-- Check API and database logs separately.
+- Check API and database logs separately; the solver logs inside the API container.
 - Confirm the snapshot ID before debugging a schedule.
 - Reproduce solver issues with the same fixture, ruleset, and seed.
 - Never delete database volumes to fix application behavior without explicit approval.

@@ -216,12 +216,13 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                   </button>
                 </th>
                 <th>Solver State</th>
-                <th>Authorized Reviewer</th>
+                <th>Approving Reviewer</th>
                 <th>
                   <button type="button" className="th-sort-btn" onClick={() => toggleSort("tasksCount")}>
                     Task Count{sortIndicator("tasksCount")}
                   </button>
                 </th>
+                <th>Closure vs. serial</th>
                 <th>Coverage</th>
                 <th>Action</th>
               </tr>
@@ -244,7 +245,14 @@ export function PreviousPlansList({ onSelectPlan, onBackToHome }: PreviousPlansL
                     <strong>{plan.scheduledJobCount}</strong>
                     <span className="neutral-cell"> / {plan.totalJobCount} scheduled</span>
                   </td>
-                  <td className={plan.maintenanceCoveragePercent === null ? "neutral-cell" : "gain-cell"}>
+                  <td className={plan.closureReductionPercent ? "gain-cell" : "neutral-cell"}>
+                    {plan.closureReductionPercent === null ? (
+                      "—"
+                    ) : (
+                      <strong>-{plan.closureReductionPercent.toFixed(1)}%</strong>
+                    )}
+                  </td>
+                  <td className={plan.maintenanceCoveragePercent === null ? "neutral-cell" : ""}>
                     {plan.maintenanceCoveragePercent === null ? (
                       "—"
                     ) : (

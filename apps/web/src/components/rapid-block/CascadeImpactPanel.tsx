@@ -126,7 +126,9 @@ export function CascadeImpactPanel({
             <p>
               Approving creates the revised recommendation and makes candidate run{" "}
               <code>{impact.childRunId}</code> the active plan. Affected tasks are rescheduled
-              automatically.
+              automatically. It does not grant a block, issue railway authority, or move any
+              train — the recommendation still has to be actioned through the normal
+              operational channel.
             </p>
           </div>
         </div>
@@ -149,14 +151,20 @@ export function CascadeImpactPanel({
               </>
             )}
           </button>
-          <span className="review-cta-hint">Requires standard review before it becomes the active plan.</span>
+          {/* Say what approval actually does. "Requires standard review before it
+              becomes the active plan" contradicted the paragraph above, which
+              correctly states that approving makes it active straight away. */}
+          <span className="review-cta-hint">
+            Becomes the active plan immediately — decision support only, the block still needs
+            operational sanction.
+          </span>
         </div>
       </div>
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
         title="Approve candidate recommendation?"
-        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). This action updates the active plan and cannot be undone from this screen.`}
+        description={`This approves candidate run ${impact.childRunId} and reschedules ${rescheduledCount} maintenance task(s). It updates the active plan, confers no railway authority, and cannot be undone from this screen.`}
         confirmLabel="Confirm Approval"
         cancelLabel="Abort"
         variant="emergency"

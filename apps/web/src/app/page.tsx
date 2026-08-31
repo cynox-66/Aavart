@@ -2,11 +2,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import {
+  PlanningHorizon,
   CorridorPresetId,
   DepartmentDataSource,
   OptimizationStatus,
   PendingMoveIntent,
-  PlanningHorizon,
   PlanRunView,
   ToastMessage,
   ValidationState,
@@ -68,7 +68,6 @@ export default function RailNiyojanApp() {
       ? getDepartmentSources(initial.dataset, initial.label)
       : initialDepartmentSources;
   });
-  const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [validation, setValidation] = useState<ValidationState>(EMPTY_VALIDATION_STATE);
 
   // Corridor selection - Step 1 selector. The chosen preset's dataset.json is
@@ -79,6 +78,7 @@ export default function RailNiyojanApp() {
   const [customBaseDataset, setCustomBaseDataset] = useState<Record<string, unknown> | null>(null);
 
   // Active Planning Run State - null until a real plan actually exists.
+  const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
   const [plan, setPlan] = useState<PlanRunView | null>(null);
   const [hasPlanCreated, setHasPlanCreated] = useState(false);
   // Whether the currently-open plan was opened from the archive (Previous
@@ -424,9 +424,9 @@ export default function RailNiyojanApp() {
   };
 
   // --- Rapid Block Handler ---
-  // Adopts the approved emergency child run as the new active plan, so the
-  // rest of the app (header, review screen, etc.) reflects the real
-  // post-approval state going forward.
+  // Adopts the approved rapid-block child run as the new active plan, so the
+  // rest of the app (header, review screen, etc.) reflects it going forward.
+  // This is a planning state only - it confers no railway authority.
   const handleRapidBlockApproved = (newPlan: PlanRunView) => {
     setPlan(newPlan);
     setIsHistoricalPlan(false);
@@ -465,13 +465,13 @@ export default function RailNiyojanApp() {
 
         {currentView === "wizard-step-1" && (
           <SelectDataStep
+            horizon={horizon}
+            onHorizonChange={setHorizon}
             sources={sources}
             selectedCorridorId={selectedCorridorId}
             onSelectCorridor={handleSelectCorridor}
             customBaseDataset={customBaseDataset}
             onUploadCustomBase={handleUploadCustomBase}
-            horizon={horizon}
-            onHorizonChange={setHorizon}
             onToggleSourceStatus={handleToggleSource}
             onReplaceFile={handleReplaceFile}
             onContinue={handleProceedToValidation}

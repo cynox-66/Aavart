@@ -20,8 +20,12 @@ export function CheckDataStep({
     validation.issues.find((i) => !i.resolved)?.id ?? null,
   );
 
-  const unresolvedIssues = validation.issues;
-  const isValid = validation.valid;
+  // The backend registers a snapshot candidate only for a dataset that validated
+  // clean, and Step 3 refuses to solve without one. Gate on that single fact so
+  // this button and the solver can never disagree. There is deliberately no
+  // control on this screen that can change it: the old "Mark as Resolved" and
+  // "Auto-Fix All" only ever flipped local state the backend had already refused.
+  const hasSnapshot = validation.snapshotCandidateId !== null;
 
   return (
     <div className="check-data-layout">
@@ -44,11 +48,11 @@ export function CheckDataStep({
       <div className="check-data-grid">
         {/* Main Validation State Container */}
         <div className="validation-main-column">
-          {isValid ? (
+          {hasSnapshot ? (
             /* ALL GOOD STATE */
             <div className="validation-all-good-card">
               <div className="all-good-header">
-                <i className="fi fi-ss-check-circle" style={{ fontSize: "44px", color: "var(--status-green-dark)", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "44px", color: "var(--status-green-dark)", display: "flex" }}></i>
                 <div>
                   <h3>Dataset Validated & Ready</h3>
                   <p className="all-good-sub">
@@ -91,11 +95,19 @@ export function CheckDataStep({
               <div className="attention-header">
                 <div className="warning-icon-badge">⚠️</div>
                 <div className="attention-title-group">
-                  <h3>Needs Attention ({unresolvedIssues.length} issues found)</h3>
+                  <h3>
+                    Rejected by validation ({validation.issues.length}{" "}
+                    {validation.issues.length === 1 ? "issue" : "issues"})
+                  </h3>
                   <p className="attention-sub">
-                    Correct the uploaded source data and run backend validation again before planning.
+                    No snapshot was registered, so the solver cannot run. Correct the uploaded
+                    source data, re-upload it, and run backend validation again — nothing on this
+                    screen can change what the backend accepts.
                   </p>
                 </div>
+                <button type="button" className="btn-attention-primary" onClick={onBack} disabled={isBusy}>
+                  ← Back to Select Data
+                </button>
               </div>
 
               <div className="issues-accordion">
@@ -142,7 +154,8 @@ export function CheckDataStep({
 
                           <div className="issue-actions-row">
                             <span className="issue-resolve-note">
-                              Backend rejected this candidate. Return to Step 1, update the source file, and validate again.
+                              Backend rejected this candidate. Return to Step 1, update the source
+                              file, and validate again.
                             </span>
                           </div>
                         </div>
@@ -162,7 +175,7 @@ export function CheckDataStep({
             <ul className="protocol-checks-list">
               {validation.sourceSummaries.map((source) => (
                 <li className={`check-item ${source.status === "loaded" ? "passed" : "pending"}`} key={source.source_id}>
-                  <span className="check-mark">{source.status === "loaded" ? <i className="fi fi-ss-check-circle"></i> : "•"}</span>
+                  <span className="check-mark">{source.status === "loaded" ? <i aria-hidden="true" className="fi fi-ss-check-circle"></i> : "•"}</span>
                   {source.department}: {source.job_count} jobs / {source.warning_count} warnings
                 </li>
               ))}
@@ -178,16 +191,16 @@ export function CheckDataStep({
             <h4>Validation Protocol</h4>
             <ul className="protocol-checks-list">
               <li className="check-item passed">
-                <span className="check-mark"><i className="fi fi-ss-check-circle"></i></span> Schema Version 1.0 Strict
+                <span className="check-mark"><i aria-hidden="true" className="fi fi-ss-check-circle"></i></span> Schema Version 1.0 Strict
               </li>
               <li className="check-item passed">
-                <span className="check-mark"><i className="fi fi-ss-check-circle"></i></span> Asset & Section References Valid
+                <span className="check-mark"><i aria-hidden="true" className="fi fi-ss-check-circle"></i></span> Asset & Section References Valid
               </li>
-              <li className={`check-item ${isValid ? "passed" : "pending"}`}>
-                <span className="check-mark">{isValid ? <i className="fi fi-ss-check-circle"></i> : "•"}</span> Priority & Duration Bounds Checked
+              <li className={`check-item ${hasSnapshot ? "passed" : "pending"}`}>
+                <span className="check-mark">{hasSnapshot ? <i aria-hidden="true" className="fi fi-ss-check-circle"></i> : "•"}</span> Priority & Duration Bounds Checked
               </li>
-              <li className={`check-item ${isValid ? "passed" : "pending"}`}>
-                <span className="check-mark">{isValid ? <i className="fi fi-ss-check-circle"></i> : "•"}</span> Timetable Supply Gap Coherence
+              <li className={`check-item ${hasSnapshot ? "passed" : "pending"}`}>
+                <span className="check-mark">{hasSnapshot ? <i aria-hidden="true" className="fi fi-ss-check-circle"></i> : "•"}</span> Timetable Supply Gap Coherence
               </li>
             </ul>
           </div>
@@ -209,16 +222,16 @@ export function CheckDataStep({
         </button>
 
         <div className="step-next-group">
-          {!isValid && (
+          {!hasSnapshot && (
             <span className="validation-hint error">
-              Backend validation must pass before the solver can run
+              Backend validation must pass before the solver can run — correct the data at source and re-upload
             </span>
           )}
           <button
             type="button"
             className="btn-step-continue"
             onClick={onContinue}
-            disabled={!isValid || isBusy}
+            disabled={!hasSnapshot || isBusy}
           >
             {isBusy ? "Launching Solver..." : "3. Create Plan (CP-SAT Solver) →"}
           </button>

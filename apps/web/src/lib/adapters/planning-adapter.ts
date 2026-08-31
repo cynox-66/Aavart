@@ -128,10 +128,6 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     };
   });
 
-  const closureReduction = run.kpis.baseline_closure_minutes > 0
-    ? ((run.kpis.baseline_closure_minutes - run.kpis.optimized_closure_minutes) / run.kpis.baseline_closure_minutes) * 100
-    : 0;
-
   return {
     run_id: run.run_id,
     snapshot_id: run.snapshot_id,
@@ -145,16 +141,10 @@ export function mapBackendRunToView(run: RunDetail): PlanRunView {
     schedule_items,
     unscheduled_jobs: run.unscheduled_jobs,
     sections,
+    // Pass the backend's numbers straight through. The headline percentage is
+    // computed once, in planning/kpis.py, and never re-derived here.
     kpis: {
-      baseline_closure_minutes: run.kpis.baseline_closure_minutes,
-      optimized_closure_minutes: run.kpis.optimized_closure_minutes,
-      closure_minutes_saved: run.kpis.closure_minutes_saved,
-      closure_reduction_percent: run.kpis.closure_reduction_percent || closureReduction,
-      total_maintenance_minutes: run.kpis.total_maintenance_minutes,
-      scheduled_maintenance_minutes: run.kpis.scheduled_maintenance_minutes,
-      rejected_maintenance_minutes: run.kpis.rejected_maintenance_minutes,
-      maintenance_coverage_percent: run.kpis.maintenance_coverage_percent,
-      rejected_maintenance_percent: run.kpis.rejected_maintenance_percent,
+      ...run.kpis,
       plan_quality: run.state === "OPTIMAL" ? "OPTIMAL" : run.state === "FEASIBLE" ? "FEASIBLE" : "DEGRADED",
     },
     changes: run.changes,
@@ -180,6 +170,9 @@ export function mapBackendSummaryToArchiveEntry(summary: PlanningRunSummary): Pl
     totalJobCount: summary.total_job_count,
     scheduledJobCount: summary.scheduled_job_count,
     validatorPassed: summary.validator_passed,
+    // Runs persisted before KPIs were recorded carry no kpis block - report that
+    // as unknown rather than as a 0% gain.
+    closureReductionPercent: summary.kpis?.closure_reduction_percent ?? null,
     maintenanceCoveragePercent: summary.kpis?.maintenance_coverage_percent ?? null,
     triggerType: summary.trigger_type,
     planningHorizon: summary.planning_horizon,

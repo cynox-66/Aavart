@@ -6,8 +6,9 @@ interface ConfirmModalProps {
   isOpen: boolean;
   title: string;
   description: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
+  // ReactNode, not string: callers pass an icon alongside the text.
+  confirmLabel?: ReactNode;
+  cancelLabel?: ReactNode;
   variant?: "default" | "destructive" | "emergency";
   isBusy?: boolean;
   children?: ReactNode;

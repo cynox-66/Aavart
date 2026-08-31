@@ -135,7 +135,7 @@ export function ReviewPlanScreen({
             <div className="rn-important-banner approved">
               <div className="rn-important-left">
                 <div className="rn-info-circle-icon">
-                  <i className="fi fi-ss-check-circle" style={{ fontSize: "18px", color: "#16A34A", display: "flex" }}></i>
+                  <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "18px", color: "#16A34A", display: "flex" }}></i>
                 </div>
                 <div className="rn-important-text">
                   <strong>{isApproved ? "Approved" : "Archived"}</strong>
@@ -151,7 +151,7 @@ export function ReviewPlanScreen({
             <div className="rn-important-banner">
               <div className="rn-important-left">
                 <div className="rn-info-circle-icon">
-                  <i className="fi fi-sr-octagon-exclamation" style={{ fontSize: "18px", color: "#0047BA", display: "flex" }}></i>
+                  <i aria-hidden="true" className="fi fi-sr-octagon-exclamation" style={{ fontSize: "18px", color: "#0047BA", display: "flex" }}></i>
                 </div>
                 <div className="rn-important-text">
                   <strong>Important</strong>
@@ -165,7 +165,7 @@ export function ReviewPlanScreen({
                 onClick={onReoptimize}
                 disabled={isBusy || !isDirty}
               >
-                <i className="fi fi-br-rotate-right" style={{ fontSize: "18px", color: "inherit", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-br-rotate-right" style={{ fontSize: "18px", color: "inherit", display: "flex" }}></i>
                 <span>Re-Optimize Plan</span>
               </button>
             </div>

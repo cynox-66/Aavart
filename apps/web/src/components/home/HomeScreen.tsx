@@ -16,7 +16,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
         <div className="rn-home-left">
           <div className="rn-welcome-header">
             <div className="rn-welcome-icon-box">
-              <i className="fi fi-br-train" style={{ color: "#0047BA", fontSize: "36px", display: "flex" }}></i>
+              <i aria-hidden="true" className="fi fi-br-train" style={{ color: "#0047BA", fontSize: "36px", display: "flex" }}></i>
             </div>
             <div className="rn-welcome-titles">
               <span className="rn-welcome-pre">Welcome to</span>
@@ -198,7 +198,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               onClick={() => onNavigate("previous-plans")}
             >
               <div className="rn-action-icon-box secondary">
-                <i className="fi fi-br-time-past" style={{ color: "#0047BA", fontSize: "26px", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-br-time-past" style={{ color: "#0047BA", fontSize: "26px", display: "flex" }}></i>
               </div>
 
               <div className="rn-action-details">
@@ -223,7 +223,7 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               title={hasActivePlan ? undefined : "Create a plan first — Rapid Block adds an incident to an active run."}
             >
               <div className="rn-action-icon-box">
-                <i className="fi fi-br-problem-solving" style={{ color: "#EF4444", fontSize: "26px", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-br-problem-solving" style={{ color: "#EF4444", fontSize: "26px", display: "flex" }}></i>
               </div>
 
               <div className="rn-action-details">

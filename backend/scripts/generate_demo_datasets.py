@@ -108,6 +108,14 @@ def build_corridor(corridor_no: int, *, station_count: int = 12) -> dict[str, An
                 }
             )
 
+    # Every window that belongs to a section, in slot order. A maintenance job is
+    # eligible for any possession of the section it sits in - eligibility is a
+    # compatibility fact, while availability is a separate operational one, so
+    # unavailable slots stay listed and the solver skips them.
+    windows_by_section: dict[str, list[str]] = {}
+    for window in windows:
+        windows_by_section.setdefault(window["section_id"], []).append(window["window_id"])
+
     train_paths = []
     for service in range(1, 25):
         day = service % 7
@@ -141,7 +149,6 @@ def build_corridor(corridor_no: int, *, station_count: int = 12) -> dict[str, An
         kind = work_types[(index + corridor_no) % len(work_types)]
         asset_kind = "OHE" if "OHE" in kind else "SIGNAL" if "signal" in kind else "TRACK"
         resource_index = (index - 1) % 12 + 1
-        window_slot = (index - 1) % 3 + 1
         duration = 45 + (index % 4) * 15
         jobs.append(
             {
@@ -161,7 +168,7 @@ def build_corridor(corridor_no: int, *, station_count: int = 12) -> dict[str, An
                 "duration_min_minutes": max(30, duration - 15),
                 "duration_max_minutes": duration + 30,
                 "required_resources": [f"RES-{prefix}-{resource_index:02d}"],
-                "allowed_windows": [f"WIN-{prefix}-{section_index:02d}-{window_slot}"],
+                "allowed_windows": list(windows_by_section[section_id]),
                 "status": "UNSCHEDULED",
                 "source_class": "CONTROLLED-SCENARIO",
             }

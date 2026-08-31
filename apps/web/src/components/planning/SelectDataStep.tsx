@@ -118,7 +118,7 @@ export function SelectDataStep({
               >
                 {isSelected && (
                   <span className="corridor-card-check" aria-hidden="true">
-                    <i className="fi fi-ss-check-circle" style={{ fontSize: "14px", color: "currentColor", display: "flex" }}></i>
+                    <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "14px", color: "currentColor", display: "flex" }}></i>
                   </span>
                 )}
                 <div className="corridor-card-label">{preset.label}</div>
@@ -143,7 +143,7 @@ export function SelectDataStep({
           <div className={`custom-base-upload-zone ${customBaseDataset ? "uploaded" : ""}`}>
             {customBaseDataset ? (
               <div className="custom-base-uploaded-state">
-                <i className="fi fi-ss-check-circle" style={{ fontSize: "16px", color: "currentColor", display: "flex" }}></i>
+                <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "16px", color: "currentColor", display: "flex" }}></i>
                 <span>Base dataset loaded</span>
                 <label className="custom-base-reupload-btn" title="Replace dataset">
                   Replace
@@ -192,10 +192,10 @@ export function SelectDataStep({
                   className={`dept-source-card ${isLoaded ? "loaded" : "skipped"}`}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                    {source.id === "tms" && <i className="fi fi-bs-train-track" style={{ fontSize: "32px", color: "#F59E0B", display: "flex" }}></i>}
-                    {source.id === "smms" && <i className="fi fi-br-traffic-light-stop" style={{ fontSize: "32px", color: "#3B82F6", display: "flex" }}></i>}
-                    {source.id === "tdms" && <i className="fi fi-bs-utility-pole-double" style={{ fontSize: "32px", color: "#10B981", display: "flex" }}></i>}
-                    {source.id === "civil" && <i className="fi fi-bs-hammer-brush" style={{ fontSize: "32px", color: "#A855F7", display: "flex" }}></i>}
+                    {source.id === "tms" && <i aria-hidden="true" className="fi fi-bs-train-track" style={{ fontSize: "32px", color: "#F59E0B", display: "flex" }}></i>}
+                    {source.id === "smms" && <i aria-hidden="true" className="fi fi-br-traffic-light-stop" style={{ fontSize: "32px", color: "#3B82F6", display: "flex" }}></i>}
+                    {source.id === "tdms" && <i aria-hidden="true" className="fi fi-bs-utility-pole-double" style={{ fontSize: "32px", color: "#10B981", display: "flex" }}></i>}
+                    {source.id === "civil" && <i aria-hidden="true" className="fi fi-bs-hammer-brush" style={{ fontSize: "32px", color: "#A855F7", display: "flex" }}></i>}
 
                   <div className="source-main-info">
                     <div className="dept-badge-row">

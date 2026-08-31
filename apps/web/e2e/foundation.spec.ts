@@ -4,7 +4,8 @@ import os from "node:os";
 import path from "node:path";
 
 const baselinePath = path.resolve(process.cwd(), "../../fixtures/baseline_valid/dataset.json");
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl =
+  process.env.NEXT_PUBLIC_API_URL ?? `http://127.0.0.1:${process.env.API_PORT ?? "8000"}`;
 
 function uniqueFixturePath(): string {
   const payload = JSON.parse(fs.readFileSync(baselinePath, "utf8"));
@@ -95,7 +96,7 @@ test("invalid uploaded data stays blocked until backend validation passes", asyn
   await page.locator('input[type="file"]').first().setInputFiles(invalidFixturePath());
   await page.getByRole("button", { name: "Check Data →" }).click();
 
-  await expect(page.getByText("Needs Attention")).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Rejected by validation/ })).toBeVisible();
   await expect(page.getByText("Backend validation must pass before the solver can run")).toBeVisible();
   await expect(page.getByRole("button", { name: /3\. Create Plan/ })).toBeDisabled();
 });
@@ -169,7 +170,14 @@ test("export is blocked before approval and archive reopen loads the real backen
   await page.goto("/");
   await page.getByRole("button", { name: /View Previous Plans/ }).click();
   await expect(page.getByText(runId)).toBeVisible();
-  await page.getByRole("button", { name: "Open Review Desk →" }).first().click();
+  // Open this test's own run, not whichever is newest. The API keeps one store
+  // for the whole e2e session, so by the time this runs the archive holds runs
+  // created by other specs and `.first()` opens one of those.
+  await page
+    .locator(".plan-archive-row")
+    .filter({ hasText: runId })
+    .getByRole("button", { name: "Open Review Desk →" })
+    .click();
   await expect(page.getByText(`Archived run ${runId}`)).toBeVisible({ timeout: 15_000 });
 });
 

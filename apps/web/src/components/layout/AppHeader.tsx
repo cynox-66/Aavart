@@ -86,7 +86,7 @@ export function AppHeader({
           title={planId ? `Go to Home (active plan ${planId})` : "Go to RailNiyojan Home"}
         >
           <div className="rn-logo-icon">
-            <i className="fi fi-br-train" style={{ color: "#0047BA", fontSize: "24px", display: "flex" }}></i>
+            <i aria-hidden="true" className="fi fi-br-train" style={{ color: "#0047BA", fontSize: "24px", display: "flex" }}></i>
           </div>
           <div className="rn-brand-titles">
             <span className="rn-brand-title">RailNiyojan</span>

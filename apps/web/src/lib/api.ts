@@ -67,13 +67,22 @@ export interface ValidatorSummary {
 }
 
 export interface KpiSummary {
-  baseline_closure_minutes: number;
+  baseline_method: "SERIAL_PER_SECTION";
+  serial_baseline_closure_minutes: number;
   optimized_closure_minutes: number;
-  closure_minutes_saved: number;
+  closure_reduction_minutes: number;
   closure_reduction_percent: number;
+  serial_baseline_asset_downtime_minutes: number;
+  optimized_asset_downtime_minutes: number;
+  asset_downtime_reduction_minutes: number;
+  asset_downtime_reduction_percent: number;
+  /** Coverage. Never render a reduction without these beside it. */
   total_maintenance_minutes: number;
   scheduled_maintenance_minutes: number;
   rejected_maintenance_minutes: number;
+  scheduled_jobs: number;
+  total_jobs: number;
+  job_coverage_percent: number;
   maintenance_coverage_percent: number;
   rejected_maintenance_percent: number;
 }
@@ -90,7 +99,7 @@ export interface AiEstimate {
 
 export interface RunDetail {
   run_id: string;
-  state: "QUEUED" | "RUNNING" | "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
+  state: "FEASIBLE" | "OPTIMAL" | "INFEASIBLE" | "TIMEOUT" | "INVALID" | "FAILED";
   snapshot_id: string;
   snapshot_status: string;
   ruleset_version: string;
@@ -170,7 +179,7 @@ export interface RapidBlockResponse {
   derived_snapshot_id: string | null;
   child_run_id: string | null;
   reason_codes: string[];
-  status_url: string;
+  detail_url: string;
 }
 
 export interface RapidBlockDetail extends RapidBlockResponse {

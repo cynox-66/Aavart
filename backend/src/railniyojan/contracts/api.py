@@ -59,7 +59,7 @@ class PlanningRunCreatedResponse(ApiModel):
     snapshot_id: str
     ruleset_version: str
     created_at: datetime
-    status_url: str
+    detail_url: str
 
 
 class UnscheduledJob(ApiModel):
@@ -98,13 +98,33 @@ class JobContext(ApiModel):
 
 
 class KpiSummary(ApiModel):
-    baseline_closure_minutes: int
+    """Plan impact, reported so that rejecting work cannot improve the score.
+
+    Every field is computed over the scheduled jobs only, and coverage is part
+    of the summary rather than an optional extra - see planning/kpis.py.
+    """
+
+    # The counterfactual is named, not implied. "SERIAL_PER_SECTION" means one
+    # possession per job, stacked back to back within each section; it is not a
+    # human-authored plan.
+    baseline_method: Literal["SERIAL_PER_SECTION"]
+    serial_baseline_closure_minutes: int
     optimized_closure_minutes: int
-    closure_minutes_saved: int
+    # Named for what it measures. "downtime" was ambiguous once asset downtime
+    # became a real, separate figure rather than a copy of section closure.
+    closure_reduction_minutes: int
     closure_reduction_percent: float
+    serial_baseline_asset_downtime_minutes: int
+    optimized_asset_downtime_minutes: int
+    asset_downtime_reduction_minutes: int
+    asset_downtime_reduction_percent: float
+    # Coverage. Never render a reduction without these beside it.
     total_maintenance_minutes: int
     scheduled_maintenance_minutes: int
     rejected_maintenance_minutes: int
+    scheduled_jobs: int
+    total_jobs: int
+    job_coverage_percent: float
     maintenance_coverage_percent: float
     rejected_maintenance_percent: float
 
@@ -232,7 +252,7 @@ class RapidBlockResponse(ApiModel):
     derived_snapshot_id: str | None = None
     child_run_id: str | None = None
     reason_codes: list[str]
-    status_url: str
+    detail_url: str
 
 
 class RapidBlockDetail(RapidBlockResponse):
