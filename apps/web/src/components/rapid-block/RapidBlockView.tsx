@@ -144,7 +144,7 @@ export function RapidBlockView({ plan, onExitToHome, onShowToast, onRapidBlockAp
         onCancel={() => setIsSuccessModalOpen(false)}
       >
         <div className="emergency-success-summary">
-          <div className="success-check-badge">✓</div>
+          <div className="success-check-badge"><i aria-hidden="true" className="fi fi-ss-check-circle"></i></div>
           <p>
             Incident registered on <strong>{impact?.incidentLocation.sectionId ?? selectedSection}</strong>.{" "}
             {impact?.rescheduledJobs.length ?? 0} downstream job(s) rescheduled,{" "}

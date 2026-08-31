@@ -86,16 +86,7 @@ export function AppHeader({
           title={planId ? `Go to Home (active plan ${planId})` : "Go to RailNiyojan Home"}
         >
           <div className="rn-logo-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F2850" strokeWidth="2">
-              {/* Locomotive engine icon */}
-              <rect x="4" y="3" width="16" height="14" rx="3" />
-              <path d="M4 11h16" />
-              <circle cx="8" cy="7" r="1.5" fill="#0F2850" />
-              <circle cx="16" cy="7" r="1.5" fill="#0F2850" />
-              <path d="M6 17l-2 4" />
-              <path d="M18 17l2 4" />
-              <path d="M4 21h16" />
-            </svg>
+            <i aria-hidden="true" className="fi fi-br-train" style={{ color: "#0047BA", fontSize: "24px", display: "flex" }}></i>
           </div>
           <div className="rn-brand-titles">
             <span className="rn-brand-title">RailNiyojan</span>
