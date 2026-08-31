@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { DepartmentType, PlanRunView } from "@/types";
 import { ConfirmModal } from "@/components/layout/ConfirmModal";
-import { formatPercent, getDepartmentLabel } from "@/lib/utils";
+import { formatPercent, formatPercentValue, getDepartmentLabel } from "@/lib/utils";
 
 interface PlanApprovedScreenProps {
   plan: PlanRunView;
   onExport: () => Promise<void>;
   isExporting?: boolean;
   onNewVersion: () => void;
+  onGoHome: () => void;
 }
 
 export function PlanApprovedScreen({
@@ -17,6 +18,7 @@ export function PlanApprovedScreen({
   onExport,
   isExporting = false,
   onNewVersion,
+  onGoHome,
 }: PlanApprovedScreenProps) {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -37,6 +39,14 @@ export function PlanApprovedScreen({
 
   return (
     <div className="rn-plan-approved-workspace">
+      {/* Every other terminal screen offers a way home; this one ended the
+          workflow without one, leaving the header chevron as the only exit. */}
+      <div className="rn-approved-topbar">
+        <button type="button" className="btn-back-home-top" onClick={onGoHome}>
+          ← Back to Home
+        </button>
+      </div>
+
       {/* 1. Celebration Banner */}
       <div className="rn-celebration-banner center">
         <div className="rn-confetti-circle-wrap">
@@ -110,7 +120,7 @@ export function PlanApprovedScreen({
             <i aria-hidden="true" className="fi fi-ss-check-circle" style={{ fontSize: "24px", color: "#16A34A", display: "flex" }}></i>
           </div>
           <div className="rn-stat-data">
-            <div className="rn-stat-number green">{formatPercent(plan.kpis.maintenance_coverage_percent)}</div>
+            <div className="rn-stat-number green">{formatPercentValue(plan.kpis.maintenance_coverage_percent)}</div>
             <span className="rn-stat-label">Maintenance Coverage</span>
           </div>
         </div>

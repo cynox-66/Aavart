@@ -7,6 +7,7 @@ interface CreatePlanStepProps {
   snapshotId: string;
   onPlanReady: () => void;
   onCancel: () => void;
+  onRetry: () => void;
   onTriggerSolve: () => Promise<boolean>;
 }
 
@@ -26,6 +27,7 @@ const pipelineSteps: PipelineStep[] = [
 export function CreatePlanStep({
   onPlanReady,
   onCancel,
+  onRetry,
   onTriggerSolve,
 }: CreatePlanStepProps) {
   // Starts at step 0 / low progress - these only ever advance once the real
@@ -235,10 +237,18 @@ export function CreatePlanStep({
           Cancel Plan
         </button>
 
-        <button type="button" className="rn-btn-please-wait" disabled>
-          <span>Please Wait...</span>
-          <span className="rn-spinner-dots" />
-        </button>
+        {error ? (
+          /* The solve has failed. Claiming to still be waiting strands the
+             operator on a screen that will never finish. */
+          <button type="button" className="rn-btn-retry-plan" onClick={onRetry}>
+            Try Again
+          </button>
+        ) : (
+          <button type="button" className="rn-btn-please-wait" disabled>
+            <span>Please Wait…</span>
+            <span className="rn-spinner-dots" />
+          </button>
+        )}
       </div>
     </div>
   );

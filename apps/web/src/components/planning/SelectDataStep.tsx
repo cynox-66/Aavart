@@ -88,9 +88,14 @@ export function SelectDataStep({
               Monthly (30-day filter)
             </button>
           </div>
-          <p className="validation-hint">
-            Monthly mode uses the same CP-SAT solver on a 30-day date-bounded snapshot. It does not create a separate monthly optimizer.
-          </p>
+          {/* Only when it applies. Shown permanently, a caveat about Monthly
+              reads as a warning about whatever mode you are actually in. */}
+          {horizon === "MONTHLY" && (
+            <p className="validation-hint" role="status">
+              Monthly mode uses the same CP-SAT solver on a 30-day date-bounded snapshot. It does
+              not create a separate monthly optimizer.
+            </p>
+          )}
         </div>
       </div>
 

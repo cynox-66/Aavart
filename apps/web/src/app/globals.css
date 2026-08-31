@@ -71,7 +71,9 @@
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0.01ms !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
@@ -243,7 +245,11 @@ button:disabled {
   font-size: 0.8rem;
   flex: 0 0 auto;
   position: relative;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
   border-bottom: 2px solid transparent;
 }
 
@@ -669,7 +675,11 @@ button:disabled {
   padding: 1.4rem 1.6rem;
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
   user-select: none;
 }
 
@@ -883,7 +893,11 @@ button:disabled {
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--text-muted);
-  transition: all 0.2s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-pipeline-item.active {
@@ -1018,11 +1032,39 @@ button:disabled {
   color: var(--text-main);
   font-size: 0.9rem;
   box-shadow: var(--shadow-sm);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-cancel-plan:hover {
   background: var(--bg-subtle);
+}
+
+/* Shown in place of the "Please Wait…" button once a solve has failed. */
+.rn-btn-retry-plan {
+  padding: 0.75rem 1.8rem;
+  background: var(--brand-blue);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
+}
+
+.rn-btn-retry-plan:hover { background: var(--brand-blue-hover); }
+.rn-btn-retry-plan:active { transform: translateY(1px); }
+
+/* Keeps the approved screen's exit aligned with the archive screen's. */
+.rn-approved-topbar {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.85rem;
 }
 
 .rn-btn-please-wait {
@@ -1341,7 +1383,11 @@ button:disabled {
   border-radius: var(--radius-md);
   padding: 0.85rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
   text-align: left;
 }
 
@@ -2181,7 +2227,11 @@ button:disabled {
   font-weight: 600;
   color: var(--brand-blue);
   box-shadow: var(--shadow-sm);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-reoptimize-banner:hover {
@@ -2458,7 +2508,11 @@ button:disabled {
   align-items: flex-start;
   gap: 0.5rem;
   text-align: left;
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-action-btn:hover:not(:disabled) {
@@ -2518,7 +2572,11 @@ button:disabled {
   justify-content: space-between;
   box-shadow: var(--shadow-card);
   color: var(--text-main);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-reoptimize-full:hover:not(:disabled) {
@@ -2631,7 +2689,11 @@ button:disabled {
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 0 2px 6px rgba(0, 71, 186, 0.25);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-export-primary:hover:not(:disabled) {
@@ -2979,9 +3041,10 @@ button:disabled {
   background: #FFFFFF;
 }
 
-.rn-notes-textarea:focus {
+.rn-notes-textarea:focus-visible {
   outline: none;
   border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(0, 71, 186, 0.14);
 }
 
 .rn-char-counter {
@@ -3012,7 +3075,11 @@ button:disabled {
   justify-content: center;
   gap: 0.5rem;
   box-shadow: var(--shadow-sm);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-appr-export:hover {
@@ -3032,7 +3099,11 @@ button:disabled {
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-appr-submit:hover:not(:disabled) {
@@ -3208,7 +3279,11 @@ button:disabled {
   gap: 0.4rem;
   background: #FFFFFF;
   box-shadow: var(--shadow-sm);
-  transition: all 0.15s ease;
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .rn-btn-tile-action.green { border: 1px solid var(--status-green); color: var(--status-green-dark); }
@@ -4576,6 +4651,63 @@ button:disabled { cursor: not-allowed; }
   to { opacity: 1; transform: none; }
 }
 
+/* ── Staggered entrance for card groups ───────────────────────────────────────
+   The view wrapper already fades a screen in as one block. Card rows arriving
+   in sequence rather than all at once is what separates a composed screen from
+   a generated one: the eye is led left-to-right instead of being handed the
+   whole grid at once.
+
+   Deliberately restrained - 6px of travel, ~40ms apart, capped at the fifth
+   card so a long row never turns into a queue. Only opacity and transform
+   animate, so this stays on the compositor, and the reduce-motion block above
+   flattens both the duration and the delay. */
+.rn-action-card,
+.dept-source-card,
+.rn-next-tile,
+.rn-impact-item,
+.rn-kpi-card,
+.rn-stat-box,
+.val-stat-box {
+  animation: rn-view-enter var(--dur-slow) var(--ease-out) backwards;
+}
+
+.rn-action-card:nth-child(2),
+.dept-source-card:nth-child(2),
+.rn-next-tile:nth-child(2),
+.rn-impact-item:nth-child(2),
+.rn-kpi-card:nth-child(2),
+.rn-stat-box:nth-child(2),
+.val-stat-box:nth-child(2) { animation-delay: 40ms; }
+
+.rn-action-card:nth-child(3),
+.dept-source-card:nth-child(3),
+.rn-next-tile:nth-child(3),
+.rn-impact-item:nth-child(3),
+.rn-kpi-card:nth-child(3),
+.rn-stat-box:nth-child(3),
+.val-stat-box:nth-child(3) { animation-delay: 80ms; }
+
+.rn-action-card:nth-child(4),
+.dept-source-card:nth-child(4),
+.rn-next-tile:nth-child(4),
+.rn-impact-item:nth-child(4),
+.rn-kpi-card:nth-child(4),
+.rn-stat-box:nth-child(4),
+.val-stat-box:nth-child(4) { animation-delay: 120ms; }
+
+.dept-source-card:nth-child(n + 5) { animation-delay: 160ms; }
+
+/* The approval tick is the one moment worth a beat of its own. */
+.rn-confetti-circle-wrap {
+  animation: rn-approve-pop 420ms var(--ease-out) backwards;
+}
+
+@keyframes rn-approve-pop {
+  from { opacity: 0; transform: scale(0.88); }
+  60%  { transform: scale(1.02); }
+  to   { opacity: 1; transform: none; }
+}
+
 /* Toasts slide in from the right, exit faster than they enter. */
 @keyframes rn-toast-enter {
   from { opacity: 0; transform: translateX(16px); }
@@ -5132,7 +5264,11 @@ button:disabled { cursor: not-allowed; }
   border-left: 4px solid var(--border-strong);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--dur-fast) var(--ease-out);
+  transition: background-color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
 
 .expanded-job-card:hover { 

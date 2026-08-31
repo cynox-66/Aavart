@@ -79,6 +79,7 @@ export default function RailNiyojanApp() {
 
   // Active Planning Run State - null until a real plan actually exists.
   const [horizon, setHorizon] = useState<PlanningHorizon>("WEEKLY");
+  const [solveAttempt, setSolveAttempt] = useState(0);
   const [plan, setPlan] = useState<PlanRunView | null>(null);
   const [hasPlanCreated, setHasPlanCreated] = useState(false);
   // Whether the currently-open plan was opened from the archive (Previous
@@ -491,9 +492,13 @@ export default function RailNiyojanApp() {
 
         {currentView === "wizard-step-3" && (
           <CreatePlanStep
+            // Remounting is what re-runs the solve: the step kicks off its
+            // attempt once on mount and guards against repeats.
+            key={solveAttempt}
             snapshotId={validation.snapshotCandidateId ?? ""}
             onPlanReady={handlePlanReady}
             onCancel={handleCancelSolve}
+            onRetry={() => setSolveAttempt((n) => n + 1)}
             onTriggerSolve={handleTriggerSolve}
           />
         )}
@@ -542,6 +547,7 @@ export default function RailNiyojanApp() {
               onExport={handleExportPlan}
               isExporting={isExporting}
               onNewVersion={handleNewPlanVersion}
+              onGoHome={() => setCurrentView("home")}
             />
           ) : (
             <NoPlanRedirect onNavigateHome={() => setCurrentView("home")} />
