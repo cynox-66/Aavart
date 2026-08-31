@@ -170,7 +170,14 @@ test("export is blocked before approval and archive reopen loads the real backen
   await page.goto("/");
   await page.getByRole("button", { name: /View Previous Plans/ }).click();
   await expect(page.getByText(runId)).toBeVisible();
-  await page.getByRole("button", { name: "Open Review Desk →" }).first().click();
+  // Open this test's own run, not whichever is newest. The API keeps one store
+  // for the whole e2e session, so by the time this runs the archive holds runs
+  // created by other specs and `.first()` opens one of those.
+  await page
+    .locator(".plan-archive-row")
+    .filter({ hasText: runId })
+    .getByRole("button", { name: "Open Review Desk →" })
+    .click();
   await expect(page.getByText(`Archived run ${runId}`)).toBeVisible({ timeout: 15_000 });
 });
 

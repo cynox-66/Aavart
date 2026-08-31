@@ -116,6 +116,11 @@ export function WeeklyTimelineSummary({
   
   const [animState, setAnimState] = useState<"IDLE" | "HOLD_OLD" | "MOVING">("IDLE");
   const [barDelays, setBarDelays] = useState<Map<string, number>>(new Map());
+  // The positions the bars animate *from*. This is a copy of prevPositions taken
+  // when the animation starts, held in state rather than read from the ref during
+  // render: a ref read in render does not re-render when it changes, so the bars
+  // could paint from a stale snapshot.
+  const [heldPositions, setHeldPositions] = useState<Map<string, BarSnapshot>>(new Map());
 
   const prevRunId = useRef<string>(plan.run_id);
   const prevOptStatus = useRef<OptimizationStatus | undefined>(optimizationStatus);
@@ -154,6 +159,7 @@ export function WeeklyTimelineSummary({
         });
       }
       setBarDelays(delays);
+      setHeldPositions(new Map(prevPositions.current));
 
       // 2. Lock bars into their OLD positions instantly
       setAnimState("HOLD_OLD");
@@ -278,7 +284,7 @@ export function WeeklyTimelineSummary({
                 const isLocked = !!item.locked;
                 
                 const key = barKey(section.section_id, item.job_id);
-                const oldPos = prevPositions.current.get(key);
+                const oldPos = heldPositions.get(key);
                 const delay = barDelays.get(key) || 0;
 
                 // Determine final render positions
