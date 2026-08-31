@@ -64,8 +64,13 @@ export function CreatePlanStep({
       const heartbeat = setInterval(() => {
         if (cancelled) return;
         setCurrentStepIndex((idx) => Math.min(idx + 1, 3));
-        setProgressPercent((p) => Math.min(p + 20, 85));
-      }, 1500);
+        // Ease toward - but never reach - completion. A hard cap parked the bar
+        // at 85% for seconds on the 90-job corridor, which reads as "stuck";
+        // a decelerating creep keeps saying "still working" without lying.
+        // Rounded: this value is rendered as a label, and the eased increment
+        // is fractional. The 1.5 floor keeps rounding from ever stalling it.
+        setProgressPercent((p) => Math.round(Math.min(96, p + Math.max(1.5, (96 - p) * 0.28))));
+      }, 500);
 
       try {
         const success = await onTriggerSolveRef.current();
@@ -78,7 +83,7 @@ export function CreatePlanStep({
             setIsCompleted(true);
             setTimeout(() => {
               if (!cancelled) onPlanReadyRef.current();
-            }, 400);
+            }, 200);
           } else {
             setError("Solver failed to compute a conflict-free schedule.");
           }

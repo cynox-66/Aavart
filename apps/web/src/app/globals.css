@@ -188,7 +188,7 @@ button:disabled {
 }
 
 .rn-brand-title {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
   font-weight: 700;
   color: var(--brand-navy);
   letter-spacing: -0.02em;
@@ -502,52 +502,67 @@ button:disabled {
    Home Screen (Image 2)
    ========================================================================== */
 .rn-home-container {
-  max-width: 1240px;
-  margin: 1rem auto;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  /* The home screen is a landing view: it fills the space the header leaves
+     and never scrolls. 4.5rem header + the wrapper's vertical padding. */
+  min-height: calc(100vh - 12.5rem);
+  display: flex;
+  align-items: center;
 }
 
 .rn-home-card {
-  background: #FFFFFF;
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
-  padding: 2.5rem 3rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  width: 100%;
   display: grid;
   /* minmax(0, …) so the columns can shrink; bare fr units are min-content
      floored and made the whole page scroll sideways on narrow viewports. */
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: 3.5rem;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2.5rem, 5vw, 4.5rem);
+  align-items: center;
 }
 
 @media (max-width: 900px) {
+  .rn-home-container {
+    min-height: 0;
+    align-items: flex-start;
+  }
   .rn-home-card {
     grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
-    padding: 1.75rem 1.5rem;
   }
 }
 
 .rn-home-left {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .rn-welcome-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
+  gap: clamp(1rem, 1.6vw, 1.5rem);
+  margin-bottom: 0.5rem;
 }
 
 .rn-welcome-icon-box {
-  width: 60px;
-  height: 60px;
-  background: var(--brand-blue-light);
+  width: clamp(48px, 4.6vw, 68px);
+  height: clamp(48px, 4.6vw, 68px);
+  background: transparent;
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.rn-welcome-icon-box i {
+  font-size: clamp(40px, 3.8vw, 58px) !important;
 }
 
 .rn-welcome-titles {
@@ -555,60 +570,58 @@ button:disabled {
   flex-direction: column;
 }
 
+.rn-welcome-titles { gap: 0.1rem; }
+
 .rn-welcome-pre {
-  font-size: 1.15rem;
+  font-size: clamp(1.35rem, 2.1vw, 2rem);
   color: var(--text-main);
   font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 .rn-welcome-main {
-  font-size: 2.1rem;
+  font-size: clamp(2.5rem, 5.2vw, 4.25rem);
   font-weight: 800;
   color: var(--text-main);
-  letter-spacing: -0.03em;
-  line-height: 1.1;
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
 
 .rn-welcome-tagline-blue {
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+  font-weight: 700;
   color: var(--brand-blue);
-  margin: 0.5rem 0 1rem;
+  margin: 1rem 0 0;
+  letter-spacing: -0.01em;
 }
 
 .rn-blue-divider {
-  width: 44px;
-  height: 3px;
+  width: 56px;
+  height: 4px;
   background: var(--brand-blue);
   border-radius: 2px;
-  margin-bottom: 1.25rem;
-}
-
-.rn-welcome-desc {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 2rem;
+  margin: 1.4rem 0 1.9rem;
 }
 
 .rn-value-props-list {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  margin-bottom: 2.5rem;
+  gap: clamp(1.1rem, 2.2vh, 1.9rem);
+  margin-bottom: clamp(1.5rem, 4vh, 2.75rem);
 }
 
 .rn-value-prop-card {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1.1rem;
 }
 
 .rn-value-icon {
-  width: 44px;
-  height: 44px;
+  width: 34px;
+  height: 34px;
   border-radius: var(--radius-md);
-  background: var(--brand-blue-light);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -616,23 +629,17 @@ button:disabled {
 }
 
 .rn-value-text h3 {
-  font-size: 0.95rem;
+  font-size: clamp(0.95rem, 1.15vw, 1.1rem);
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 0.2rem;
-}
-
-.rn-value-text p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.4;
+  margin-bottom: 0;
 }
 
 .rn-compliance-note {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding-top: 1.25rem;
+  padding-top: clamp(1rem, 2.5vh, 1.5rem);
   border-top: 1px solid var(--border-subtle);
   color: var(--text-muted);
   font-size: 0.82rem;
@@ -642,13 +649,16 @@ button:disabled {
 .rn-home-right {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: clamp(1.25rem, 3vh, 2rem);
 }
 
 .rn-train-illustration-container {
-  width: 115%;
-  margin-left: -7.5%;
-  height: 380px;
+  position: relative;
+  /* Bleeds a little past the column on both sides, and takes more vertical
+     room, so the hero reads at the size it does in the design reference. */
+  width: 116%;
+  margin-left: -8%;
+  height: clamp(300px, 42vh, 470px);
   background: transparent;
   border-radius: var(--radius-lg);
   border: none;
@@ -656,25 +666,19 @@ button:disabled {
   align-items: center;
   justify-content: center;
   overflow: visible;
-  margin-bottom: -1rem;
-}
-
-.rn-train-svg {
-  width: 100%;
-  height: 100%;
 }
 
 .rn-home-action-cards {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(0.65rem, 1.6vh, 1rem);
 }
 
 .rn-action-card {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-  padding: 1.4rem 1.6rem;
+  padding: clamp(0.9rem, 2vh, 1.35rem) 1.6rem;
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: background-color var(--dur-fast) var(--ease-out),
@@ -701,7 +705,7 @@ button:disabled {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.15);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -709,9 +713,9 @@ button:disabled {
 }
 
 .rn-action-card.rn-action-primary h3 {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
   font-weight: 700;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0;
 }
 
 .rn-action-card.rn-action-primary p {
@@ -751,7 +755,7 @@ button:disabled {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
-  background: var(--bg-subtle);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -759,10 +763,10 @@ button:disabled {
 }
 
 .rn-action-card.rn-action-secondary h3 {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
   font-weight: 700;
   color: var(--text-main);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0;
 }
 
 .rn-action-card.rn-action-secondary p {
@@ -810,7 +814,7 @@ button:disabled {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
-  background: #FEE2E2;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -818,9 +822,9 @@ button:disabled {
 }
 
 .rn-action-card.rn-action-emergency h3 {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
   font-weight: 700;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0;
   color: #991B1B;
 }
 
@@ -2035,19 +2039,32 @@ button:disabled {
 }
 
 .wt-bar-moving {
-  transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-              width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-              top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-              background-color 0.5s ease,
-              box-shadow 0.5s ease !important;
-  box-shadow: 0 0 12px 2px currentColor !important;
+  /* easeOutQuint: decisive, then settles. The previous curve overshot its
+     endpoint (control point 1.56), so dozens of bars visibly sprang past
+     their target and snapped back at once. */
+  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              top 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.6s ease !important;
   z-index: 10 !important;
-  animation: wt-bar-glow 0.5s ease-in-out infinite alternate;
+  /* One pass that rises and settles back to the bar's resting shadow. This
+     used to be an infinite alternating brightness flash held for ~4s. */
+  animation: wt-bar-glow 0.9s ease-in-out both;
 }
 
 @keyframes wt-bar-glow {
-  0% { filter: brightness(1); }
-  100% { filter: brightness(1.4); }
+  0% { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+  40% { box-shadow: 0 0 9px 1px currentColor, 0 1px 3px rgba(0, 0, 0, 0.12); }
+  100% { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+}
+
+/* Re-optimization is informational, not essential: skip the travel entirely
+   for anyone who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .wt-bar-moving {
+    transition: none !important;
+    animation: none;
+  }
 }
 
 .wt-bar:hover {
@@ -2217,29 +2234,6 @@ button:disabled {
 .rn-important-text p {
   font-size: 0.78rem;
   color: var(--text-muted);
-}
-
-.rn-btn-reoptimize-banner {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.9rem;
-  background: #FFFFFF;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--brand-blue);
-  box-shadow: var(--shadow-sm);
-  transition: background-color var(--dur-fast) var(--ease-out),
-              border-color var(--dur-fast) var(--ease-out),
-              color var(--dur-fast) var(--ease-out),
-              box-shadow var(--dur-fast) var(--ease-out),
-              transform var(--dur-fast) var(--ease-out);
-}
-
-.rn-btn-reoptimize-banner:hover {
-  background: var(--brand-blue-light);
 }
 
 /* Right Sidebar: Job Inspector */
@@ -3803,7 +3797,7 @@ button:disabled {
 }
 
 .all-good-header h3 {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
   font-weight: 700;
   color: var(--text-main);
 }

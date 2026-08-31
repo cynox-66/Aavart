@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { AppView } from "@/types";
 
 interface HomeScreenProps {
@@ -8,7 +10,7 @@ interface HomeScreenProps {
   hasActivePlan?: boolean;
 }
 
-export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: HomeScreenProps) {
+export function HomeScreen({ onNavigate, hasActivePlan = false }: HomeScreenProps) {
   return (
     <div className="rn-home-container">
       <div className="rn-home-card">
@@ -30,10 +32,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
           <div className="rn-blue-divider" />
 
-          <p className="rn-welcome-desc">
-            Plan maintenance together, reduce disruptions, and keep trains moving.
-          </p>
-
           {/* 3 Value Proposition Cards */}
           <div className="rn-value-props-list">
             <div className="rn-value-prop-card">
@@ -47,7 +45,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               </div>
               <div className="rn-value-text">
                 <h3>Coordinate maintenance work efficiently</h3>
-                <p>Bring Engineering, Signalling and Traction teams together for integrated planning.</p>
               </div>
             </div>
 
@@ -60,7 +57,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               </div>
               <div className="rn-value-text">
                 <h3>Reduce disruptions to train operations</h3>
-                <p>Find the best maintenance windows around train movements.</p>
               </div>
             </div>
 
@@ -73,7 +69,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
               </div>
               <div className="rn-value-text">
                 <h3>Improve safety &amp; reliability</h3>
-                <p>Ensure safety constraints while optimizing maintenance and resources.</p>
               </div>
             </div>
           </div>
@@ -91,11 +86,13 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
         <div className="rn-home-right">
           {/* Train Graphic */}
           <div className="rn-train-illustration-container">
-            <img 
-              src="/train-hero.png" 
-              alt="RailNiyojan Train Illustration" 
-              className="rn-train-img"
-              style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', mixBlendMode: 'multiply' }} 
+            <Image
+              src="/train-hero.png"
+              alt="Illustration of a train on a maintenance corridor"
+              fill
+              priority
+              sizes="(max-width: 900px) 100vw, 45vw"
+              style={{ objectFit: "contain", mixBlendMode: "multiply" }}
             />
           </div>
 
@@ -118,11 +115,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>Start New Plan</h3>
-                <p>
-                  {hasActivePlan && activePlanId
-                    ? `Replaces the active plan (${activePlanId}) with a new planning session.`
-                    : "Create a new planning session for your corridor and planning period."}
-                </p>
               </div>
 
               <div className="rn-action-arrow-btn primary">
@@ -145,7 +137,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>View Previous Plans</h3>
-                <p>Access and review your past planning sessions and exported plans.</p>
               </div>
 
               <div className="rn-action-arrow-btn secondary">
@@ -170,11 +161,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>Rapid-Block Review</h3>
-                <p>
-                  {hasActivePlan && activePlanId
-                    ? `Add an urgent incident to ${activePlanId} and re-optimize around it.`
-                    : "Create a plan first — this adds an urgent incident to an active run."}
-                </p>
               </div>
 
               <div className="rn-action-arrow-btn">
