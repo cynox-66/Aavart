@@ -163,7 +163,9 @@ export function WeeklyTimelineSummary({
       let i = 0;
       for (const { section, items } of rows) {
         items.forEach((item) => {
-          delays.set(barKey(section.section_id, item.job_id), i * 40); // 40ms stagger
+          // Bounded cascade: at 40ms x 81 bars the stagger alone ran 3.2s and
+          // read as chaos rather than sequence.
+          delays.set(barKey(section.section_id, item.job_id), Math.min(i * 10, 300));
           i++;
         });
       }
@@ -178,8 +180,8 @@ export function WeeklyTimelineSummary({
         requestAnimationFrame(() => {
           setAnimState("MOVING");
           
-          // 4. Clean up after the longest animation finishes (0.5s duration + max delay)
-          const totalTime = (i * 40) + 700; 
+          // 4. Clean up once the last bar has finished: capped stagger + glow.
+          const totalTime = 300 + 900;
           setTimeout(() => {
             setAnimState("IDLE");
           }, totalTime);

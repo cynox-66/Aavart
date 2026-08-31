@@ -2036,19 +2036,32 @@ button:disabled {
 }
 
 .wt-bar-moving {
-  transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-              width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-              top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-              background-color 0.5s ease,
-              box-shadow 0.5s ease !important;
-  box-shadow: 0 0 12px 2px currentColor !important;
+  /* easeOutQuint: decisive, then settles. The previous curve overshot its
+     endpoint (control point 1.56), so dozens of bars visibly sprang past
+     their target and snapped back at once. */
+  transition: left 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              top 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              background-color 0.6s ease !important;
   z-index: 10 !important;
-  animation: wt-bar-glow 0.5s ease-in-out infinite alternate;
+  /* One pass that rises and settles back to the bar's resting shadow. This
+     used to be an infinite alternating brightness flash held for ~4s. */
+  animation: wt-bar-glow 0.9s ease-in-out both;
 }
 
 @keyframes wt-bar-glow {
-  0% { filter: brightness(1); }
-  100% { filter: brightness(1.4); }
+  0% { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+  40% { box-shadow: 0 0 9px 1px currentColor, 0 1px 3px rgba(0, 0, 0, 0.12); }
+  100% { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+}
+
+/* Re-optimization is informational, not essential: skip the travel entirely
+   for anyone who asked for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .wt-bar-moving {
+    transition: none !important;
+    animation: none;
+  }
 }
 
 .wt-bar:hover {
