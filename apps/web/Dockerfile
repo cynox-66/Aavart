@@ -7,7 +7,19 @@ FROM base AS deps
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json ./apps/web/
-RUN pnpm install
+# The lockfile is authoritative in an image build: --frozen-lockfile fails loudly
+# on drift instead of silently resolving new versions.
+#
+# The registry can be slow from some networks, and pnpm's defaults (2 retries,
+# 60s timeout) abort the entire build on one transient stall. Be patient instead,
+# and keep the store on a cache mount so a retry resumes rather than restarting.
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+    pnpm install --frozen-lockfile \
+      --store-dir=/pnpm/store \
+      --fetch-retries=6 \
+      --fetch-retry-mintimeout=10000 \
+      --fetch-retry-maxtimeout=120000 \
+      --network-concurrency=8
 
 FROM base AS builder
 WORKDIR /app

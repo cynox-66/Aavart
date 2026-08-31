@@ -4,8 +4,14 @@ install:
 	uv sync --project backend --dev
 	pnpm install
 
-dev:
+dev: .env
 	docker compose up --build
+
+# .env is gitignored (it holds real keys), so a fresh clone has none and
+# compose's `env_file:` would abort. Seed it from the tracked example.
+.env:
+	cp .env.example .env
+	@echo "Created .env from .env.example - add real API keys if you need them."
 
 migrate:
 	uv run --project backend alembic -c backend/alembic.ini upgrade head

@@ -19,7 +19,10 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: ["uvicorn", "railniyojan.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    # Migrations run here rather than as a separate host step: DATABASE_URL
+    # points at `db:5432`, which only resolves inside this network, so
+    # `make migrate` on the host cannot reach it. Keeps `make dev` one command.
+    command: ["sh", "-c", "alembic -c backend/alembic.ini upgrade head && exec uvicorn railniyojan.api.main:app --host 0.0.0.0 --port 8000 --reload"]
     env_file: .env
     ports:
       - "8000:8000"
