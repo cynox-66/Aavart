@@ -72,7 +72,7 @@ export function WeeklyTimelineSummary({
     const s = new Date(itemStart).getTime();
     const e = new Date(itemEnd).getTime();
     const left = Math.max(0, ((s - (start?.getTime() ?? s)) / spanMs) * 100);
-    return Math.max(1.5, Math.min(100 - left, ((e - s) / spanMs) * 100));
+    return Math.max(12, Math.min(100 - left, ((e - s) / spanMs) * 100));
   };
 
   /** Resolve the bar's department color from the underlying job. */
