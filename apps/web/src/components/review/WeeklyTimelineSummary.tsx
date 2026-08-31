@@ -72,7 +72,10 @@ export function WeeklyTimelineSummary({
     const s = new Date(itemStart).getTime();
     const e = new Date(itemEnd).getTime();
     const left = Math.max(0, ((s - (start?.getTime() ?? s)) / spanMs) * 100);
-    return Math.max(12, Math.min(100 - left, ((e - s) / spanMs) * 100));
+    // Clamp to the lane's remaining width LAST so a bar can never overflow its
+    // track. Legibility for very short jobs comes from `.wt-bar { min-width }`,
+    // which is in px and so does not misrepresent the job's duration.
+    return Math.min(100 - left, Math.max(0, ((e - s) / spanMs) * 100));
   };
 
   /** Resolve the bar's department color from the underlying job. */
