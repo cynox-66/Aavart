@@ -29,6 +29,11 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY fixtures ./fixtures
 COPY apps/web ./apps/web
 ENV NEXT_TELEMETRY_DISABLED=1
+# Next.js inlines NEXT_PUBLIC_* at BUILD time, so setting this as a runtime
+# env on the container has no effect on client-side code. It has to arrive
+# as a build arg or the browser silently falls back to localhost.
+ARG NEXT_PUBLIC_API_URL=http://localhost:8000
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 RUN pnpm --filter @railniyojan/web build
 
 FROM base AS runner
