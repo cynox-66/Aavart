@@ -654,15 +654,18 @@ button:disabled {
 
 .rn-train-illustration-container {
   position: relative;
-  width: 100%;
-  height: clamp(200px, 30vh, 340px);
+  /* Bleeds a little past the column on both sides, and takes more vertical
+     room, so the hero reads at the size it does in the design reference. */
+  width: 116%;
+  margin-left: -8%;
+  height: clamp(300px, 42vh, 470px);
   background: transparent;
   border-radius: var(--radius-lg);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .rn-home-action-cards {
