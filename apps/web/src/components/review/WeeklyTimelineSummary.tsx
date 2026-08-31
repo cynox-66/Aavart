@@ -62,6 +62,9 @@ export function WeeklyTimelineSummary({
     return { section, items };
   });
 
+  /** Minimum bar width, in % of the lane, so short jobs stay clickable. */
+  const MIN_BAR_PCT = 12;
+
   const barLeft = (itemStart: string) => {
     if (!start || spanMs <= 0) return 0;
     return Math.max(0, Math.min(100, ((new Date(itemStart).getTime() - start.getTime()) / spanMs) * 100));
@@ -72,10 +75,13 @@ export function WeeklyTimelineSummary({
     const s = new Date(itemStart).getTime();
     const e = new Date(itemEnd).getTime();
     const left = Math.max(0, ((s - (start?.getTime() ?? s)) / spanMs) * 100);
-    // Clamp to the lane's remaining width LAST so a bar can never overflow its
-    // track. Legibility for very short jobs comes from `.wt-bar { min-width }`,
-    // which is in px and so does not misrepresent the job's duration.
-    return Math.min(100 - left, Math.max(0, ((e - s) / spanMs) * 100));
+    // A 1.5h job is ~0.9% of a week -- proportionally honest but invisible.
+    // This overview answers "which section, which day", so bars get a generous
+    // floor; exact durations live in the expanded timeline. The floor is applied
+    // INSIDE the lane bound, so a bar late in the horizon shrinks to fit rather
+    // than overflowing its track (which is what a bare Math.max did).
+    const available = Math.max(0, 100 - left);
+    return Math.min(available, Math.max(MIN_BAR_PCT, ((e - s) / spanMs) * 100));
   };
 
   /** Resolve the bar's department color from the underlying job. */
