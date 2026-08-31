@@ -188,7 +188,9 @@ test("rapid-block review is unreachable until a plan exists", async ({ page }) =
 
   const emergency = page.getByRole("button", { name: /Rapid-Block Review/ });
   await expect(emergency).toBeDisabled();
-  await expect(emergency).toContainText("Create a plan first");
+  // The reference home screen carries no descriptive copy under the CTAs, so
+  // the "why" for this disabled control lives in its title attribute.
+  await expect(emergency).toHaveAttribute("title", /Create a plan first/);
 });
 
 test("a backend-rejected emergency request surfaces its reason code", async ({ page }) => {

@@ -65,7 +65,7 @@ export function CreatePlanStep({
         if (cancelled) return;
         setCurrentStepIndex((idx) => Math.min(idx + 1, 3));
         setProgressPercent((p) => Math.min(p + 20, 85));
-      }, 1500);
+      }, 750);
 
       try {
         const success = await onTriggerSolveRef.current();
@@ -78,7 +78,7 @@ export function CreatePlanStep({
             setIsCompleted(true);
             setTimeout(() => {
               if (!cancelled) onPlanReadyRef.current();
-            }, 400);
+            }, 200);
           } else {
             setError("Solver failed to compute a conflict-free schedule.");
           }

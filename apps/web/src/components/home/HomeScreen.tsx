@@ -10,7 +10,7 @@ interface HomeScreenProps {
   hasActivePlan?: boolean;
 }
 
-export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: HomeScreenProps) {
+export function HomeScreen({ onNavigate, hasActivePlan = false }: HomeScreenProps) {
   return (
     <div className="rn-home-container">
       <div className="rn-home-card">
@@ -161,11 +161,6 @@ export function HomeScreen({ onNavigate, activePlanId, hasActivePlan = false }: 
 
               <div className="rn-action-details">
                 <h3>Rapid-Block Review</h3>
-                <p>
-                  {hasActivePlan && activePlanId
-                    ? `Add an urgent incident to ${activePlanId} and re-optimize around it.`
-                    : "Create a plan first — this adds an urgent incident to an active run."}
-                </p>
               </div>
 
               <div className="rn-action-arrow-btn">
